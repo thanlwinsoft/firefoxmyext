@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" output="bin" path="java-firefox-extension-utils"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="converters"/>
+	<classpathentry kind="var" path="JRE_LIB" sourcepath="JRE_SRC"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.thanlwinsoft.doccharconvert"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rdf:RDF 
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+
+  <rdf:Description rdf:about="urn:mozilla:install-manifest">
+
+    <em:name>Myanmar Converter Extension</em:name>
+    <em:id>myanmar-converter@thanlwinsoft.org</em:id>
+    <em:version>0.1.0</em:version>
+    <em:type>2</em:type>
+    <em:creator>ThanLwinSoft</em:creator>
+    <em:description>Converts Myanmar webpages in ZawGyi encoding to Unicode 5.1</em:description>
+
+    <em:contributor>Keith Stribley</em:contributor>
+    
+    <em:homepageURL>http://thanlwinsoft.co.uk/</em:homepageURL>
+    <em:iconURL>chrome://myanmar-converter/skin/images/ThanLwin.jpg</em:iconURL>
+    <!--
+    <em:aboutURL>chrome://myanmar-converter/content/about-dialog.xul</em:aboutURL>
+    <em:optionsURL>chrome://myanmar-converter/content/options-dialog.xul</em:optionsURL>
+    -->
+    <em:updateURL>https://thanlwinsoft.co.uk/myanmar-converter-extension/updates.rdf</em:updateURL>
+    
+    <!-- 
+    	Target application is Firefox. You can try specifying other Mozilla
+    	applications such as Thunderbird and see.
+    -->
+    <em:targetApplication>
+      <rdf:Description>
+        <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+        <em:minVersion>2.0</em:minVersion>
+        <em:maxVersion>3.1</em:maxVersion>
+      </rdf:Description>
+    </em:targetApplication> 
+
+    <em:file>
+        <rdf:Description rdf:about="urn:mozilla:extension:file:myanmar-converter">
+            <em:package>content/</em:package>
+            <em:locale>locale/en-US/</em:locale>
+            <em:skin>skin/classic/</em:skin>
+        </rdf:Description>
+    </em:file>
+
+  </rdf:Description>
+
+</rdf:RDF>

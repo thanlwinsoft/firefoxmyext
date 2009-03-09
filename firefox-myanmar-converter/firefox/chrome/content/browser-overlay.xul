@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://myanmar-converter/skin/styles/browser-overlay.css" type="text/css"?>
+
+<!DOCTYPE overlay SYSTEM "chrome://myanmar-converter/locale/browser-overlay.dtd">
+
+<overlay id="myanmar-converter-browser-overlay" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/browser-overlay.js"/>
+    <script type="application/x-javascript">
+        MyanmarConverterExtension.initialize(); // this starts the whole show;
+    </script>
+
+    <menupopup id="menu_ToolsPopup">
+        <menuitem
+            id          ="myanmarConverter.doIt.menu"
+            label       ="&myanmarConverter.doIt.label;"
+            accesskey   ="&myanmarConverter.doIt.accessKey;"
+            oncommand   ="MyanmarConverterExtension.doIt();"
+            />
+    </menupopup>
+
+</overlay>

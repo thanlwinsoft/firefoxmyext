@@ -1,0 +1,188 @@
+<!--Myanmar Converter Firefox Extension
+
+Skeleton based on Java Firefox Extension template.
+-->
+
+<project default="xpi" basedir="." name="Myanmar Converter Firefox Extension">
+
+    <target name="start" depends="init">
+<echo>===================================================================
+               ${fullname} ${version} [${year}]
+===================================================================
+Building with ${ant.version}
+-------------------------------------------------------------------
+Using build file ${ant.file}
+-------------------------------------------------------------------
+Running on Java version ${ant.java.version} on ${os.name}
+-------------------------------------------------------------------
+Compiler options:
+ - debug ......... [${compiler.debug}]
+ - optimize ...... [${compiler.optimize}]
+ - deprecation ... [${compiler.deprecation}]
+===================================================================
+</echo>
+    </target>
+
+    <target name="init">
+        <!-- Set the timestamps -->
+        <tstamp/>
+    
+        <property environment="env" />
+    
+        <!-- Detecting the current jvm -->
+        <condition property="target.vm" value="1.4">
+            <equals arg1="1.5" arg2="${ant.java.version}"/>
+        </condition>
+        <condition property="target.vm" value="1.4">
+            <equals arg1="1.4" arg2="${ant.java.version}"/>
+        </condition>
+        <condition property="target.vm" value="1.3">
+          <not>
+            <or>
+              <equals arg1="1.4" arg2="${ant.java.version}"/>
+              <equals arg1="1.5" arg2="${ant.java.version}"/>
+            </or>
+          </not>
+        </condition>
+    
+        <!-- Describe the location of the java runtime library on different systems -->
+        <condition property="java.classes" value="/System/Library/Frameworks/JavaVM.framework/Classes/classes.jar">
+          <equals arg1="Mac OS X" arg2="${os.name}"/>
+        </condition>
+        <condition property="java.classes" value="${env.JAVA_HOME}/lib/rt.jar">
+           <not>
+            <equals arg1="Mac OS X" arg2="${os.name}"/>
+           </not>
+        </condition>
+    
+        <!-- Allow users a chance to override without editing the main file -->
+        <property file="${user.home}/${name}.build.properties"/>
+        <property file="local.build.properties"/>
+    
+        <!-- Get the build properties from an external file -->
+        <property file="build.properties"/>
+        
+        <!-- Set classpath -->
+        <path id="classpath">
+            <fileset dir="${lib}">
+            <include name="*.jar"/>
+            </fileset>
+            <path location="${build}"/>
+        </path>
+    </target>
+
+<!-- === Preparation ============================================= -->
+
+    <target name="prepare" depends="init">
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="idl" description="Regenerate XUL IDL" depends="init">
+         <exec executable="${xulrunner.xpidl}">
+         	<arg value="-I"/>
+         	<arg value="${xulrunner.include}"/>
+         	<arg value="-m"/>
+         	<arg value="typelib"/>
+         	<arg value="-e"/>
+         	<arg value="${basedir}/firefox/components/nsIMyanmarConverter.xpt"/>
+         	<arg value="${basedir}/firefox/components/nsIMyanmarConverter.idl"/>
+         	
+         </exec>
+    </target>
+
+    <target name="tools" depends="init">
+    	<mkdir dir="${tools.build}"/>
+        <javac sourcepath="" 
+            srcdir="${tools.java}"
+            destdir="${tools.build}"
+            debug="${compiler.debug}"
+            optimize="${compiler.optimize}"
+            deprecation="${compiler.deprecation}"
+            target="${target.vm}"
+            source="${target.vm}"
+            nowarn="${compiler.nowarn}"
+            compiler="${compiler}">
+            
+            <include name="**/*.java"/>
+        </javac>
+        <jar destfile="${tools}/javaFirefoxExtensionUtils.jar" basedir="${tools.build}"
+			includes="**/*">
+	</jar>
+    </target>
+
+<!-- === Compile Java Code ================================================= -->
+
+    <target name="compile" depends="prepare">
+        <mkdir dir="${build}"/>
+        <javac sourcepath="" 
+            srcdir="${src.java}"
+            destdir="${build}"
+            debug="${compiler.debug}"
+            optimize="${compiler.optimize}"
+            deprecation="${compiler.deprecation}"
+            target="${target.vm}"
+            source="${target.vm}"
+            nowarn="${compiler.nowarn}"
+            compiler="${compiler}"
+            classpathref="classpath">
+            
+            <include name="**/*.java"/>
+        </javac>
+        <copy todir="${build}">
+            <fileset dir="${src.java}" includes="**/*.properties" />
+            <filterset>
+                <filter token="version" value="${version}"/>
+                <filter token="fullname" value="${fullname}"/>
+            </filterset>
+        </copy>
+    </target>
+
+<!-- === Prepare The Distribution ================================================= -->
+
+    <target name="dist" depends="compile,tools" description="Create the distribution">
+        <mkdir dir="${dist}"/>
+        
+        <copy todir="${dist}/chrome">
+            <fileset dir="${src.extension}/chrome"
+                includes="**" />
+        </copy>
+        
+        <copy todir="${dist}/components">
+            <fileset dir="${src.extension}/components" includes="*.js" />
+            <fileset dir="${src.extension}/components" includes="*.xpt" />
+        </copy>
+        
+        <copy todir="${dist}/java/classes">
+            <fileset dir="${build}"
+                includes="**" />
+        </copy>
+        <copy todir="${dist}/java/lib">
+            <fileset dir="${lib}"
+                includes="*.jar" />
+        </copy>
+        <copy file="${tools}/javaFirefoxExtensionUtils.jar" tofile="${dist}/java/javaFirefoxExtensionUtils.jar" />
+
+        <copy file="${src.extension}/install.rdf" tofile="${dist}/install.rdf" />
+        <copy file="${src.extension}/chrome.manifest" tofile="${dist}/chrome.manifest"/>
+        
+        <!-- touch the directory so that firefox registry reloads (helps during development) -->
+        <touch>
+            <fileset dir="${dist}"/>
+        </touch>
+    </target>
+
+<!-- === Package The Distribution XPI ================================================= -->
+
+    <target name="xpi" depends="dist" description="Create the XPI extension">
+        <zip zipfile="${dist.target}/${dist.name}.xpi" basedir="${dist}" includes="**"/>
+    </target>
+	
+	<target name="clean" description="Remove build files">
+		<delete>
+			<fileset dir="${dist}" includes="**/*"/>
+		</delete>
+		<delete>
+			<fileset dir="${build}" includes="**/*"/>
+		</delete>
+	</target>
+</project>

@@ -1,0 +1,15 @@
+#
+# Chrome Manifest file (for Firefox 1.1+)
+#
+
+# WARNING: don't forget the '/' at the end of the paths or it won't work!!
+
+overlay    chrome://browser/content/browser.xul chrome://myanmar-converter/content/browser-overlay.xul
+content    myanmar-converter chrome/content/
+
+skin       myanmar-converter  classic/1.0  chrome/skin/classic/
+
+# style overlay on other parts of the browser if needed
+# style    chrome://global/content/customizeToolbar.xul  chrome://myanmar-converter/skin/browser.css
+
+locale     myanmar-converter  en-US  chrome/locale/en-US/

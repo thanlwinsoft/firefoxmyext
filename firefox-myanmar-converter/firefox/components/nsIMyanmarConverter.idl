@@ -1,0 +1,26 @@
+#include "nsISupports.idl"
+
+//
+// This is an IDL interface. Name your own interface. Do NOT
+// use nsIHelloWorld again.
+//
+
+//
+// VERY IMPORTANT: Generate your own UUID. Do NOT re-use this one.
+// Use something like Visual Studio's guidgen utility to generate
+// a UUID.
+//
+[scriptable, uuid(a4647465-2605-4edf-8033-483c5a7bad8c)]
+interface nsIMyanmarConverter : nsISupports {
+    // This is a skeleton IDL interface. We will implement
+    // it in Javascript. The implementation Javascript object
+    // will expose its own methods, so we don't really need
+    // to declare any method here.
+    
+    // Note that methods declared in IDL interfaces are
+    // limited to accept arguments of just a few types
+    // (e.g., number, string) as dictated by IDL. Our 
+    // implementation Javascript  object will be able to 
+    // expose methods accepting arguments of a lot more 
+    // types, including Java objects.
+};

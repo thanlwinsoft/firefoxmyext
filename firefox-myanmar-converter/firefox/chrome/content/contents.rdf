@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
+    
+    <!-- list all the packages being supplied -->
+    <rdf:Seq rdf:about="urn:mozilla:package:root">
+        <rdf:li rdf:resource="urn:mozilla:package:myanmar-converter"/>
+    </rdf:Seq>
+
+    <!-- describe the package -->
+	<rdf:Description rdf:about="urn:mozilla:package:myanmar-converter"
+		chrome:displayName="Myanmar Converter Firefox Extension"
+		chrome:author="ThanLwinSoft.org"
+		chrome:authorURL="http://thanlwinsoft.org/"
+		chrome:name="myanmar-converter"
+		chrome:extension="true"
+		chrome:description="Converts from ZawGyi encoding to Unicode 5.1">
+	</rdf:Description>
+        
+    <!-- overlay parentnodes -->
+    <rdf:Seq rdf:about="urn:mozilla:overlays">
+        <rdf:li resource="chrome://browser/content/browser.xul" />
+    </rdf:Seq>
+    
+    <!-- overlay children -->
+    <rdf:Seq rdf:about="chrome://browser/content/browser.xul">
+        <rdf:li>chrome://myanmar-converter/content/browser-overlay.xul</rdf:li>
+    </rdf:Seq>
+</rdf:RDF>
