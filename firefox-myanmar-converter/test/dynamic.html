@@ -1,0 +1,45 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<title>Dyanmic loading test</title>
+<script>
+function loadTest(url)
+{
+	
+	var req = new XMLHttpRequest();
+	
+	var fullUrl = new String(document.location);
+	fullUrl = fullUrl.substring(0, fullUrl.lastIndexOf("/") + 1) + url;
+
+	req.onreadystatechange = function (aEvt) {
+		if (req.readyState == 4) {  
+			if(req.status == 200 || req.status == 0)
+			{
+				   //alert(req.responseText);  
+				var data = req.responseXML;
+				var divData = data.getElementById("div.zawgyi");
+				var appendDiv = document.getElementById("append");
+				var text = document.createTextNode(divData.textContent);
+				appendDiv.appendChild(text);
+			}
+			else  
+			   alert("Error loading page" + req.status);  
+		}
+	};
+	try
+	{
+		req.open('GET', fullUrl, true);   
+		req.send(null);  
+			//data = req.responseXML;
+			//divData = data.getElementById("div.zawgyi");
+			
+	}
+	catch (e) { alert(e); }
+}
+</script>
+</head>
+<body>
+<a href="javascript:loadTest('ZawGyi.html')">Load ZawGyi</a><br />
+<div id="append"></div>
+</body>
+</head>

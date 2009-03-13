@@ -13,10 +13,11 @@
 
     <menupopup id="menu_ToolsPopup">
         <menuitem
-            id          ="myanmarConverter.doIt.menu"
-            label       ="&myanmarConverter.doIt.label;"
-            accesskey   ="&myanmarConverter.doIt.accessKey;"
-            oncommand   ="MyanmarConverterExtension.doIt();"
+            id          ="myanmarConverter.enable.menu"
+            label       ="&myanmarConverter.enable.label;"
+            accesskey   ="&myanmarConverter.enable.accessKey;"
+            type        ="checkbox"
+            oncommand   ="MyanmarConverterExtension.toggleEnable();"
             />
     </menupopup>
 

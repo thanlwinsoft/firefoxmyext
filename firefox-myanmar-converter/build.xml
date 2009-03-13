@@ -146,6 +146,10 @@ Compiler options:
             <fileset dir="${src.extension}/chrome"
                 includes="**" />
         </copy>
+    	
+    	<copy todir="${dist}/defaults">
+	    	<fileset dir="${src.extension}/defaults" includes="**" />
+    	</copy>
         
         <copy todir="${dist}/components">
             <fileset dir="${src.extension}/components" includes="*.js" />
@@ -176,6 +180,12 @@ Compiler options:
     <target name="xpi" depends="dist" description="Create the XPI extension">
         <zip zipfile="${dist.target}/${dist.name}.xpi" basedir="${dist}" includes="**"/>
     </target>
+	
+	<target name="install" description="install in firefox" depends="xpi">
+		<exec executable="firefox">
+			<arg value="${dist.target}/${dist.name}.xpi"/>
+		</exec>
+	</target>	
 	
 	<target name="clean" description="Remove build files">
 		<delete>

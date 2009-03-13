@@ -1,3 +1,62 @@
+
+const STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
+const STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
+var myListener =
+{
+  QueryInterface: function(aIID)
+  {
+   if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
+       aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
+       aIID.equals(Components.interfaces.nsISupports))
+     return this;
+   throw Components.results.NS_NOINTERFACE;
+  },
+
+  onStateChange: function(aWebProgress, aRequest, aFlag, aStatus)
+  {
+   // If you use myListener for more than one tab/window, use
+   // aWebProgress.DOMWindow to obtain the tab/window which triggers the state change
+   if(aFlag & STATE_START)
+   {
+     // This fires when the load event is initiated
+   }
+   if(aFlag & STATE_STOP)
+   {
+     // This fires when the load finishes
+	   MyanmarConverterExtension._trace("State stop");
+   }
+   MyanmarConverterExtension._trace("Flags:" + aFlag + " State:" + aStatus);
+   return 0;
+  },
+
+  onLocationChange: function(aProgress, aRequest, aURI)
+  {
+   // This fires when the location bar changes; i.e load event is confirmed
+   // or when the user switches tabs. If you use myListener for more than one tab/window,
+   // use aProgress.DOMWindow to obtain the tab/window which triggered the change.
+
+   return 0;
+  },
+
+  // For definitions of the remaining functions see XULPlanet.com
+  onProgressChange: function() {
+	  MyanmarConverterExtension._trace("progress");
+	  return 0;
+  },
+  onStatusChange: function() {
+	  MyanmarConverterExtension._trace("status");
+	  return 0;
+  },
+  onSecurityChange: function() {
+	  MyanmarConverterExtension._trace("security");
+	  return 0;
+  },
+  onLinkIconAvailable: function() {
+	  MyanmarConverterExtension._trace("linkicon");
+	  return 0;
+  }
+};
+
 var MyanmarConverterExtension = new Object();
 
 MyanmarConverterExtension.initialize = function() {
@@ -6,7 +65,14 @@ MyanmarConverterExtension.initialize = function() {
          *  Get a MyConv component
          */
         var myConv = this.getMyConv();
-        
+
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
+
+        this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
+        this.prefs = prefs;
+
         /*
          *  Initialize it. The trick is to get past its IDL interface
          *  and right into its Javascript implementation, so that we
@@ -18,6 +84,21 @@ MyanmarConverterExtension.initialize = function() {
         if (!myConv.wrappedJSObject.initialize(MyanmarConverterExtension._packageLoader, true)) {
             alert(myConv.wrappedJSObject.error);
         }
+
+        //page load listener
+		var appcontent = document.getElementById("appcontent"); // browser
+		if (!appcontent)
+		{
+			appcontent = document.getElementById("frame_main_pane"); // songbird
+		}
+		if (appcontent)
+		{
+			appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
+			appcontent.addEventListener("DOMContentUnloaded", MyanmarConverterExtension.onPageUnload, true);
+		}
+		//var browser = document.getElementsByTagName("browser")[0]; 
+		//browser.addProgressListener(myListener,
+		//		  Components.interfaces.nsIWebProgress.NOTIFY_ALL);
     } catch (e) {
         this._fail(e);
     }
@@ -202,14 +283,14 @@ function WrappedPackages(classLoader) {
     };
 }
 
-MyanmarConverterExtension.doIt = function() {
+MyanmarConverterExtension.toggleEnable = function() {
     try {
-        var myConv = this.getMyConv();
+    	this.enabled = ! this.enabled;
+
+    	this.prefs.setBoolPref("enabled", this.enabled);
+        //var myConv = this.getMyConv();
+        //var test = myConv.wrappedJSObject.getConv();
         
-        var test = myConv.wrappedJSObject.getTest();
-        var output = test.convert("ေက "  );
-        
-        alert(test.toString() + output);
     } catch (e) {
         this._fail(e);
     }
@@ -218,13 +299,13 @@ MyanmarConverterExtension.doIt = function() {
 MyanmarConverterExtension.getMyConv = function() {
     return Components.classes["@thanlwinsoft.org/myanmar-converter;1"]
         .getService(Components.interfaces.nsIMyanmarConverter);
-}
+};
 
 MyanmarConverterExtension._trace = function (msg) {
     Components.classes["@mozilla.org/consoleservice;1"]
         .getService(Components.interfaces.nsIConsoleService)
             .logStringMessage(msg);
-}
+};
 
 MyanmarConverterExtension._fail = function(e) {
     var msg;
@@ -239,3 +320,107 @@ MyanmarConverterExtension._fail = function(e) {
     }
     alert(msg);
 };
+
+MyanmarConverterExtension.onPageLoad = function(event) {
+	try
+	{
+		var enableMenu = document.getElementById("myanmarConverter.enable.menu");
+        if (enableMenu)
+        {
+        	enableMenu.setAttribute("checked", MyanmarConverterExtension.enabled);
+        }
+        else
+        	MyanmarConverterExtension._trace("enable.menu not found");
+
+		if (event.originalTarget.nodeName == "#document")
+		{
+			var doc = event.originalTarget;
+
+			if (doc && MyanmarConverterExtension.isEnabledForUrl(doc.location.href))
+			{
+				MyanmarConverterExtension.processDoc(doc);
+			}
+			
+		}
+		var browser = document.getElementsByTagName("tabbrowser")[0];
+		browser.addProgressListener(myListener,
+				Components.interfaces.nsIWebProgress.NOTIFY_ALL);
+	}
+	catch (e) { MyanmarConverterExtension._fail(e); }
+};
+
+MyanmarConverterExtension.pages = new Array();
+
+MyanmarConverterExtension.onPageUnload = function(event) {
+	
+};
+
+MyanmarConverterExtension.processDoc = function(doc) {
+	var docId = MyanmarConverterExtension.pages.push(doc);
+	if (!MyanmarConverterExtension.isZawGyi(doc))
+	{
+		setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 10000);
+		return;
+	}
+	var myConv = MyanmarConverterExtension.getMyConv();
+
+    var converter = myConv.wrappedJSObject.getConv();
+
+	var walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
+	var textNode = walker.nextNode();
+	var count = 0;
+	while (textNode != null)
+	{
+		count++;
+		var oldValue = new String(textNode.nodeValue);
+		if (typeof oldValue == 'undefined')
+		{
+			textNode = walker.nextNode();
+			continue;
+		}
+		var parent = textNode.parentNode;
+		var style = window.getComputedStyle(parent, null);
+		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1 ||
+			parent.lang == "my")
+		{
+			textNode = walker.nextNode();
+			continue;
+		}
+		var oldNode = textNode;
+		var newNode =  doc.createTextNode(converter.convert(oldValue));
+		textNode = walker.nextNode();
+		parent.replaceChild(newNode, oldNode);
+		parent.lang = "my";
+	}
+	MyanmarConverterExtension._trace(doc.location + " contains ZawGyi");
+	setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 2000);
+};
+
+MyanmarConverterExtension.parse  = function(docId)
+{
+	try
+	{
+		var doc = MyanmarConverterExtension.pages[docId-1];
+		MyanmarConverterExtension.processDoc(doc);
+		setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 10000);
+	}
+	catch (e)
+	{
+		MyanmarConverterExtension._trace(e);
+	}
+};
+
+MyanmarConverterExtension.isEnabledForUrl = function(url) {
+	// TODO
+	return MyanmarConverterExtension.enabled;
+};
+
+MyanmarConverterExtension.isZawGyi = function(doc) {
+	if (doc.body && doc.body.textContent.match("[\u1050-\u109F]"))
+	{
+		return true;
+	}
+	return false;
+};
+
+window.addEventListener("pagehide", MyanmarConverterExtension.onPageUnload, false);
