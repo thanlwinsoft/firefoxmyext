@@ -1,61 +1,4 @@
 
-const STATE_START = Components.interfaces.nsIWebProgressListener.STATE_START;
-const STATE_STOP = Components.interfaces.nsIWebProgressListener.STATE_STOP;
-var myListener =
-{
-  QueryInterface: function(aIID)
-  {
-   if (aIID.equals(Components.interfaces.nsIWebProgressListener) ||
-       aIID.equals(Components.interfaces.nsISupportsWeakReference) ||
-       aIID.equals(Components.interfaces.nsISupports))
-     return this;
-   throw Components.results.NS_NOINTERFACE;
-  },
-
-  onStateChange: function(aWebProgress, aRequest, aFlag, aStatus)
-  {
-   // If you use myListener for more than one tab/window, use
-   // aWebProgress.DOMWindow to obtain the tab/window which triggers the state change
-   if(aFlag & STATE_START)
-   {
-     // This fires when the load event is initiated
-   }
-   if(aFlag & STATE_STOP)
-   {
-     // This fires when the load finishes
-	   MyanmarConverterExtension._trace("State stop");
-   }
-   MyanmarConverterExtension._trace("Flags:" + aFlag + " State:" + aStatus);
-   return 0;
-  },
-
-  onLocationChange: function(aProgress, aRequest, aURI)
-  {
-   // This fires when the location bar changes; i.e load event is confirmed
-   // or when the user switches tabs. If you use myListener for more than one tab/window,
-   // use aProgress.DOMWindow to obtain the tab/window which triggered the change.
-
-   return 0;
-  },
-
-  // For definitions of the remaining functions see XULPlanet.com
-  onProgressChange: function() {
-	  MyanmarConverterExtension._trace("progress");
-	  return 0;
-  },
-  onStatusChange: function() {
-	  MyanmarConverterExtension._trace("status");
-	  return 0;
-  },
-  onSecurityChange: function() {
-	  MyanmarConverterExtension._trace("security");
-	  return 0;
-  },
-  onLinkIconAvailable: function() {
-	  MyanmarConverterExtension._trace("linkicon");
-	  return 0;
-  }
-};
 
 var MyanmarConverterExtension = new Object();
 
@@ -71,6 +14,7 @@ MyanmarConverterExtension.initialize = function() {
                                       .getBranch("extensions.myanmarconverter.");
 
         this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
+        this.trace = (prefs)? prefs.getBoolPref("trace") : false;
         this.prefs = prefs;
 
         /*
@@ -94,7 +38,8 @@ MyanmarConverterExtension.initialize = function() {
 		if (appcontent)
 		{
 			appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
-			appcontent.addEventListener("DOMContentUnloaded", MyanmarConverterExtension.onPageUnload, true);
+			//appcontent.addEventListener("unload", MyanmarConverterExtension.onPageUnload, true);
+			//appcontent.addEventListener("pagehide", MyanmarConverterExtension.onPageUnload, true);
 		}
 		//var browser = document.getElementsByTagName("browser")[0]; 
 		//browser.addProgressListener(myListener,
@@ -302,9 +247,12 @@ MyanmarConverterExtension.getMyConv = function() {
 };
 
 MyanmarConverterExtension._trace = function (msg) {
-    Components.classes["@mozilla.org/consoleservice;1"]
-        .getService(Components.interfaces.nsIConsoleService)
-            .logStringMessage(msg);
+	if (MyanmarConverterExtension.trace)
+	{
+		Components.classes["@mozilla.org/consoleservice;1"]
+		                   .getService(Components.interfaces.nsIConsoleService)
+		                   .logStringMessage(msg);
+	}
 };
 
 MyanmarConverterExtension._fail = function(e) {
@@ -318,7 +266,10 @@ MyanmarConverterExtension._fail = function(e) {
     } else {
         msg = e;
     }
-    alert(msg);
+    if (MyanmarConverterExtension.trace)
+	{
+    	alert(msg);
+	}
 };
 
 MyanmarConverterExtension.onPageLoad = function(event) {
@@ -332,34 +283,65 @@ MyanmarConverterExtension.onPageLoad = function(event) {
         else
         	MyanmarConverterExtension._trace("enable.menu not found");
 
-		if (event.originalTarget.nodeName == "#document")
+		if (event.originalTarget.nodeName == "#document" &&
+			event.originalTarget.location.href.indexOf("chrome:") == -1)
 		{
 			var doc = event.originalTarget;
 
 			if (doc && MyanmarConverterExtension.isEnabledForUrl(doc.location.href))
 			{
-				MyanmarConverterExtension.processDoc(doc);
+				// assign a docId
+				var docId = undefined;
+				for (var i = 0; i < MyanmarConverterExtension.pages.length; i++)
+				{
+					if (!MyanmarConverterExtension.pages[i])
+					{
+						MyanmarConverterExtension.pages[i] = doc;
+						docId = i + 1;
+						break;
+					}
+				}
+				
+				if (docId == undefined)
+					docId = MyanmarConverterExtension.pages.push(doc);
+				MyanmarConverterExtension.processDoc(docId);
 			}
 			
 		}
-		var browser = document.getElementsByTagName("tabbrowser")[0];
-		browser.addProgressListener(myListener,
-				Components.interfaces.nsIWebProgress.NOTIFY_ALL);
 	}
 	catch (e) { MyanmarConverterExtension._fail(e); }
 };
 
 MyanmarConverterExtension.pages = new Array();
 
-MyanmarConverterExtension.onPageUnload = function(event) {
-	
+/*
+MyanmarConverterExtension.onPageUnload = function(event)
+{
+	if (event.originalTarget.nodeName == "#document" &&
+		event.originalTarget.location.href.indexOf("chrome:") == -1)
+	{
+		for (var i = 0; i < MyanmarConverterExtension.pages.length; i++)
+		{
+			if (MyanmarConverterExtension.pages[i] == event.originalTarget)
+			{
+				MyanmarConverterExtension.pages[i] = null;
+				break;
+			}
+		}
+		MyanmarConverterExtension._trace("Unload:" + event.originalTarget.location.href);
+	}
+	else MyanmarConverterExtension._trace(event.originalTarget.nodeName);
 };
+*/
 
-MyanmarConverterExtension.processDoc = function(doc) {
-	var docId = MyanmarConverterExtension.pages.push(doc);
+MyanmarConverterExtension.processDoc = function(docId) {
+	var doc = MyanmarConverterExtension.pages[docId-1];
+	// TODO see if there are some DOM events which are sufficient to avoid the
+	// timeout code
 	if (!MyanmarConverterExtension.isZawGyi(doc))
 	{
-		setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 10000);
+		if (MyanmarConverterExtension.enabled)
+			setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 5000);
 		return;
 	}
 	var myConv = MyanmarConverterExtension.getMyConv();
@@ -369,6 +351,9 @@ MyanmarConverterExtension.processDoc = function(doc) {
 	var walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
 	var textNode = walker.nextNode();
 	var count = 0;
+	var convertedCount = 0;
+	var trueUnicodeCount = 0;
+	var alreadyConverted = false;
 	while (textNode != null)
 	{
 		count++;
@@ -384,25 +369,64 @@ MyanmarConverterExtension.processDoc = function(doc) {
 			parent.lang == "my")
 		{
 			textNode = walker.nextNode();
+			alreadyConverted = true;
 			continue;
 		}
 		var oldNode = textNode;
-		var newNode =  doc.createTextNode(converter.convert(oldValue));
+		var newValue = converter.convert(oldValue);
+		var newNode =  doc.createTextNode(newValue);
 		textNode = walker.nextNode();
-		parent.replaceChild(newNode, oldNode);
-		parent.lang = "my";
+		if (oldValue != newValue)
+		{
+			parent.replaceChild(newNode, oldNode);
+			convertedCount++;
+			parent.lang = "my";
+		}
+		else
+		{
+			trueUnicodeCount++;
+		}
 	}
-	MyanmarConverterExtension._trace(doc.location + " contains ZawGyi");
-	setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 2000);
+	MyanmarConverterExtension._trace(doc.location + " may contain ZawGyi ");
+	if (MyanmarConverterExtension.enabled)
+	{
+		// Should we stop altogether in the true unicode case?
+		// The problems is gmail, which may have a mixture
+		if (trueUnicodeCount > convertedCount)
+			setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 10000);
+		else
+			setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 5000);
+	}
 };
 
 MyanmarConverterExtension.parse  = function(docId)
 {
 	try
 	{
-		var doc = MyanmarConverterExtension.pages[docId-1];
-		MyanmarConverterExtension.processDoc(doc);
-		setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 10000);
+		
+		if (MyanmarConverterExtension.pages[docId-1])
+		{
+			var doc = MyanmarConverterExtension.pages[docId-1];
+			if (doc.defaultView)
+			{
+				MyanmarConverterExtension._trace("MyanmarConverterExtension.parse" +
+						docId + " " + doc.defaultView.closed + ", " + 
+						doc.location.href);
+				MyanmarConverterExtension.processDoc(docId);
+			}
+			else
+			{
+				// if defaultView is null, then the page is no longer visible
+				for (var i = 0; i < MyanmarConverterExtension.pages.length; i++)
+				{
+					if (MyanmarConverterExtension.pages[i] == doc)
+					{
+						MyanmarConverterExtension.pages[i] = null;
+						break;
+					}
+				}
+			}
+		}
 	}
 	catch (e)
 	{
@@ -423,4 +447,4 @@ MyanmarConverterExtension.isZawGyi = function(doc) {
 	return false;
 };
 
-window.addEventListener("pagehide", MyanmarConverterExtension.onPageUnload, false);
+//window.addEventListener("pagehide", MyanmarConverterExtension.onPageUnload, false);

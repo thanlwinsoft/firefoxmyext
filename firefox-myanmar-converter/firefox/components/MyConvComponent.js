@@ -178,6 +178,7 @@ MyConvComponent.prototype.initialize = function (packageLoader, trace) {
         var javaPath = extensionPath + "java/";
         var jarFilepaths = [
             javaPath + "classes/", // our own classes, compiled from myanmar-converter/src
+            javaPath + "lib/org.thanlwinsoft.myanmar.jar",
             javaPath + "lib/org.thanlwinsoft.doccharconvert_1.2.1.jar"
         ];
         this._packages = this._packageLoader(jarFilepaths, this._traceFlag);
