@@ -6,6 +6,7 @@
 <overlay id="myanmar-converter-browser-overlay" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
+    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/WrappedLoader.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/browser-overlay.js"/>
     <script type="application/x-javascript">
         MyanmarConverterExtension.initialize(); // this starts the whole show;

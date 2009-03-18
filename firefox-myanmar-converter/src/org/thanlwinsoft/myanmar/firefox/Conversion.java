@@ -85,7 +85,7 @@ public class Conversion
 	 * @param text
 	 * @return converted text
 	 */
-	public String convert(String text)
+	public String convert(String text, Boolean defaultToZawGyi)
 	{
 		if (mConv == null) return text;
 		try
@@ -109,6 +109,10 @@ public class Conversion
 	        // only return the result if it has fewer encoding errors than the original
 	        if (errorsAfter < errorsBefore)
 	        	return outWriter.toString();
+	        if ((errorsAfter == errorsBefore) && defaultToZawGyi)
+	        {
+	        	return outWriter.toString();
+	        }
 		}
 		catch (FatalException e)
 		{

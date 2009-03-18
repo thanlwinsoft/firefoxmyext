@@ -1,4 +1,23 @@
+/*
+Copyright 2009 Keith Stribley http://www.thanlwinsoft.org/
 
+The java wrapper code is based on the java-firefox-extension which is
+Copyright The SIMILE Project 2003-2005.
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
 
 var MyanmarConverterExtension = new Object();
 
@@ -38,13 +57,10 @@ MyanmarConverterExtension.initialize = function() {
 		if (appcontent)
 		{
 			appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
-			//appcontent.addEventListener("unload", MyanmarConverterExtension.onPageUnload, true);
-			//appcontent.addEventListener("pagehide", MyanmarConverterExtension.onPageUnload, true);
 		}
-		//var browser = document.getElementsByTagName("browser")[0]; 
-		//browser.addProgressListener(myListener,
-		//		  Components.interfaces.nsIWebProgress.NOTIFY_ALL);
-    } catch (e) {
+    }
+    catch (e)
+    {
         this._fail(e);
     }
 };
@@ -188,46 +204,6 @@ MyanmarConverterExtension._packageLoader = function(urlStrings, trace) {
         return packages;
 };
 
-/*
- *  Wraps a class loader and allows easy access to the classes that it loads.
- */
-function WrappedPackages(classLoader) {
-    var packages = classLoader.loadClass("edu.mit.simile.javaFirefoxExtensionUtils.Packages").newInstance();
-    
-    var argumentsToArray = function(args) {
-        var a = java.lang.reflect.Array.newInstance(java.lang.Object, args.length);
-        for (var i = 0; i < args.length; i++) {
-            java.lang.reflect.Array.set(a, i, args[i]);
-        }
-        return a;
-    }
-
-    this.getClass = function(className) {
-        var classWrapper = packages.getClass(className);
-        if (classWrapper) {
-            return {
-                n : function() {
-                    return classWrapper.callConstructor(argumentsToArray(arguments));
-                },
-                f : function(fieldName) {
-                    return classWrapper.getField(fieldName);
-                },
-                m : function(methodName) {
-                    return function() {
-                        return classWrapper.callMethod(methodName, argumentsToArray(arguments));
-                    };
-                }
-            };
-        } else {
-            return null;
-        }
-    };
-    
-    this.setTracing = function(enable) {
-        classLoader.setTracing((enable) ? true : false);
-    };
-}
-
 MyanmarConverterExtension.toggleEnable = function() {
     try {
     	this.enabled = ! this.enabled;
@@ -284,27 +260,14 @@ MyanmarConverterExtension.onPageLoad = function(event) {
         	MyanmarConverterExtension._trace("enable.menu not found");
 
 		if (event.originalTarget.nodeName == "#document" &&
-			event.originalTarget.location.href.indexOf("chrome:") == -1)
+			((!event.originalTarget.location) ||
+			 event.originalTarget.location.href.indexOf("chrome:") == -1))
 		{
 			var doc = event.originalTarget;
 
-			if (doc && MyanmarConverterExtension.isEnabledForUrl(doc.location.href))
+			if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location.href)))
 			{
-				// assign a docId
-				var docId = undefined;
-				for (var i = 0; i < MyanmarConverterExtension.pages.length; i++)
-				{
-					if (!MyanmarConverterExtension.pages[i])
-					{
-						MyanmarConverterExtension.pages[i] = doc;
-						docId = i + 1;
-						break;
-					}
-				}
-				
-				if (docId == undefined)
-					docId = MyanmarConverterExtension.pages.push(doc);
-				MyanmarConverterExtension.processDoc(docId);
+				MyanmarConverterExtension.processDoc(doc);
 			}
 			
 		}
@@ -312,48 +275,27 @@ MyanmarConverterExtension.onPageLoad = function(event) {
 	catch (e) { MyanmarConverterExtension._fail(e); }
 };
 
-MyanmarConverterExtension.pages = new Array();
 
-/*
-MyanmarConverterExtension.onPageUnload = function(event)
+MyanmarConverterExtension.parseNodes = function(treeNode)
 {
-	if (event.originalTarget.nodeName == "#document" &&
-		event.originalTarget.location.href.indexOf("chrome:") == -1)
+	var walker = treeNode.ownerDocument.createTreeWalker(treeNode, NodeFilter.SHOW_TEXT, null, false);
+	var textNode = walker.currentNode;
+	if (textNode.nodeType != Node.TEXT_NODE)
 	{
-		for (var i = 0; i < MyanmarConverterExtension.pages.length; i++)
-		{
-			if (MyanmarConverterExtension.pages[i] == event.originalTarget)
-			{
-				MyanmarConverterExtension.pages[i] = null;
-				break;
-			}
-		}
-		MyanmarConverterExtension._trace("Unload:" + event.originalTarget.location.href);
+		textNode = walker.nextNode();
 	}
-	else MyanmarConverterExtension._trace(event.originalTarget.nodeName);
-};
-*/
-
-MyanmarConverterExtension.processDoc = function(docId) {
-	var doc = MyanmarConverterExtension.pages[docId-1];
-	// TODO see if there are some DOM events which are sufficient to avoid the
-	// timeout code
-	if (!MyanmarConverterExtension.isZawGyi(doc))
-	{
-		if (MyanmarConverterExtension.enabled)
-			setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 5000);
-		return;
-	}
-	var myConv = MyanmarConverterExtension.getMyConv();
-
-    var converter = myConv.wrappedJSObject.getConv();
-
-	var walker = doc.createTreeWalker(doc.body, NodeFilter.SHOW_TEXT, null, false);
-	var textNode = walker.nextNode();
 	var count = 0;
 	var convertedCount = 0;
 	var trueUnicodeCount = 0;
 	var alreadyConverted = false;
+	var myConv = MyanmarConverterExtension.getMyConv();
+	if (typeof myConv == "undefined")
+	{
+		MyanmarConverterExtension._trace("myConv undefined");
+		return;
+	}
+	var converter = myConv.wrappedJSObject.getConv();
+
 	while (textNode != null)
 	{
 		count++;
@@ -373,65 +315,118 @@ MyanmarConverterExtension.processDoc = function(docId) {
 			continue;
 		}
 		var oldNode = textNode;
-		var newValue = converter.convert(oldValue);
-		var newNode =  doc.createTextNode(newValue);
+		var defaultToZawGyi = (convertedCount > trueUnicodeCount)? true : false;
+		if (typeof treeNode.ownerDocument.assumeZawGyi != "undefined")
+		{
+			MyanmarConverterExtension._trace("assumeZawGyi = " + treeNode.ownerDocument.assumeZawGyi);
+			defaultToZawGyi = treeNode.ownerDocument.assumeZawGyi;
+		}
 		textNode = walker.nextNode();
-		if (oldValue != newValue)
+		if (oldValue.match("[\u1000-\u109F]"))
 		{
-			parent.replaceChild(newNode, oldNode);
-			convertedCount++;
-			parent.lang = "my";
-		}
-		else
-		{
-			trueUnicodeCount++;
-		}
-	}
-	MyanmarConverterExtension._trace(doc.location + " may contain ZawGyi ");
-	if (MyanmarConverterExtension.enabled)
-	{
-		// Should we stop altogether in the true unicode case?
-		// The problems is gmail, which may have a mixture
-		if (trueUnicodeCount > convertedCount)
-			setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 10000);
-		else
-			setTimeout("MyanmarConverterExtension.parse(" + docId + ");", 5000);
-	}
-};
-
-MyanmarConverterExtension.parse  = function(docId)
-{
-	try
-	{
-		
-		if (MyanmarConverterExtension.pages[docId-1])
-		{
-			var doc = MyanmarConverterExtension.pages[docId-1];
-			if (doc.defaultView)
+			var newValue = converter.convert(oldValue, defaultToZawGyi);
+			var newNode =  treeNode.ownerDocument.createTextNode(newValue);
+			if (oldValue != newValue)
 			{
-				MyanmarConverterExtension._trace("MyanmarConverterExtension.parse" +
-						docId + " " + doc.defaultView.closed + ", " + 
-						doc.location.href);
-				MyanmarConverterExtension.processDoc(docId);
+				parent.replaceChild(newNode, oldNode);
+				convertedCount++;
+				parent.lang = "my";
 			}
 			else
 			{
-				// if defaultView is null, then the page is no longer visible
-				for (var i = 0; i < MyanmarConverterExtension.pages.length; i++)
-				{
-					if (MyanmarConverterExtension.pages[i] == doc)
-					{
-						MyanmarConverterExtension.pages[i] = null;
-						break;
-					}
-				}
+				trueUnicodeCount++;
 			}
 		}
 	}
-	catch (e)
+	if (typeof treeNode.ownerDocument.assumeZawGyi == "undefined")
 	{
-		MyanmarConverterExtension._trace(e);
+		MyanmarConverterExtension._trace("converted " + convertedCount + " unicode " + trueUnicodeCount);
+		treeNode.ownerDocument.assumeZawGyi = (convertedCount > trueUnicodeCount)? true : false;
 	}
+};
+
+
+MyanmarConverterExtension.processDoc = function(doc) {
+	// TODO see if there are some DOM events which are sufficient to avoid the
+	// timeout code
+	if (!MyanmarConverterExtension.isZawGyi(doc))
+	{
+		doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+    	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+		return;
+	}
+
+    if (doc.body)
+    {
+    	MyanmarConverterExtension.parseNodes(doc.body);
+    	doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+    	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+    }
+};
+
+MyanmarConverterExtension.onTreeModified = function(event)
+{
+	MyanmarConverterExtension._trace("onTreeModified" + event.target);
+	if (event.target)
+	{
+		try
+		{
+			// the parse may change nodes itself, so remove the event listener temporarily
+			var doc = event.target.ownerDocument;
+			doc.removeEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+			doc.removeEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+			if (event.type == "DOMCharacterDataModified")
+			{
+				MyanmarConverterExtension.updateText(event.target, event.prevValue, event.newValue);
+			}
+			else
+			{
+				MyanmarConverterExtension.parseNodes(event.target);
+			}
+			doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+			doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+		}
+		catch (e)
+		{
+			MyanmarConverterExtension._trace(e);
+		}
+	}
+};
+
+MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
+{
+	if (!prevValue) prevValue = "";
+	if (!newValue) newValue = "";
+	var s = 0;
+	var prevE = prevValue.length - 1;
+	var newE = newValue.length - 1;
+	// find common text at start
+	for (s = 0; s < prevValue.length && s < newValue.length; s++)
+	{
+		if (prevValue[s] != newValue[s]) break;
+	}
+	// find common text at end
+	for (; prevE > s && newE > s; --prevE, --newE)
+	{
+		if (prevValue[prevE] != newValue[newE]) break;
+	}
+	var prefix = prevValue.substring(0, s);
+	var suffix = prevValue.substring(prevE+1, prevValue.length);
+	var toConvert = newValue.substring(s, newE+1);
+	var myConv = MyanmarConverterExtension.getMyConv();
+	if (typeof myConv == "undefined")
+	{
+		MyanmarConverterExtension._trace("myConv undefined");
+		return;
+	}
+	var defaultToZawGyi = false;
+	if (typeof target.ownerDocument.assumeZawGyi != "undefined")
+	{
+		defaultToZawGyi = target.ownerDocument.assumeZawGyi;
+	}
+	var converter = myConv.wrappedJSObject.getConv();
+	var converted = converter.convert(toConvert, defaultToZawGyi);
+	target.textContent = new String(prefix + converted + suffix);
 };
 
 MyanmarConverterExtension.isEnabledForUrl = function(url) {
@@ -446,5 +441,3 @@ MyanmarConverterExtension.isZawGyi = function(doc) {
 	}
 	return false;
 };
-
-//window.addEventListener("pagehide", MyanmarConverterExtension.onPageUnload, false);

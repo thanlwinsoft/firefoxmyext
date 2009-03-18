@@ -19,8 +19,17 @@ function loadTest(url)
 				var data = req.responseXML;
 				var divData = data.getElementById("div.zawgyi");
 				var appendDiv = document.getElementById("append");
-				var text = document.createTextNode(divData.textContent);
-				appendDiv.appendChild(text);
+				if (appendDiv.firstChild)
+				{
+					var child = appendDiv.firstChild;
+					child.textContent += divData.textContent;
+				}
+				else
+				{
+					var text = document.createTextNode(divData.textContent);
+					appendDiv.appendChild(text);
+				}
+				
 			}
 			else  
 			   alert("Error loading page" + req.status);  
@@ -35,11 +44,54 @@ function loadTest(url)
 			
 	}
 	catch (e) { alert(e); }
+
+	
 }
+document.addEventListener("DOMContentLoaded",
+	function() {
+		//document.body.addEventListener("DOMSubTreeModified",function(){alert("body modified");},true);
+//		document.body.addEventListener("DOMCharacterDataModified",function(ev){alert(ev.type + " char change\n" + ev.prevValue.length + "\n" + ev.newValue.length);},true);
+		//document.body.addEventListener("DOMNodeInserted",function(){alert("node inserted");},true);
+		//document.addEventListener("DOMNodeInserted",function(event){alert(event.target);},true);
+},true);
+
+function testTextChange()
+{
+	var n = document.getElementById("a").appendChild(document.createTextNode("ဂြငြကြၽႏ္ုပ္"));
+	n = document.getElementById("b").firstChild;
+	n.textContent = "";
+	n = document.getElementById("c").firstChild;
+	n.textContent = "ဂြငြကြၽႏ္ုပ္";
+	n = document.getElementById("d").firstChild;
+	n.textContent = n.textContent + "ဂြငြကြၽႏ္ုပ္";
+	n = document.getElementById("e").firstChild;
+	n.textContent = "ဂြငြကြၽႏ္ုပ္" + n.textContent;
+}
+//document.addEventListener("DOMNodeInsertedIntoDocument",function(){alert("modified");},true);
 </script>
 </head>
-<body>
+<body onload="setTimeout(testTextChange,5000);">
+<div id="header">
+<ul>
+<li><a href="dynamic.html">Dynamic test</a></li>
+<li><a href="dynamic2.html">Dynamic test 2</a></li>
+<li><a href="Unicode5.1.html">Unicode 5.1</a></li>
+<li><a href="ZawGyi.html">ZawGyi</a></li>
+<li><a href="ZawGyiToUnicode5.1.html">ZawGyi + Unicode 5.1</a></li>
+<li><a href="Unicode5.1KarenMonShan.html">Unicode 5.1 Karen, Mon, Shan</a></li>
+</ul>
+</div>
 <a href="javascript:loadTest('ZawGyi.html')">Load ZawGyi</a><br />
 <div id="append"></div>
+<div>
+<p id="a"></p>
+<p id="b">ကြခြ ကြၽႏ္ုပ္</p>
+<p id="c">ကြခြ ကြၽႏ္ုပ္</p>
+<p id="d">ကြခြ ကြၽႏ္ုပ္</p>
+<p id="e">ကြခြ ကြၽႏ္ုပ္</p>
+</div>
+<script type="text/javascript">
+//document.getElementById("append").addEventListener("DOMSubtreeModified",function() { alert("append modified");},true);
+</script>
 </body>
-</head>
+</html>
