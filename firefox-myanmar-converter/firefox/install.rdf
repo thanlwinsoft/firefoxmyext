@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <rdf:RDF 
     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -6,12 +6,15 @@
 
   <rdf:Description rdf:about="urn:mozilla:install-manifest">
 
-    <em:name>Myanmar Converter Extension</em:name>
+    <em:name>Myanmar Converter</em:name>
     <em:id>myanmar-converter@thanlwinsoft.org</em:id>
     <em:version>0.1.0</em:version>
     <em:type>2</em:type>
     <em:creator>ThanLwinSoft</em:creator>
-    <em:description>Converts Myanmar webpages in ZawGyi encoding to Unicode 5.1</em:description>
+    <em:description>
+    Converts Myanmar webpages in ZawGyi encoding to Unicode 5.1.
+    မြန်မာ ဝက်ဘ်စာမျက်နှာမှာ ဇော်ဂျီးက ယူနီကုတ် ၅ ဒသမ ၁ အထိ ပြောင်းပါသည်။
+    </em:description>
 
     <em:contributor>Keith Stribley</em:contributor>
     

@@ -318,7 +318,6 @@ MyanmarConverterExtension.parseNodes = function(treeNode)
 		var defaultToZawGyi = (convertedCount > trueUnicodeCount)? true : false;
 		if (typeof treeNode.ownerDocument.assumeZawGyi != "undefined")
 		{
-			MyanmarConverterExtension._trace("assumeZawGyi = " + treeNode.ownerDocument.assumeZawGyi);
 			defaultToZawGyi = treeNode.ownerDocument.assumeZawGyi;
 		}
 		textNode = walker.nextNode();
@@ -340,7 +339,7 @@ MyanmarConverterExtension.parseNodes = function(treeNode)
 	}
 	if (typeof treeNode.ownerDocument.assumeZawGyi == "undefined")
 	{
-		MyanmarConverterExtension._trace("converted " + convertedCount + " unicode " + trueUnicodeCount);
+		MyanmarConverterExtension._trace("converted " + convertedCount + ", unicode " + trueUnicodeCount);
 		treeNode.ownerDocument.assumeZawGyi = (convertedCount > trueUnicodeCount)? true : false;
 	}
 };
