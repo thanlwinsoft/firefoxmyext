@@ -13,3 +13,4 @@ skin       myanmar-converter  classic/1.0  chrome/skin/classic/
 # style    chrome://global/content/customizeToolbar.xul  chrome://myanmar-converter/skin/browser.css
 
 locale     myanmar-converter  en-US  chrome/locale/en-US/
+locale     myanmar-converter  my-MM  chrome/locale/my-MM/

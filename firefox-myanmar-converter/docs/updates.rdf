@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+<rdf:Description about="urn:mozilla:extension:myanmar-converter@thanlwinsoft.org">
+ <em:updates>
+  <rdf:Seq>
+    <rdf:li resource="urn:mozilla:extension:myanmar-converter@thanlwinsoft.org:0.1.0"/>
+  </rdf:Seq>
+ </em:updates>
+</rdf:Description>
+
+<rdf:Description about="urn:mozilla:extension:myanmar-converter@thanlwinsoft.org:0.1.0">
+ <em:version>0.1.0</em:version>
+ 
+<!-- 
+	Target application is Firefox. You can try specifying other Mozilla
+	applications such as Thunderbird and see.
+-->
+ <em:targetApplication>
+  <rdf:Description>
+   <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+   <em:minVersion>2.0.0.*</em:minVersion>
+   <em:maxVersion>3.0.*</em:maxVersion>
+   <em:updateLink>http://thanlwinsoft.co.uk/myanmar-converter.xpi</em:updateLink>
+  </rdf:Description>
+ </em:targetApplication>
+ 
+</rdf:Description>
+
+</rdf:RDF>

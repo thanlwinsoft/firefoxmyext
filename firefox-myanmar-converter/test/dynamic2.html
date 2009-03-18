@@ -1,0 +1,69 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<title>Dyanmic loading test</title>
+<script>
+var req;
+function loadTest(url)
+{
+	
+	req = new XMLHttpRequest();
+	
+	var fullUrl = new String(document.location);
+	fullUrl = fullUrl.substring(0, fullUrl.lastIndexOf("/") + 1) + url;
+	req.overrideMimeType('text/xml; charset=UTF-8');  
+	req.onreadystatechange = function (aEvt) {
+		if (req.readyState == 4) {  
+			if(req.status == 200 || req.status == 0)
+			{
+				//alert(req.responseText);  
+				var data = req.responseXML;
+				var divData = data.getElementById("div.zawgyi");
+				var appendDiv = document.getElementById("append");
+				var text = document.createTextNode(divData.textContent);
+				var para = document.createElement("p");
+				para.appendChild(text);
+				appendDiv.appendChild(para);
+			}
+			else  
+			   alert("Error loading page" + req.status);  
+		}
+	};
+	try
+	{
+		req.open('GET', fullUrl, true);   
+		req.send(null);  
+			//data = req.responseXML;
+			//divData = data.getElementById("div.zawgyi");
+			
+	}
+	catch (e) { alert(e); }
+}
+
+document.addEventListener("DOMContentLoaded",
+		function() {
+		if (typeof document.testTime == "undefined")
+				document.testTime = new Date();
+			//document.body.addEventListener("DOMSubTreeModified",function(){alert("body modified");},true);
+//			document.body.addEventListener("DOMCharacterDataModified",function(ev){alert(ev.type + " char change\n" + ev.prevValue.length + "\n" + ev.newValue.length);},true);
+			//document.body.addEventListener("DOMNodeInserted",function(){alert("node inserted");},true);
+//			document.addEventListener("DOMNodeInserted",function(event){alert(event.target);},true);
+	},true);
+
+</script>
+</head>
+<body>
+<div id="header">
+<ul>
+<li><a href="dynamic.html">Dynamic test</a></li>
+<li><a href="dynamic2.html">Dynamic test 2</a></li>
+<li><a href="Unicode5.1.html">Unicode 5.1</a></li>
+<li><a href="ZawGyi.html">ZawGyi</a></li>
+<li><a href="ZawGyiToUnicode5.1.html">ZawGyi + Unicode 5.1</a></li>
+<li><a href="Unicode5.1KarenMonShan.html">Unicode 5.1 Karen, Mon, Shan</a></li>
+</ul>
+</div>
+<a href="javascript:loadTest('ZawGyi.html')">Load ZawGyi</a><br />
+<div id="append"></div>
+</body>
+</html>

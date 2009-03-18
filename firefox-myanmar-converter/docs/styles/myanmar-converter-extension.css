@@ -1,0 +1,29 @@
+/*
+ * Written by Stefano Mazzocchi <stefanom at mit dot edu>
+ */
+
+/* ----------------------------- Global Definitions -------------------- */
+
+#body {
+    margin-bottom: 250px;
+}
+
+.code {
+	font-family: courier ;
+	color: #0000bb;
+}
+.ui {
+	font-weight: bold
+}
+.figure {
+    border: 0px;
+	margin: 2em 0;
+}
+.todo {
+    background-color: #ffcccc;
+}
+
+ul.spaced li { 
+    padding-top: 0.5em;
+}
+ 
