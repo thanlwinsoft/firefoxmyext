@@ -107,12 +107,15 @@ public class Conversion
 	        bufferedOut.close();            
             outWriter.flush();
 	        // only return the result if it has fewer encoding errors than the original
+            /*
 	        if (errorsAfter < errorsBefore)
 	        	return outWriter.toString();
 	        if ((errorsAfter == errorsBefore) && defaultToZawGyi)
 	        {
 	        	return outWriter.toString();
 	        }
+	        */
+        	return outWriter.toString();
 		}
 		catch (FatalException e)
 		{

@@ -307,13 +307,14 @@ MyanmarConverterExtension.parseNodes = function(treeNode)
 		}
 		var parent = textNode.parentNode;
 		var style = window.getComputedStyle(parent, null);
-		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1 ||
-			parent.lang == "my")
+		/*
+		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
+			|| parent.lang == "my")
 		{
 			textNode = walker.nextNode();
 			alreadyConverted = true;
 			continue;
-		}
+		}*/
 		var oldNode = textNode;
 		var defaultToZawGyi = (convertedCount > trueUnicodeCount)? true : false;
 		if (typeof treeNode.ownerDocument.assumeZawGyi != "undefined")

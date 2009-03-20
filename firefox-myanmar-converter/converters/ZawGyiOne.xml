@@ -983,6 +983,15 @@
       <syl:m>
         <syl:c r="zCons" class="AllCons"/>
         <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="zUpperVowel1">ံ</syl:c>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zUpperVowel2"/>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="uCons" class="AllCons"/>
         <syl:c r="zUpperVowel1"/>
         <syl:c r="uUpperVowel"/>
         <syl:c r="zLowerVowel1">ု</syl:c>
