@@ -307,14 +307,13 @@ MyanmarConverterExtension.parseNodes = function(treeNode)
 		}
 		var parent = textNode.parentNode;
 		var style = window.getComputedStyle(parent, null);
-		/*
 		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
-			|| parent.lang == "my")
+			/*|| parent.lang == "my"*/)
 		{
 			textNode = walker.nextNode();
 			alreadyConverted = true;
 			continue;
-		}*/
+		}
 		var oldNode = textNode;
 		var defaultToZawGyi = (convertedCount > trueUnicodeCount)? true : false;
 		if (typeof treeNode.ownerDocument.assumeZawGyi != "undefined")
@@ -329,6 +328,7 @@ MyanmarConverterExtension.parseNodes = function(treeNode)
 			if (oldValue != newValue)
 			{
 				parent.replaceChild(newNode, oldNode);
+				parent.style.fontFamily = "Padauk,Myanmar3";
 				convertedCount++;
 				parent.lang = "my";
 			}
