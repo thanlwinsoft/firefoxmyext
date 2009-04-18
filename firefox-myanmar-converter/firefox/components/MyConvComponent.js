@@ -218,7 +218,7 @@ MyConvComponent.prototype.getPackages = function() {
  *  Returns the Test object instantiated by default.
  */
 MyConvComponent.prototype.getConv = function() {
-    this._trace("MyConvComponent.getConv");
+    //this._trace("MyConvComponent.getConv");
     return this._test;
 };
 
