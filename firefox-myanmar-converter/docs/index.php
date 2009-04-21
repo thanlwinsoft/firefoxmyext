@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="ISO-8859-1"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-US" lang="en-US">
 <head>
@@ -23,6 +22,9 @@ h3 { font-size: 13pt; }
 h4 { font-size: 12pt; }
 h5 { font-size: 12pt; }
   </style>
+   <?php
+  include('../ThanLwinSoft/_shared/DownloadList.php');
+  ?>
 </head>
 <body>
 <a href="http://thanlwinsoft.co.uk/" title="ThanLwinSoft" style="float:left;"><img src="images/ThanLwin.jpg" alt="ThanLwinSoft" /></a>
@@ -58,7 +60,11 @@ Unicode 5.1 has many advantages over Zaw Gyi:
 <li>Myanmar spell checking becomes possible with Unicode 5.1.</li>
 <li>Mon, Karen, Shan can be displayed correctly with Unicode 5.1</li>
 </ul>
-
+<h2>Install</h2>
+<?php
+$dir = new DownloadList("/var/www/MyanmarConverter/","/MyanmarConverter");
+$dir->listDir();
+?>
 </div>
 </body>
 </html>

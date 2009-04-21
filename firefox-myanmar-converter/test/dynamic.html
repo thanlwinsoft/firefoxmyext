@@ -49,8 +49,8 @@ function loadTest(url)
 }
 document.addEventListener("DOMContentLoaded",
 	function() {
-		//document.body.addEventListener("DOMSubTreeModified",function(){alert("body modified");},true);
-//		document.body.addEventListener("DOMCharacterDataModified",function(ev){alert(ev.type + " char change\n" + ev.prevValue.length + "\n" + ev.newValue.length);},true);
+		//document.body.addEventListener("DOMSubTreeModified",function(ev){alert(ev.type + " body modified");},true);
+		//document.body.addEventListener("DOMCharacterDataModified",function(ev){alert(ev.type + " char change\n" + ev.prevValue.length + "\n" + ev.newValue.length);},true);
 		//document.body.addEventListener("DOMNodeInserted",function(){alert("node inserted");},true);
 		//document.addEventListener("DOMNodeInserted",function(event){alert(event.target);},true);
 },true);

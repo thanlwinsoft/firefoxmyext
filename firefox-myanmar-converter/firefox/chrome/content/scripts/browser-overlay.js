@@ -284,12 +284,15 @@ MyanmarConverterExtension.parseNodes = function(parent)
 		MyanmarConverterExtension._trace("myConv undefined");
 		return;
 	}
+	var convertText = true;
+	var defaultToZawGyi = false;
 	var converter = myConv.wrappedJSObject.getConv();
 	// if this is directly called by the event it may not be a text node
 	if (parent.nodeType == Node.TEXT_NODE)
 	{
+		MyanmarConverterExtension._trace("text node");
 		var node = parent;
-		var theParent = node.parent;
+		var theParent = node.parentNode;
 		var oldValue = new String(node.nodeValue);
 		if (convertText && oldValue.match("[\u1000-\u109F]"))
 		{
@@ -310,8 +313,6 @@ MyanmarConverterExtension.parseNodes = function(parent)
 	}
 	var nodes = parent.childNodes;
 	var convertedCount = 0;
-	var convertText = true;
-	var defaultToZawGyi = false;
 	var style = window.getComputedStyle(parent, null);
 	if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
 		|| parent.lang == "my")
@@ -424,8 +425,6 @@ MyanmarConverterExtension.walkNodes = function(treeNode)
 
 
 MyanmarConverterExtension.processDoc = function(doc) {
-	// TODO see if there are some DOM events which are sufficient to avoid the
-	// timeout code
 	if (!MyanmarConverterExtension.isZawGyi(doc))
 	{
 		doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
