@@ -6897,6 +6897,19 @@
         <syl:c r="uAsat">်</syl:c>
       </syl:m>
       <syl:m>
+        <syl:c r="zTone1" hex="0020 1037"/>
+        <syl:c r="u1037">့</syl:c>
+        <syl:c r="zTone0"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zTone1" hex="0020 1094" />
+        <syl:c r="u1037">့</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zTone1" hex="0020 1095"/>
+        <syl:c r="u1037">့</syl:c>
+      </syl:m>
+      <syl:m>
         <syl:c r="zTone1"/>
         <syl:c r="u1037">့</syl:c>
         <syl:c r="zTone0">့့</syl:c>

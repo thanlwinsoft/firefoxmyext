@@ -128,6 +128,9 @@ Compiler options:
             
             <include name="**/*.java"/>
         </javac>
+    	<copy todir="${build}">
+    		<fileset dir="converters" includes="*.xml" />
+    	</copy>
         <copy todir="${build}">
             <fileset dir="${src.java}" includes="**/*.properties" />
             <filterset>
@@ -178,7 +181,7 @@ Compiler options:
 <!-- === Package The Distribution XPI ================================================= -->
 
     <target name="xpi" depends="dist" description="Create the XPI extension">
-        <zip zipfile="${dist.target}/${dist.name}.xpi" basedir="${dist}" includes="**"/>
+        <zip zipfile="${dist.target}/${dist.name}.xpi" basedir="${dist}" includes="**" update="true"/>
     </target>
 	
 	<target name="install" description="install in firefox" depends="xpi">
@@ -187,12 +190,15 @@ Compiler options:
 		</exec>
 	</target>	
 	
-	<target name="clean" description="Remove build files">
+	<target name="clean" depends="init" description="Remove build files">
 		<delete>
 			<fileset dir="${dist}" includes="**/*"/>
 		</delete>
 		<delete>
 			<fileset dir="${build}" includes="**/*"/>
+		</delete>
+		<delete>
+			<fileset dir="${dist.target}" includes="*.xpi"/>
 		</delete>
 	</target>
 </project>
