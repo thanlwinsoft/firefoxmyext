@@ -987,6 +987,7 @@
         <syl:c r="uHMed">ှ</syl:c>
         <syl:c r="zLowerVowel1">ဳ</syl:c>
         <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel1"/>
       </syl:m>
       <syl:m>
         <syl:c r="zCons">ဥ</syl:c>
@@ -1001,6 +1002,26 @@
         <syl:c r="uCons">ဥ</syl:c>
         <syl:c r="uLowerVowel">ုံ</syl:c>
         <syl:c r="zUpperVowel2">ံ</syl:c>
+        <syl:c r="zMedCons"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zLowerVowel1"/>
+        <syl:c r="zUpperVowel3">ဲ</syl:c>
+        <syl:c r="uUpperVowel">ဲ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="uLowerVowel">ု</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="zLowerVowel1">ူ</syl:c>
+        <syl:c r="uLowerVowel">ူ</syl:c>
       </syl:m>
       <syl:m>
         <syl:c r="zUpperVowel1" class="UpperVowel1"/>
@@ -6902,7 +6923,7 @@
         <syl:c r="zTone0"/>
       </syl:m>
       <syl:m>
-        <syl:c r="zTone1" hex="0020 1094" />
+        <syl:c r="zTone1" hex="0020 1094"/>
         <syl:c r="u1037">့</syl:c>
       </syl:m>
       <syl:m>

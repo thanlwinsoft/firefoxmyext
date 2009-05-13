@@ -8,7 +8,7 @@
 
     <em:name>Myanmar Converter</em:name>
     <em:id>myanmar-converter@thanlwinsoft.org</em:id>
-    <em:version>0.2.0</em:version>
+    <em:version>0.2.2</em:version>
     <em:type>2</em:type>
     <em:creator>ThanLwinSoft</em:creator>
     <em:description>
@@ -24,7 +24,6 @@
     <em:aboutURL>chrome://myanmar-converter/content/about-dialog.xul</em:aboutURL>
     <em:optionsURL>chrome://myanmar-converter/content/options-dialog.xul</em:optionsURL>
     -->
-    <em:updateURL>https://thanlwinsoft.co.uk/myanmar-converter-extension/updates.rdf</em:updateURL>
     
     <!-- 
     	Target application is Firefox. You can try specifying other Mozilla
