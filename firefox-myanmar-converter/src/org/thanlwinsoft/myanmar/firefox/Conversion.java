@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.net.URL;
 
 import org.thanlwinsoft.doccharconvert.converter.CharConverter;
+import org.thanlwinsoft.doccharconvert.converter.ReversibleConverter;
 import org.thanlwinsoft.doccharconvert.converter.SyllableConverter;
 import org.thanlwinsoft.doccharconvert.converter.CharConverter.FatalException;
 import org.thanlwinsoft.doccharconvert.converter.CharConverter.RecoverableException;
@@ -21,7 +22,7 @@ import org.thanlwinsoft.myanmar.Validator;
  */
 public class Conversion
 {
-	private CharConverter mConv = null;
+	private ReversibleConverter mConv = null;
 	private boolean mInitialized = false;
 	private StringBuilder mErrors = new StringBuilder();
 
@@ -39,27 +40,14 @@ public class Conversion
 			mErrors.append("url not found:" + converterName + ".xml");
 			return;
 		}
-		//ConverterXmlParser convParser = new ConverterXmlParser();
 		try
 		{
 			//mInitialized = convParser.parseStream(url.openStream());
 			mConv = new SyllableConverter(url);
-//			if (mInitialized && convParser.getConverters().size() > 0)
-//			{
-//				//mConv = convParser.getConverters().firstElement();
-				mConv.initialize();
-				mInitialized = mConv.isInitialized();
-//			}
-//			else
-//			{
-//				mErrors.append("Failed to parse stream");
-//			}
+			mConv.setDirection(true);
+			mConv.initialize();
+			mInitialized = mConv.isInitialized();
 		}
-//		catch (IOException e)
-//		{
-//			mErrors.append("IOError: " + e.toString());
-//			e.printStackTrace();
-//		}
 		catch (FatalException e)
 		{
 			e.printStackTrace();
