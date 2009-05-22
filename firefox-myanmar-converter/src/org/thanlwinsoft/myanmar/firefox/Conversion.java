@@ -83,6 +83,7 @@ public class Conversion
 	/**
 	 * 
 	 * @param text
+	 * @param defaultToZawGyi 
 	 * @return converted text
 	 */
 	public String convert(String text, Boolean defaultToZawGyi)
@@ -95,7 +96,7 @@ public class Conversion
 	        StringWriter outWriter = new StringWriter();
 	        BufferedWriter bufferedOut = new BufferedWriter(outWriter);
 	        mv.validate(inReader, bufferedOut);
-	        long errorsBefore = mv.getErrorCount();
+	        //long errorsBefore = mv.getErrorCount();
 	        bufferedOut.close();
 	        mv.reset();
 			String converted = mConv.convert(text);
@@ -103,7 +104,7 @@ public class Conversion
 			outWriter = new StringWriter();
 			bufferedOut = new BufferedWriter(outWriter);
 			mv.validate(inReader, bufferedOut);
-	        long errorsAfter = mv.getErrorCount();
+	        //long errorsAfter = mv.getErrorCount();
 	        bufferedOut.close();            
             outWriter.flush();
 	        // only return the result if it has fewer encoding errors than the original
