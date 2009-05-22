@@ -287,6 +287,11 @@ MyanmarConverterExtension.parseNodes = function(parent)
 	var convertText = true;
 	var defaultToZawGyi = false;
 	var converter = myConv.wrappedJSObject.getConv();
+	var doc = parent.ownerDocument;
+	if (typeof doc.myconvDefaultToZawGyi != "undefined")
+	{
+		defaultToZawGyi = doc.myconvDefaultToZawGyi;
+	}
 	// if this is directly called by the event it may not be a text node
 	if (parent.nodeType == Node.TEXT_NODE)
 	{
@@ -348,10 +353,16 @@ MyanmarConverterExtension.parseNodes = function(parent)
 	if (convertedCount > 0)
 	{
 		parent.style.fontFamily = "Padauk,Myanmar3";
-		parent.lang = "my";		
+		parent.lang = "my";
+		if (typeof doc.myconvDefaultToZawGyi == "undefined")
+		{
+			doc.myconvDefaultToZawGyi = true;
+			MyanmarConverterExtension._trace(doc.location + " Default to ZawGyi");
+		}
 	}
 }
 
+/*
 MyanmarConverterExtension.walkNodes = function(treeNode)
 {	
 	var walker = treeNode.ownerDocument.createTreeWalker(treeNode, NodeFilter.SHOW_TEXT, null, false);
@@ -385,8 +396,7 @@ MyanmarConverterExtension.walkNodes = function(treeNode)
 		var style = window.getComputedStyle(parent, null);
 		// TODO this gets confused when we convert some text in the parent element before text in
 		// a child element
-		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
-			/*|| parent.lang == "my"*/)
+		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1)
 		{
 			textNode = walker.nextNode();
 			alreadyConverted = true;
@@ -422,7 +432,7 @@ MyanmarConverterExtension.walkNodes = function(treeNode)
 		treeNode.ownerDocument.assumeZawGyi = (convertedCount > trueUnicodeCount)? true : false;
 	}
 };
-
+*/
 
 MyanmarConverterExtension.processDoc = function(doc) {
 	if (!MyanmarConverterExtension.isZawGyi(doc))
@@ -435,9 +445,27 @@ MyanmarConverterExtension.processDoc = function(doc) {
     if (doc.body)
     {
     	MyanmarConverterExtension.parseNodes(doc.body);
+    	MyanmarConverterExtension.convertTitle(doc);
     	doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
     	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
     }
+};
+
+MyanmarConverterExtension.convertTitle = function(doc)
+{
+	try
+	{
+		var converter = MyanmarConverterExtension.getMyConv().wrappedJSObject.getConv();
+		if (typeof doc.myconvDefaultToZawGyi != "undefined")
+		{
+			defaultToZawGyi = doc.myconvDefaultToZawGyi;
+		}
+		doc.title = converter.convert(doc.title, defaultToZawGyi);
+	}
+	catch (e)
+	{
+		MyanmarConverterExtension._trace(e);
+	}
 };
 
 MyanmarConverterExtension.onTreeModified = function(event)
@@ -496,9 +524,9 @@ MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
 		return;
 	}
 	var defaultToZawGyi = false;
-	if (typeof target.ownerDocument.assumeZawGyi != "undefined")
+	if (typeof target.ownerDocument.myconvDefaultToZawGyi != "undefined")
 	{
-		defaultToZawGyi = target.ownerDocument.assumeZawGyi;
+		defaultToZawGyi = target.ownerDocument.myconvDefaultToZawGyi;
 	}
 	var converter = myConv.wrappedJSObject.getConv();
 	var converted = converter.convert(toConvert, defaultToZawGyi);
@@ -513,7 +541,21 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
 MyanmarConverterExtension.isZawGyi = function(doc) {
 	if (doc.body && doc.body.textContent.match("[\u1050-\u109F]"))
 	{
-		return true;
+		var myConv = MyanmarConverterExtension.getMyConv();
+		if (typeof myConv == "undefined")
+		{
+			MyanmarConverterExtension._trace("myConv undefined");
+			return false;
+		}
+		var converter = myConv.wrappedJSObject.getConv();
+		var converted = converter.convert(doc.body.textContent, false);
+		if (converted != doc.body.textContent)
+		{
+			doc.myconvDefaultToZawGyi = true;
+			MyanmarConverterExtension._trace(doc.location + " Default to ZawGyi");
+			return true;
+		}
+		return false;
 	}
 	return false;
 };

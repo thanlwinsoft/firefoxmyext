@@ -179,7 +179,7 @@ MyConvComponent.prototype.initialize = function (packageLoader, trace) {
         var jarFilepaths = [
             javaPath + "classes/", // our own classes, compiled from myanmar-converter/src
             javaPath + "lib/org.thanlwinsoft.myanmar.jar",
-            javaPath + "lib/org.thanlwinsoft.doccharconvert_1.2.1.jar"
+            javaPath + "lib/org.thanlwinsoft.doccharconvert_1.2.2.jar"
         ];
         this._packages = this._packageLoader(jarFilepaths, this._traceFlag);
         
@@ -194,7 +194,7 @@ MyConvComponent.prototype.initialize = function (packageLoader, trace) {
          *  Create a sample Java object
          */
         this._test = this._packages.getClass("org.thanlwinsoft.myanmar.firefox.Conversion").n("ZawGyiOne");
-        this._trace("Environment Variable PATH = " + this._test.getEnvironmentVariable("PATH"));
+        //this._trace("Environment Variable PATH = " + this._test.getEnvironmentVariable("PATH"));
          
         this._initialized = true;
     } catch (e) {

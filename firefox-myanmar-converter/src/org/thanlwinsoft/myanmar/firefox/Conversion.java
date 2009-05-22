@@ -7,7 +7,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URL;
 
-import org.thanlwinsoft.doccharconvert.converter.CharConverter;
 import org.thanlwinsoft.doccharconvert.converter.ReversibleConverter;
 import org.thanlwinsoft.doccharconvert.converter.SyllableConverter;
 import org.thanlwinsoft.doccharconvert.converter.CharConverter.FatalException;
@@ -84,7 +83,7 @@ public class Conversion
 	        StringWriter outWriter = new StringWriter();
 	        BufferedWriter bufferedOut = new BufferedWriter(outWriter);
 	        mv.validate(inReader, bufferedOut);
-	        //long errorsBefore = mv.getErrorCount();
+	        long errorsBefore = mv.getErrorCount();
 	        bufferedOut.close();
 	        mv.reset();
 			String converted = mConv.convert(text);
@@ -92,19 +91,18 @@ public class Conversion
 			outWriter = new StringWriter();
 			bufferedOut = new BufferedWriter(outWriter);
 			mv.validate(inReader, bufferedOut);
-	        //long errorsAfter = mv.getErrorCount();
+	        long errorsAfter = mv.getErrorCount();
 	        bufferedOut.close();            
             outWriter.flush();
 	        // only return the result if it has fewer encoding errors than the original
-            /*
 	        if (errorsAfter < errorsBefore)
 	        	return outWriter.toString();
-	        if ((errorsAfter == errorsBefore) && defaultToZawGyi)
+	        if ((errorsAfter == errorsBefore) && defaultToZawGyi.booleanValue())
 	        {
 	        	return outWriter.toString();
 	        }
-	        */
-        	return outWriter.toString();
+	        // default to unchanged
+        	return text;
 		}
 		catch (FatalException e)
 		{
