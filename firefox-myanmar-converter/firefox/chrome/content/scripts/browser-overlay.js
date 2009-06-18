@@ -332,7 +332,9 @@ MyanmarConverterExtension.parseNodes = function(parent)
 		case Node.ELEMENT_NODE:
 			if (node.hasChildNodes())
 			{
-				MyanmarConverterExtension.parseNodes(node);
+				// don't parse the tree if there is no Myanmar text
+				if (node.textContent.match("[\u1000-\u109F]"))
+					MyanmarConverterExtension.parseNodes(node);
 			}
 			break;
 		case Node.TEXT_NODE:
