@@ -35,7 +35,8 @@ function WrappedPackages(classLoader) {
     var packages = classLoader.loadClass("edu.mit.simile.javaFirefoxExtensionUtils.Packages").newInstance();
     
     var argumentsToArray = function(args) {
-        var a = java.lang.reflect.Array.newInstance(java.lang.Object, args.length);
+        var objectClass = java.lang.Class.forName("java.lang.Object");
+        var a = java.lang.reflect.Array.newInstance(objectClass, args.length);
         for (var i = 0; i < args.length; i++) {
             java.lang.reflect.Array.set(a, i, args[i]);
         }

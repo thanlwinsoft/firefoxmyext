@@ -91,7 +91,8 @@ MyanmarConverterExtension._packageLoader = function(urlStrings, trace) {
     MyanmarConverterExtension._trace("packageLoader {");
     
     var toUrlArray = function(a) {
-        var urlArray = java.lang.reflect.Array.newInstance(java.net.URL, a.length);
+    	var urlClass = java.lang.Class.forName("java.net.URL");
+    	var urlArray = java.lang.reflect.Array.newInstance(urlClass, a.length);
         for (var i = 0; i < a.length; i++) {
             var url = a[i];
             java.lang.reflect.Array.set(

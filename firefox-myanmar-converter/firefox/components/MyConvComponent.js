@@ -172,6 +172,7 @@ MyConvComponent.prototype.initialize = function (packageLoader, trace) {
         
         var extensionPath = this._getExtensionPath("myanmar-converter");
         
+        this._trace("setting paths");
         /*
          *  Enumerate URLs to our JARs and class directories
          */
