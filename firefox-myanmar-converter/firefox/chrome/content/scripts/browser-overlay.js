@@ -245,7 +245,8 @@ MyanmarConverterExtension._fail = function(e) {
     }
     if (MyanmarConverterExtension.trace)
 	{
-    	alert(msg);
+    	//alert(msg);
+    	MyanmarConverterExtension._trace(msg);
 	}
 };
 
@@ -277,17 +278,20 @@ MyanmarConverterExtension.onPageLoad = function(event) {
 };
 
 
-MyanmarConverterExtension.parseNodes = function(parent)
+MyanmarConverterExtension.parseNodes = function(parent, converter)
 {
-	var myConv = MyanmarConverterExtension.getMyConv();
-	if (typeof myConv == "undefined")
+	if (converter == null)
 	{
-		MyanmarConverterExtension._trace("myConv undefined");
-		return;
+		var myConv = MyanmarConverterExtension.getMyConv();
+		if (typeof myConv == "undefined")
+		{
+			MyanmarConverterExtension._trace("myConv undefined");
+			return;
+		}
+		converter = myConv.wrappedJSObject.getConv();
 	}
 	var convertText = true;
 	var defaultToZawGyi = false;
-	var converter = myConv.wrappedJSObject.getConv();
 	var doc = parent.ownerDocument;
 	if (typeof doc.myconvDefaultToZawGyi != "undefined")
 	{
@@ -335,7 +339,7 @@ MyanmarConverterExtension.parseNodes = function(parent)
 			{
 				// don't parse the tree if there is no Myanmar text
 				if (node.textContent.match("[\u1000-\u109F]"))
-					MyanmarConverterExtension.parseNodes(node);
+					MyanmarConverterExtension.parseNodes(node, converter);
 			}
 			break;
 		case Node.TEXT_NODE:
@@ -447,7 +451,7 @@ MyanmarConverterExtension.processDoc = function(doc) {
 
     if (doc.body)
     {
-    	MyanmarConverterExtension.parseNodes(doc.body);
+    	MyanmarConverterExtension.parseNodes(doc.body, null);
     	MyanmarConverterExtension.convertTitle(doc);
     	doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
     	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
@@ -488,7 +492,7 @@ MyanmarConverterExtension.onTreeModified = function(event)
 			}
 			else
 			{
-				MyanmarConverterExtension.parseNodes(event.target);
+				MyanmarConverterExtension.parseNodes(event.target, null);
 			}
 			doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
 			doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
