@@ -4,13 +4,13 @@
     xmlns:chrome="http://www.mozilla.org/rdf/chrome#">
     
     <RDF:Seq rdf:about="urn:mozilla:locale:root">
-        <RDF:li rdf:resource="urn:mozilla:locale:en-US" />
+        <RDF:li rdf:resource="urn:mozilla:locale:my-MM" />
     </RDF:Seq>
     
-    <RDF:Description rdf:about="urn:mozilla:locale:en-US">
+    <RDF:Description rdf:about="urn:mozilla:locale:my-MM">
         <chrome:packages>
-            <RDF:Seq rdf:about="urn:mozilla:locale:en-US:packages">
-                <RDF:li rdf:resource="urn:mozilla:locale:en-US:myanmar-converter"/>
+            <RDF:Seq rdf:about="urn:mozilla:locale:my-MM:packages">
+                <RDF:li rdf:resource="urn:mozilla:locale:my-MM:myanmar-converter"/>
             </RDF:Seq>
         </chrome:packages>
     </RDF:Description>

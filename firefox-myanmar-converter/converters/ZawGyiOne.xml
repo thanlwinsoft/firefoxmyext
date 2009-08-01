@@ -1633,6 +1633,7 @@
         <syl:c r="uCons" class="AllCons"/>
         <syl:c r="uMed"/>
         <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zKinzi"/>
       </syl:m>
       <syl:m>
         <syl:c r="zLowerVowel1">ဴ</syl:c>
@@ -1668,6 +1669,59 @@
       </syl:m>
       <syl:m>
         <syl:c r="zLowerVowel1">ဳ</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel2" class="UpperVowel2"/>
+        <syl:c r="uUpperVowel" class="UpperVowel2"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zKinzi"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ူ</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ူ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel1" class="UpperVowel1"/>
+        <syl:c r="uUpperVowel" class="UpperVowel1"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel1"/>
+        <syl:c r="uUpperVowel" class="UpperVowel3" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <syl:c r="zUpperVowel3" class="UpperVowel3"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
         <syl:c r="zCons" class="AllCons"/>
         <syl:c r="zAfterMed1">်</syl:c>
         <syl:c r="uYRMed">ျ</syl:c>
@@ -1747,6 +1801,49 @@
         <syl:c r="uHMed">ှ</syl:c>
       </syl:m>
       <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="zRMed"/>
+        <syl:c r="zUpperVowel1"/>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="zUpperVowel3">ံ</syl:c>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="zRMed"/>
+        <syl:c r="zUpperVowel1">ံ</syl:c>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="zRMed"/>
+        <syl:c r="zUpperVowel2">ံ</syl:c>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
         <syl:c r="zLowerVowel1"/>
         <syl:c r="zCons" class="AllCons"/>
         <syl:c r="zAfterMed1">်ွ</syl:c>
@@ -1846,6 +1943,68 @@
         <syl:c r="uWMed"/>
       </syl:m>
       <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ူ</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ူ</syl:c>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel1" class="UpperVowel1"/>
+        <syl:c r="uUpperVowel" class="UpperVowel1"/>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel1"/>
+        <syl:c r="uUpperVowel" class="UpperVowel3" xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
+        <syl:c r="zUpperVowel3" class="UpperVowel3"/>
+        <syl:c r="uWMed"/>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ွ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel2" class="UpperVowel2"/>
+        <syl:c r="uUpperVowel" class="UpperVowel2"/>
+        <syl:c r="uHMed">ှ</syl:c>
+        <syl:c r="uWMed"/>
+      </syl:m>
+      <syl:m>
         <syl:c r="zLowerVowel1"/>
         <syl:c r="zCons" class="AllCons"/>
         <syl:c r="zAfterMed1">်ြ</syl:c>
@@ -1885,6 +2044,7 @@
         <syl:c r="uLowerVowel">ုံ</syl:c>
         <syl:c r="uHMed"/>
         <syl:c r="uWMed">ွ</syl:c>
+        <syl:c r="zUpperVowel2"/>
       </syl:m>
       <syl:m>
         <syl:c r="zLowerVowel1">ဳ</syl:c>
@@ -1902,6 +2062,50 @@
       </syl:m>
       <syl:m>
         <syl:c r="zLowerVowel1">ဳ</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ြ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="zRMed"/>
+        <syl:c r="zUpperVowel2">ံ</syl:c>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+        <syl:c r="uHMed"/>
+        <syl:c r="uWMed">ွ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ြ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="zRMed"/>
+        <syl:c r="zUpperVowel1"/>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="zUpperVowel3">ံ</syl:c>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+        <syl:c r="uHMed"/>
+        <syl:c r="uWMed">ွ</syl:c>
+        <syl:c r="zUpperVowel2"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="zCons" class="AllCons"/>
+        <syl:c r="zAfterMed1">်ြ</syl:c>
+        <syl:c r="uYRMed">ျ</syl:c>
+        <syl:c r="uCons" class="AllCons"/>
+        <syl:c r="uMed"/>
+        <syl:c r="zRMed"/>
+        <syl:c r="zUpperVowel1">ံ</syl:c>
+        <syl:c r="uUpperVowel"/>
+        <syl:c r="uLowerVowel">ုံ</syl:c>
+        <syl:c r="uHMed"/>
+        <syl:c r="uWMed">ွ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zLowerVowel1">ု</syl:c>
         <syl:c r="zCons" class="AllCons"/>
         <syl:c r="zAfterMed1">်ြ</syl:c>
         <syl:c r="uYRMed">ျ</syl:c>

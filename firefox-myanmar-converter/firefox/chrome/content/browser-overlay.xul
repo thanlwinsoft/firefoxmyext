@@ -22,4 +22,12 @@
             />
     </menupopup>
 
+	<popup id="contentAreaContextMenu">
+		<menuitem id="myanmarConverter.context.menu"
+			label="&myanmarConverter.context.label;"
+			accesskey="&myanmarConverter.context.accessKey;"
+			insertafter="context-sep-selectall"
+			oncommand="MyanmarConverterExtension.convertDocument(document.popupNode);"
+			/>
+	</popup>
 </overlay>

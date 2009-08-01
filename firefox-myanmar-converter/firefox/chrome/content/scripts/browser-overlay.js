@@ -300,7 +300,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter)
 	// if this is directly called by the event it may not be a text node
 	if (parent.nodeType == Node.TEXT_NODE)
 	{
-		MyanmarConverterExtension._trace("text node");
+		//MyanmarConverterExtension._trace("text node");
 		var node = parent;
 		var theParent = node.parentNode;
 		var oldValue = new String(node.nodeValue);
@@ -323,12 +323,58 @@ MyanmarConverterExtension.parseNodes = function(parent, converter)
 	}
 	var nodes = parent.childNodes;
 	var convertedCount = 0;
-	var style = window.getComputedStyle(parent, null);
-	if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
-		|| parent.lang == "my")
+	
+	var walker = parent.ownerDocument.createTreeWalker(parent,
+			NodeFilter.SHOW_TEXT, null, false);
+	var textNode = walker.currentNode;
+	if (textNode != null && textNode.nodeType != Node.TEXT_NODE)
 	{
-		convertText = false;
+		textNode = walker.nextNode();
 	}
+	var parents = new Array();
+	while (textNode != null)
+	{
+		var theParent = textNode.parentNode;
+		var style = window.getComputedStyle(theParent, null);
+		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
+			|| parent.lang == "my")
+		{
+			convertText = false;
+		}
+		var oldValue = new String(textNode.nodeValue);
+		var prevNode = textNode;
+		textNode = walker.nextNode();
+		if (convertText && oldValue.match("[\u1000-\u109F]"))
+		{
+			var newValue = converter.convert(oldValue, defaultToZawGyi);
+			var newNode = prevNode.ownerDocument.createTextNode(newValue);
+			if (oldValue != newValue)
+			{
+				theParent.replaceChild(newNode, prevNode);
+				//theParent.style.fontFamily = "Padauk,Myanmar3";
+				//theParent.lang = "my";
+				var hasParent = false;
+				for (var i = parents.length - 1; i >= 0; i--)
+				{
+					if (theParent == parents[i])
+					{
+						hasParent = true;
+						break;
+					}
+				}
+				if (!hasParent)
+				{
+					parents.push(theParent);
+				}
+			}
+		}
+	}
+	for (var j = 0; j < parents.length; j++)
+	{
+		parents[j].style.fontFamily = "Padauk,Myanmar3";
+		parents[j].lang = "my";
+	}
+	/*
 	for (var i = 0; i < nodes.length; i++)
 	{
 		var node = nodes.item(i);
@@ -357,10 +403,12 @@ MyanmarConverterExtension.parseNodes = function(parent, converter)
 			break;
 		}
 	}
+	
+	*/
 	if (convertedCount > 0)
 	{
-		parent.style.fontFamily = "Padauk,Myanmar3";
-		parent.lang = "my";
+		//parent.style.fontFamily = "Padauk,Myanmar3";
+		//parent.lang = "my";
 		if (typeof doc.myconvDefaultToZawGyi == "undefined")
 		{
 			doc.myconvDefaultToZawGyi = true;
@@ -371,8 +419,9 @@ MyanmarConverterExtension.parseNodes = function(parent, converter)
 
 /*
 MyanmarConverterExtension.walkNodes = function(treeNode)
-{	
-	var walker = treeNode.ownerDocument.createTreeWalker(treeNode, NodeFilter.SHOW_TEXT, null, false);
+{
+	var walker = treeNode.ownerDocument.createTreeWalker(treeNode,
+		NodeFilter.SHOW_TEXT, null, false);
 	var textNode = walker.currentNode;
 	if (textNode.nodeType != Node.TEXT_NODE)
 	{
@@ -555,7 +604,13 @@ MyanmarConverterExtension.isZawGyi = function(doc) {
 			return false;
 		}
 		var converter = myConv.wrappedJSObject.getConv();
-		var converted = converter.convert(doc.body.textContent, false);
+		var testContent = doc.body.textContent;
+		// testing too much can cause a stack overflow
+		if (testContent.length > 1000)
+		{
+			testContent = testContent.substring(0, 1000);
+		}
+		var converted = converter.convert(testContent, false);
 		if (converted != doc.body.textContent)
 		{
 			doc.myconvDefaultToZawGyi = true;
@@ -565,4 +620,24 @@ MyanmarConverterExtension.isZawGyi = function(doc) {
 		return false;
 	}
 	return false;
+};
+
+MyanmarConverterExtension.convertDocument = function(node)
+{
+	try
+	{
+		if (node)
+		{
+			var doc = node.ownerDocument;
+			//MyanmarConverterExtension._trace(doc.location);
+			if (doc)
+			{
+				MyanmarConverterExtension.processDoc(doc);
+			}
+		}
+	}
+	catch (e)
+	{
+		MyanmarConverterExtension._trace(e);
+	}
 };
