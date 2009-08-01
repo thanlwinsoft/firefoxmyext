@@ -86,7 +86,19 @@ public class Conversion
 	        long errorsBefore = mv.getErrorCount();
 	        bufferedOut.close();
 	        mv.reset();
-			String converted = mConv.convert(text);
+	        // converting too much text can cause a stack overflow, so convert
+	        // it line by line
+	        inReader = new BufferedReader(new StringReader(text));
+	        String line = inReader.readLine();
+	        StringBuilder builder = new StringBuilder();
+	        while (line != null)
+	        {
+	        	builder.append(mConv.convert(line));
+	        	builder.append('\n');
+	        	line = inReader.readLine();
+	        }
+
+			String converted = builder.toString();
 			inReader = new BufferedReader(new StringReader(converted));
 			outWriter = new StringWriter();
 			bufferedOut = new BufferedWriter(outWriter);
