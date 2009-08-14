@@ -310,6 +310,7 @@
         <syl:c>ၸ</syl:c>
         <syl:c>ၹ</syl:c>
         <syl:c>ၺ</syl:c>
+        <syl:c>႓</syl:c>
         <syl:c>ၻ</syl:c>
         <syl:c>ၼ</syl:c>
         <syl:c>ႅ</syl:c>
@@ -337,6 +338,7 @@
         <syl:c>္ပ</syl:c>
         <syl:c>္ဖ</syl:c>
         <syl:c>္ဗ</syl:c>
+        <syl:c>္ဘ</syl:c>
         <syl:c>္ဘ</syl:c>
         <syl:c>္မ</syl:c>
         <syl:c>္လ</syl:c>
@@ -688,6 +690,54 @@
         <syl:c r="uHMed">ှ</syl:c>
         <syl:c r="zUpperVowel2">ံ</syl:c>
         <syl:c r="uUpperVowel">ံ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons">႐</syl:c>
+        <syl:c r="uCons">ရ</syl:c>
+        <syl:c r="zAfterMed1">ွ</syl:c>
+        <syl:c r="uHMed">ှ</syl:c>
+        <syl:c r="zUpperVowel3" class="UpperVowel3"/>
+        <syl:c r="uUpperVowel" class="UpperVowel3"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons">႐</syl:c>
+        <syl:c r="uCons">ရ</syl:c>
+        <syl:c r="zUpperVowel1" class="UpperVowel1"/>
+        <syl:c r="uUpperVowel" class="UpperVowel1"/>
+        <syl:c r="zAfterMed1">ွ</syl:c>
+        <syl:c r="uHMed">ှ</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons">႐</syl:c>
+        <syl:c r="uCons">ရ</syl:c>
+        <syl:c r="uContAsat"/>
+        <syl:c r="zAfterMed1">ွ</syl:c>
+        <syl:c r="zUpperVowel3" class="UpperVowel3"/>
+        <syl:c r="uUpperVowel" class="UpperVowel3"/>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="uLowerVowel">ု</syl:c>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons">႐</syl:c>
+        <syl:c r="uCons">ရ</syl:c>
+        <syl:c r="uContAsat"/>
+        <syl:c r="zAfterMed1">ွ</syl:c>
+        <syl:c r="zUpperVowel3"/>
+        <syl:c r="uUpperVowel" class="UpperVowel2"/>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel2" class="UpperVowel2"/>
+      </syl:m>
+      <syl:m>
+        <syl:c r="zCons">႐</syl:c>
+        <syl:c r="uCons">ရ</syl:c>
+        <syl:c r="uContAsat"/>
+        <syl:c r="zAfterMed1">ွ</syl:c>
+        <syl:c r="zUpperVowel3"/>
+        <syl:c r="uUpperVowel" class="UpperVowel1"/>
+        <syl:c r="zLowerVowel1">ု</syl:c>
+        <syl:c r="uLowerVowel">ု</syl:c>
+        <syl:c r="zUpperVowel1" class="UpperVowel1"/>
       </syl:m>
       <syl:m>
         <syl:c r="zCons">႐</syl:c>
