@@ -23,10 +23,6 @@ var MyanmarConverterExtension = new Object();
 
 MyanmarConverterExtension.initialize = function() {
     try {
-        /*
-         *  Get a MyConv component
-         */
-        var myConv = this.getMyConv();
 
         var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                       .getService(Components.interfaces.nsIPrefService)
@@ -35,17 +31,25 @@ MyanmarConverterExtension.initialize = function() {
         this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
         this.trace = (prefs)? prefs.getBoolPref("trace") : false;
         this.prefs = prefs;
+        this.urlPatterns = new Array();
 
-        /*
-         *  Initialize it. The trick is to get past its IDL interface
-         *  and right into its Javascript implementation, so that we
-         *  can pass it the LiveConnect "java" object, which it will
-         *  then use to load its JARs. Note that XPCOM Javascript code
-         *  is not given LiveConnect by default.
-         */
-         
-        if (!myConv.wrappedJSObject.initialize(MyanmarConverterExtension._packageLoader, true)) {
-            alert(myConv.wrappedJSObject.error);
+        this.messages = Components.classes["@mozilla.org/intl/stringbundle;1"]
+            .getService(Components.interfaces.nsIStringBundleService)
+            .createBundle("chrome://myanmar-converter/locale/MyanmarConverter.properties");
+
+        // Load the data for the converters
+        var path = MyanmarConverterExtension._getExtensionPath("myanmar-converter");
+        MyanmarConverterExtension._trace("Path: " + path);
+        this.legacyFonts = [ "Zawgyi-One", "WinInnwa", "Wwin_Burmese1" ];
+        //var conversionData = [ "zawgyi", "wininnwa", "wwin_burmese" ];
+        for (var i = 0; i < this.legacyFonts.length; i++)
+        {
+            //var data = {};
+            //Components.utils.import(path + "chrome/content/scripts/" + conversionData[i] + ".json", data);
+            // chrome urls are only supported in firefox 4
+            // Components.utils.import("chrome://myanmar-converter/content/scripts/" + conversionData[i] + ".json", data);
+            new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
+            MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
 
         //page load listener
@@ -87,124 +91,6 @@ MyanmarConverterExtension._getExtensionPath = function(extensionName) {
 };
 
 
-MyanmarConverterExtension._packageLoader = function(urlStrings, trace) {
-    MyanmarConverterExtension._trace("packageLoader {");
-    
-    var toUrlArray = function(a) {
-    	var urlClass = java.lang.Class.forName("java.net.URL");
-    	var urlArray = java.lang.reflect.Array.newInstance(urlClass, a.length);
-        for (var i = 0; i < a.length; i++) {
-            var url = a[i];
-            java.lang.reflect.Array.set(
-                urlArray, 
-                i, 
-                (typeof url == "string") ? new java.net.URL(url) : url
-            );
-        }
-        return urlArray;
-    };
-        
-    var firefoxClassLoaderURL = 
-        new java.net.URL(
-            MyanmarConverterExtension._getExtensionPath("myanmar-converter") + 
-            "java/javaFirefoxExtensionUtils.jar");
-    
-    if (trace) MyanmarConverterExtension._trace("classLoaderURL " + firefoxClassLoaderURL);
-    
-    //===== Stage 1. Prepare to Give All Permission to the Java Code to be Loaded =====
-    
-        /*
-         *  Step 1. Load the bootstraping firefoxClassLoader.jar, which contains URLSetPolicy.
-         *  We need URLSetPolicy so that we can give ourselves more permission.
-         */
-        var bootstrapClassLoader = java.net.URLClassLoader.newInstance(toUrlArray([ firefoxClassLoaderURL ]));
-        if (trace) MyanmarConverterExtension._trace("created loader");
-        
-        /*
-         *  Step 2. Instantiate a URLSetPolicy object from firefoxClassLoader.jar.
-         */
-        var policyClass = java.lang.Class.forName(
-            "edu.mit.simile.javaFirefoxExtensionUtils.URLSetPolicy",
-            true,
-            bootstrapClassLoader
-        );
-        var policy = policyClass.newInstance();
-        if (trace) MyanmarConverterExtension._trace("policy");
-        
-        /*
-         *  Step 3. Now, the trick: We wrap our own URLSetPolicy around the current security policy 
-         *  of the JVM security manager. This allows us to give our own Java code whatever permission 
-         *  we want, even though Firefox doesn't give us any permission.
-         */
-        policy.setOuterPolicy(java.security.Policy.getPolicy());
-        java.security.Policy.setPolicy(policy);
-        if (trace) MyanmarConverterExtension._trace("set policy");
-        
-        /*
-         *  Step 4. Give ourselves all permission. Yay!
-         */
-        policy.addPermission(new java.security.AllPermission());
-        if (trace) MyanmarConverterExtension._trace("got all permissions");
-        
-        /*
-         *  That's pretty much it for the security bootstraping hack. But we want to do a little more. 
-         *  We want our own class loader for subsequent JARs that we load.
-         */
-    
-    
-    //===== Stage 2. Create Our Own Class Loader so We Can Do Things Like Tracing Class Loading =====
-    
-        /*
-         *  Reload firefoxClassLoader.jar and so we can make use of TracingClassLoader. We 
-         *  need to reload it because when it was loaded previously, we had not yet set the policy 
-         *  to give it enough permission for loading classes.
-         */
-      
-        policy.addURL(firefoxClassLoaderURL);
-        if (trace) MyanmarConverterExtension._trace("added url");
-        
-        var firefoxClassLoaderPackages = new WrappedPackages(
-            java.net.URLClassLoader.newInstance(toUrlArray([ firefoxClassLoaderURL ]))
-        );
-        if (trace) MyanmarConverterExtension._trace("wrapped loader");
-        
-        var tracingClassLoaderClass = 
-            firefoxClassLoaderPackages.getClass("edu.mit.simile.javaFirefoxExtensionUtils.TracingClassLoader");
-        if (trace) MyanmarConverterExtension._trace("got class");
-    
-        var classLoader = tracingClassLoaderClass.m("newInstance")(trace);
-        MyanmarConverterExtension._trace("got new loader");
-        
-    //===== Stage 3. Actually Load the Code We Were Asked to Load =====
-    
-        var urls = toUrlArray(urlStrings);
-        
-        /*
-         *  Give it the JARs we were asked to load - should now load them with 
-         *  all permissions.
-         */
-        classLoader.add(firefoxClassLoaderURL);
-
-        for (var i = 0; i < urls.length; i++) {
-            var url = java.lang.reflect.Array.get(urls, i);
-            classLoader.add(url);
-            policy.addURL(url);
-        }
-        MyanmarConverterExtension._trace("added urls");
-        java.lang.Thread.currentThread().setContextClassLoader(classLoader);
-        MyanmarConverterExtension._trace("set context");
-        
-        /*
-         *  Wrap up the class loader and return
-         */
-        var packages = new WrappedPackages(classLoader);
-        MyanmarConverterExtension._trace("wrapped");
-        
-        MyanmarConverterExtension._trace("} packageLoader");
-        
-        return packages;
-};
-
 MyanmarConverterExtension.toggleEnable = function() {
     try {
     	this.enabled = ! this.enabled;
@@ -216,10 +102,12 @@ MyanmarConverterExtension.toggleEnable = function() {
     }
 };
 
+/*
 MyanmarConverterExtension.getMyConv = function() {
     return Components.classes["@thanlwinsoft.org/myanmar-converter;1"]
         .getService(Components.interfaces.nsIMyanmarConverter);
 };
+*/
 
 MyanmarConverterExtension._trace = function (msg) {
 	if (MyanmarConverterExtension.trace)
@@ -231,18 +119,26 @@ MyanmarConverterExtension._trace = function (msg) {
 };
 
 MyanmarConverterExtension._fail = function(e) {
-    var msg;
-    if (e.getMessage) {
-        msg = e + ": " + e.getMessage() + "\n";
-        while (e.getCause() != null) {
-            e = e.getCause();
-            msg += "caused by " + e + ": " + e.getMessage() + "\n";
-        }
-    } else {
-        msg = e;
-    }
     if (MyanmarConverterExtension.trace)
 	{
+        var msg;
+        if (e.getMessage) {
+            msg = e;
+            for (var p in e)
+            {
+                msg += p + ":" + e[p] + "\n";
+            }
+            while (e.getCause() != null) {
+                e = e.getCause();
+                msg += "caused by " + e + ": " + e.getMessage() + "\n";
+            }
+        } else {
+            msg = e + "\n";
+            for (var p in e)
+            {
+                msg += p + ":" + e[p] + "\n";
+            }
+        }
     	//alert(msg);
     	MyanmarConverterExtension._trace(msg);
 	}
@@ -251,7 +147,8 @@ MyanmarConverterExtension._fail = function(e) {
 MyanmarConverterExtension.onPageLoad = function(event) {
 	try
 	{
-		var enableMenu = document.getElementById("myanmarConverter.enable.menu");
+	    MyanmarConverterExtension._trace("onPageLoad " + event.originalTarget.nodeName);
+	    var enableMenu = document.getElementById("myanmarConverter.enable.menu");
         if (enableMenu)
         {
         	enableMenu.setAttribute("checked", MyanmarConverterExtension.enabled);
@@ -259,58 +156,98 @@ MyanmarConverterExtension.onPageLoad = function(event) {
         else
         	MyanmarConverterExtension._trace("enable.menu not found");
 
-		if (event.originalTarget.nodeName == "#document" &&
-			((!event.originalTarget.location) ||
-			 event.originalTarget.location.href.indexOf("chrome:") == -1))
-		{
-			var doc = event.originalTarget;
+	    if (event.originalTarget.nodeName == "#document" &&
+		    ((!event.originalTarget.location) ||
+		     event.originalTarget.location.href.indexOf("chrome:") == -1))
+	    {
+		    var doc = event.originalTarget;
 
-			if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location.href)))
-			{
-				MyanmarConverterExtension.processDoc(doc);
-			}
-			
-		}
+		    if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location.href)))
+		    {
+			    MyanmarConverterExtension.processDoc(doc);
+		    }
+		
+	    }
 	}
 	catch (e) { MyanmarConverterExtension._fail(e); }
 };
 
-
-MyanmarConverterExtension.parseNodes = function(parent, converter)
+MyanmarConverterExtension.guessConverterForNode = function(node)
 {
+    var nodeFontFamily = window.getComputedStyle(node.parentNode, null).fontFamily;
+	var matchIndex = -1;
+	var nodeConverter = null;
+	var bestFreq = 0;
+	// take the converter matching the font in the style with the lowest index just in case the web 
+    // page actually mixed different fonts in the same style!
+	for (var i = 0; i < MyanmarConverterExtension.legacyFonts.length; i++)
+	{
+	    var testConv = tlsMyanmarConverters[MyanmarConverterExtension.legacyFonts[i].toLowerCase()];
+	    var testIndex = nodeFontFamily.indexOf(MyanmarConverterExtension.legacyFonts[i]);
+	    if (testIndex > -1 && (matchIndex == -1 || testIndex < matchIndex))
+	    {
+	        nodeConverter = testConv;
+	        matchIndex = testIndex;
+	    }
+	    // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
+	    // change for any characters in Myanmar code range
+	    if (node.nodeValue.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
+	    {
+	        var uniFreq = testConv.matchFrequency(node.nodeValue, true);
+	        var pseudoFreq = testConv.matchFrequency(node.nodeValue, false);
+	        if (pseudoFreq > uniFreq && pseudoFreq > bestFreq)
+	        {
+	            nodeConverter = testConv;
+	            bestFreq = pseudoFreq;
+	        }
+	    }
+	}
+	if (nodeConverter == null)
+    	MyanmarConverterExtension._trace("No Converter matched: " + node.nodeValue);
+	return nodeConverter;
+}
+
+MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
+{
+	var doc = parent.ownerDocument;
 	if (converter == null)
 	{
-		var myConv = MyanmarConverterExtension.getMyConv();
-		if (typeof myConv == "undefined")
+        if (doc.tlsMyanmarEncoding)
+    	    converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+		if (typeof converter == "undefined")
 		{
-			MyanmarConverterExtension._trace("myConv undefined");
-			return;
+            MyanmarConverterExtension.guessMyanmarEncoding(doc, parent);
+            if (doc.tlsMyanmarEncoding)
+                converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+	        if (typeof converter == "undefined")
+	        {
+			    MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
+			    // still parse checking for specific styles
+		    }
 		}
-		converter = myConv.wrappedJSObject.getConv();
 	}
 	var convertText = true;
-	var defaultToZawGyi = false;
-	var doc = parent.ownerDocument;
-	if (typeof doc.myconvDefaultToZawGyi != "undefined")
-	{
-		defaultToZawGyi = doc.myconvDefaultToZawGyi;
-	}
 	// if this is directly called by the event it may not be a text node
 	if (parent.nodeType == Node.TEXT_NODE)
 	{
-		//MyanmarConverterExtension._trace("text node");
 		var node = parent;
 		var theParent = node.parentNode;
 		var oldValue = new String(node.nodeValue);
-		if (convertText && oldValue.match("[\u1000-\u109F]"))
+        var bestConv = converter;
+        if (toUnicode)
+        {
+            bestConv = MyanmarConverterExtension.guessConverterForNode(node);
+        }
+		if (bestConv)
 		{
-			var newValue = converter.convert(oldValue, defaultToZawGyi);
-			var newNode =  node.ownerDocument.createTextNode(newValue);
+			var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
+			    bestConv.convertFromUnicode(oldValue);
 			if (oldValue != newValue)
 			{
+    			var newNode =  node.ownerDocument.createTextNode(newValue);
 				theParent.replaceChild(newNode, node);
-				theParent.style.fontFamily = "Padauk,Myanmar3";
-				theParent.lang = "my";
+				theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
+				if (toUnicode) theParent.lang = "my";
 			}
 		}
 		return;
@@ -334,67 +271,62 @@ MyanmarConverterExtension.parseNodes = function(parent, converter)
 	{
 		var theParent = textNode.parentNode;
 		var style = window.getComputedStyle(theParent, null);
-		if (style.fontFamily.toLowerCase().indexOf("padauk") > -1
-			|| theParent.lang == "my")
+		var bestConv = converter;
+		if (toUnicode)
+        {
+            bestConv = MyanmarConverterExtension.guessConverterForNode(textNode);
+        }
+        if (bestConv)
 		{
-			convertText = false;
+		    convertText = true;
 		}
 		else
 		{
-			convertText = true;
+		    convertText = false;
 		}
 		var oldValue = new String(textNode.nodeValue);
 		var prevNode = textNode;
 		textNode = walker.nextNode();
-		if (convertText && oldValue.match("[\u1000-\u109F]"))
+		if (convertText)
 		{
-			var newValue = converter.convert(oldValue, defaultToZawGyi);
-			var newNode = prevNode.ownerDocument.createTextNode(newValue);
+			var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
+			    bestConv.convertFromUnicode(oldValue);
 			if (oldValue != newValue)
 			{
-				theParent.replaceChild(newNode, prevNode);
-				var hasParent = false;
-				for (var i = parents.length - 1; i >= 0; i--)
-				{
-					if (theParent == parents[i])
-					{
-						hasParent = true;
-						break;
-					}
+    			var newNode = prevNode.ownerDocument.createTextNode(newValue);
+    			if (theParent.childNodes.length == 1)
+    			{
+				    theParent.replaceChild(newNode, prevNode);
+				    theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
+				    if (toUnicode) theParent.lang = "my";
 				}
-				if (!hasParent)
+				else
 				{
-					parents.push(theParent);
+				    var span = prevNode.ownerDocument.createElement("span");
+				    span.style.fontFamily = bestConv.getFontFamily(toUnicode);
+				    if (toUnicode) span.lang = "my";
+				    span.appendChild(newNode);
+				    theParent.replaceChild(span, prevNode);
 				}
 			}
-		}
-	}
-	for (var j = 0; j < parents.length; j++)
-	{
-		parents[j].style.fontFamily = "Padauk,Myanmar3";
-		parents[j].lang = "my";
-	}
-	if (convertedCount > 0)
-	{
-		if (typeof doc.myconvDefaultToZawGyi == "undefined")
-		{
-			doc.myconvDefaultToZawGyi = true;
-			MyanmarConverterExtension._trace(doc.location + " Default to ZawGyi");
 		}
 	}
 }
 
 MyanmarConverterExtension.processDoc = function(doc) {
-	if (!MyanmarConverterExtension.isZawGyi(doc))
+    var enc = MyanmarConverterExtension.guessMyanmarEncoding(doc, doc.body);
+    /*
+	if (!enc || enc === "unicode")
 	{
 		doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
     	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
 		return;
 	}
+	*/
 
     if (doc.body)
     {
-    	MyanmarConverterExtension.parseNodes(doc.body, null);
+    	MyanmarConverterExtension.parseNodes(doc.body, null, true);
     	MyanmarConverterExtension.convertTitle(doc);
     	doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
     	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
@@ -405,12 +337,19 @@ MyanmarConverterExtension.convertTitle = function(doc)
 {
 	try
 	{
-		var converter = MyanmarConverterExtension.getMyConv().wrappedJSObject.getConv();
-		if (typeof doc.myconvDefaultToZawGyi != "undefined")
+		var converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+		//if (typeof doc.myconvDefaultToZawGyi != "undefined")
+		//{
+		//	defaultToZawGyi = doc.myconvDefaultToZawGyi;
+		//}
+		if (typeof converter != "undefined")
 		{
-			defaultToZawGyi = doc.myconvDefaultToZawGyi;
-		}
-		doc.title = converter.convert(doc.title, defaultToZawGyi);
+		    doc.title = converter.convertToUnicode(doc.title);
+	    }
+	    else if (doc.tlsMyanmarEncoding != "unicode")
+	    {
+	        MyanmarConverterExtension._trace("No converter for: " + doc.tlsMyanmarEncoding);
+	    }
 	}
 	catch (e)
 	{
@@ -435,7 +374,7 @@ MyanmarConverterExtension.onTreeModified = function(event)
 			}
 			else
 			{
-				MyanmarConverterExtension.parseNodes(event.target, null);
+				MyanmarConverterExtension.parseNodes(event.target, null, true);
 			}
 			doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
 			doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
@@ -467,20 +406,17 @@ MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
 	var prefix = prevValue.substring(0, s);
 	var suffix = prevValue.substring(prevE+1, prevValue.length);
 	var toConvert = newValue.substring(s, newE+1);
-	var myConv = MyanmarConverterExtension.getMyConv();
-	if (typeof myConv == "undefined")
+	var converter = tlsMyanmarConverters[target.ownerDocument.tlsMyanmarEncoding.toLowerCase()];
+	if (typeof converter == "undefined")
 	{
-		MyanmarConverterExtension._trace("myConv undefined");
-		return;
+	    MyanmarConverterExtension.guessMyanmarEncoding(target.ownerDocument, target);
+	    converter = tlsMyanmarConverters[target.ownerDocument.tlsMyanmarEncoding.toLowerCase()];
 	}
-	var defaultToZawGyi = false;
-	if (typeof target.ownerDocument.myconvDefaultToZawGyi != "undefined")
+	if (typeof converter != "undefined")
 	{
-		defaultToZawGyi = target.ownerDocument.myconvDefaultToZawGyi;
+	    var converted = converter.convertToUnicode(toConvert);
+    	target.textContent = new String(prefix + converted + suffix);
 	}
-	var converter = myConv.wrappedJSObject.getConv();
-	var converted = converter.convert(toConvert, defaultToZawGyi);
-	target.textContent = new String(prefix + converted + suffix);
 };
 
 MyanmarConverterExtension.isEnabledForUrl = function(url) {
@@ -488,6 +424,40 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
 	return MyanmarConverterExtension.enabled;
 };
 
+MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
+    // try to guess the encoding, but ignore if the test text is too short
+    if (testNode && testNode.textContent.length > 100)
+    {
+        var bestMatch = 0.90;
+        var unicodeFreq = 0;
+        if (! doc.tlsMyanmarEncoding)
+        {
+            doc.tlsMyanmarEncoding = "unicode";
+        }
+        for (var i = 0; i < this.legacyFonts.length; i++)
+        {
+            var conv = tlsMyanmarConverters[this.legacyFonts[i].toLowerCase()];
+            if (i == 0)
+                unicodeFreq = conv.matchFrequency(testNode.textContent, true);
+            var f = conv.matchFrequency(testNode.textContent, false);
+            if (f > bestMatch && f > unicodeFreq)
+            {
+                doc.tlsMyanmarEncoding = this.legacyFonts[i];
+                bestMatch = f;
+                this._trace(doc.location + ": encoding " + this.legacyFonts[i] + " f=" + f);
+            }
+            else
+            {
+                this._trace(doc.location + ": no match for encoding " + this.legacyFonts[i] + " f=" + f +
+                    "uni freq =" + unicodeFreq);
+            }
+        }
+        return doc.tlsMyanmarEncoding;
+    }    
+    return null;
+};
+
+/*
 MyanmarConverterExtension.isZawGyi = function(doc) {
 	if (doc.body && doc.body.textContent.match("[\u1050-\u109F]"))
 	{
@@ -510,6 +480,7 @@ MyanmarConverterExtension.isZawGyi = function(doc) {
 	}
 	return false;
 };
+*/
 
 MyanmarConverterExtension.convertDocument = function(node)
 {
@@ -527,6 +498,384 @@ MyanmarConverterExtension.convertDocument = function(node)
 	}
 	catch (e)
 	{
-		MyanmarConverterExtension._trace(e);
+		MyanmarConverterExtension._fail(e);
 	}
 };
+
+MyanmarConverterExtension.convertTextNode = function(textNode, converter, toUnicode, startOffset, endOffset)
+{
+    var doc = textNode.ownerDocument;
+    if (endOffset == null || endOffset < 0)
+        endOffset = textNode.nodeValue.length;
+    var toConvert = textNode.nodeValue.substring(startOffset, endOffset);
+    var converted = (toUnicode)? converter.convertToUnicode(toConvert) :
+        converter.convertFromUnicode(toConvert);
+    if (converted == toConvert) return textNode;
+    if (textNode.parentNode.childNodes.length == 1 && startOffset == 0 && endOffset == textNode.nodeValue.length)
+    {
+        textNode.parentNode.style.fontFamily = converter.getFontFamily(toUnicode);
+        var replacement = doc.createTextNode(converted);
+        textNode.parentNode.replaceChild(replacement, textNode);
+        return replacement;
+    }
+    else
+    {
+        if (startOffset > 0)
+        {
+            var prefixText = doc.createTextNode(textNode.nodeValue.substring(0, startOffset));
+            textNode.parentNode.insertBefore(prefixText, textNode);
+        }
+        var span = doc.createElement("span");
+        span.style.fontFamily = converter.getFontFamily(toUnicode);
+        span.appendChild(doc.createTextNode(converted));
+        textNode.parentNode.insertBefore(span, textNode);
+        var suffixText = doc.createTextNode(textNode.nodeValue.substring(endOffset, textNode.nodeValue.length));
+        textNode.parentNode.replaceChild(suffixText, textNode);
+        return span;
+    }
+};
+
+MyanmarConverterExtension.convertElementNode = function(eNode, converter, toUnicode, refNode)
+{
+    var firstConverted = null;
+    var lastConverted = null;
+    for (var i = 0; i < eNode.childNodes.length; i++)
+    {
+        var n = eNode.childNodes[i];
+        var docPos = (refNode)? n.compareDocumentPosition(refNode) :
+            Node.DOCUMENT_POSITION_FOLLOWING;
+        if (docPos & Node.DOCUMENT_POSITION_PRECEDING || docPos == 0)
+        {
+            break;
+        }
+        else
+        {
+            if (n.nodeType == Node.TEXT_NODE)
+            {
+                lastConverted = MyanmarConverterExtension.convertTextNode(n, converter, toUnicode, 0, n.nodeValue.length);
+                if (firstConverted == null) firstConverted = lastConverted;
+            }
+            else if (n.nodeType == Node.ELEMENT_NODE)
+            {
+                var convertedNodes = MyanmarConverterExtension.convertElementNode(n, converter, toUnicode, refNode);
+                if (firstConverted == null) firstConverted = convertedNodes.first;
+                lastConverted = convertedNodes.last;
+            }
+        }
+    }
+    var retValue = new Object();
+    retValue.first = firstConverted;
+    retValue.last = lastConverted;
+    return retValue;
+};
+
+MyanmarConverterExtension.convertSelection = function(popupNode, converter, toUnicode)
+{
+    var doc = popupNode.ownerDocument;
+    var s = doc.defaultView.getSelection();
+    if (s instanceof Selection)
+    {
+        //MyanmarConverterExtension._trace("Selection has " + s.rangeCount + " ranges active element " +
+        //    doc.activeElement.nodeName);
+        if (s.rangeCount == 0 && doc.activeElement.nodeName.toLowerCase() == "textarea" ||
+            doc.activeElement.nodeName.toLowerCase() == "input")
+        {
+            var origText = doc.activeElement.value;
+            var prefix = origText.substring(0, doc.activeElement.selectionStart);
+            var suffix = origText.substring(doc.activeElement.selectionEnd, origText.length);
+            var toConvert = origText.substring(doc.activeElement.selectionStart, doc.activeElement.selectionEnd);
+            var converted = (toUnicode)? converter.convertToUnicode(toConvert) :
+                converter.convertFromUnicode(toConvert);
+            if (converted != toConvert)
+            {
+                doc.activeElement.value = prefix + converted + suffix;
+                doc.activeElement.setSelectionRange(prefix.length, prefix.length + converted.length);
+                doc.activeElement.style.fontFamily = converter.getFontFamily(toUnicode);
+            }
+        }
+        for (var i = 0; i < s.rangeCount; i++)
+        {
+            var r = s.getRangeAt(i);
+            var newRange = doc.createRange();
+            var endOffset = -1;
+            var offset = 0;
+            if (r.startContainer == r.endContainer)
+            {
+                // simple case start and end are the same container
+                if (r.startContainer.nodeType == Node.TEXT_NODE)
+                {
+                    var replacement = MyanmarConverterExtension.convertTextNode(r.startContainer, converter, toUnicode,
+                        r.startOffset, r.endOffset);
+                    if (replacement)
+                    {
+                        if (replacement == r.startContainer)
+                        {
+                            newRange.setStart(r.startContainer, r.startOffset);
+                            newRange.setEnd(r.endContainer, r.endOffset);
+                        }
+                        else
+                        {
+                            if (replacement.nodeType == Node.TEXT_NODE)
+                            {
+                                newRange.setStart(replacement, 0);
+                                newRange.setEnd(replacement, replacement.value.length);
+                            }
+                            else
+                            {
+                                // it is a span with a single text node
+                                newRange.setStart(replacement, 0);
+                                newRange.setEnd(replacement, 1);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (var i = r.startOffset; i < r.endOffset; i++)
+                    {
+                        var n = r.startContainer.childNodes[i];
+                        if (n.nodeType == Node.TEXT_NODE)
+                        {
+                            var replacement = MyanmarConverterExtension.convertTextNode(n, converter, toUnicode, 0, n.nodeValue.length);
+                            if (i == r.startOffset && replacement)
+                                newRange.setStart(replacement, 0); // should be ok for both text and element node
+                            if (i + 1 == r.endOffset && replacement)
+                            {
+                                if (replacement.nodeType == Node.TEXT_NODE)
+                                    newRange.setEnd(replacement, replacement.nodeValue.length);
+                                else
+                                    newRange.setEnd(replacement, 1);
+                            }
+                        }
+                        else if (n.nodeType == Node.ELEMENT_NODE)
+                        {
+                            // should be no need to change start
+                            var converted = MyanmarConverterExtension.convertElementNode(n, converter, toUnicode, null);
+                            if (i == r.startOffset && converted.first) newRange.setStart(converted.first, 0);
+                            if (i + 1 == r.endOffset && converted.last)
+                            {
+                                if (converted.last.nodeType == Node.TEXT_NODE)
+                                    newRange.setEnd(converted.last, converted.last.nodeValue.length);
+                                else
+                                    newRange.setEnd(converted.last, 1);
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // make a record of the nextNode before we modify the startContainer
+                var parentNode = r.startContainer.parentNode;
+                var nextNode = r.startContainer.nextSibling;
+                if (r.startContainer.nodeType == Node.TEXT_NODE)
+                {
+                    var newRangeStart = MyanmarConverterExtension.convertTextNode(r.startContainer, converter, toUnicode,
+                        r.startOffset, r.startContainer.nodeValue.length);
+                    if (newRangeStart == r.startContainer)
+                    {
+                        newRange.setStart(r.startContainer, r.startOffset);
+                    }
+                    else
+                    {
+                        newRange.setStart(newRangeStart, 0);
+                    }
+                }
+                else if (r.startContainer.nodeType == Node.ELEMENT_NODE)
+                {
+                    for (var i = r.startOffset; i < r.startContainer.childNodes.length; i++)
+                    {
+                        var n = r.startContainer.childNodes[i];
+                        if (n.nodeType == Node.TEXT_NODE)
+                        {
+                            var converted = MyanmarConverterExtension.convertTextNode(n, converter, toUnicode, 0, n.nodeValue.length);
+                            if (i == r.startOffset && converted)
+                            {
+                                newRange.setStart(converted, 0);
+                            }
+                        }
+                        else if (n.nodeType == Node.ELEMENT_NODE)
+                        {
+                            var converted = MyanmarConverterExtension.convertElementNode(n, converter, toUnicode, null);
+                            if (i == r.startOffset && converted.first) newRange.setStart(converted.first, 0);
+                        }
+                    }
+                }
+                // find nodes between startContainer and endContainer
+                var maxIter = 10;
+                do
+                {
+                    --maxIter;
+                    while (nextNode == null && parentNode != null)
+                    {
+                        nextNode = parentNode.nextSibling;
+                        if (nextNode == null)
+                        {
+                            parentNode = parentNode.parentNode;
+                        }
+                        else
+                        {
+                            parentNode = nextNode.parentNode;
+                        }
+                    }
+                    if (nextNode == null)
+                    {
+                        MyanmarConverterExtension._trace("end of doc reached while looking for endContainer");
+                        break;
+                    }
+                    var docPos = nextNode.compareDocumentPosition(r.endContainer);
+                    if (docPos & Node.DOCUMENT_POSITION_PRECEDING || docPos == 0)
+                        break;
+                    if (nextNode.nodeType == Node.TEXT_NODE)
+                    {
+                        MyanmarConverterExtension._trace("nextNode text: " + nextNode.nodeValue);
+                        MyanmarConverterExtension.convertTextNode(nextNode, converter, toUnicode,
+                            0, nextNode.nodeValue.length);
+                    }
+                    else if (nextNode.nodeType == Node.ELEMENT_NODE)
+                    {
+                        MyanmarConverterExtension._trace("nextNode name: " + nextNode.nodeName);
+                        MyanmarConverterExtension.convertElementNode(nextNode, converter, toUnicode,
+                            r.endContainer);
+                    }
+                    nextNode = nextNode.nextSibling;
+                } while (nextNode !== r.endContainer);
+                // convert end
+                if (r.endContainer.nodeType == Node.TEXT_NODE)
+                {
+                    var lastConverted = MyanmarConverterExtension.convertTextNode(r.endContainer, converter, toUnicode,
+                        0, r.endOffset);
+                    if (lastConverted == r.endContainer)
+                    {
+                        newRange.setEnd(r.endContainer, r.endOffset);
+                    }
+                    else
+                    {
+                        if (lastConverted.nodeType  == Node.TEXT_NODE)
+                            newRange.setEnd(lastConverted, lastConverted.nodeValue.length);
+                        else
+                            newRange.setEnd(lastConverted, 1);
+                    }
+                }
+                else
+                {
+                    var lastConverted = null;
+                    for (var i = 0; i < r.endOffset; i++)
+                    {
+                        var n = r.endContainer.childNodes[i];
+                        if (n.nodeType == Node.TEXT_NODE)
+                        {
+                            lastConverted = MyanmarConverterExtension.convertTextNode(n, converter, toUnicode, 0, n.nodeValue.length);
+                        }
+                        else if (n.nodeType == Node.ELEMENT_NODE)
+                        {
+                            lastConverted = MyanmarConverterExtension.convertElementNode(n, converter, toUnicode, null).last;
+                        }
+                    }
+                    if (lastConverted)
+                    {
+                        if (lastConverted.nodeType  == Node.TEXT_NODE)
+                            newRange.setEnd(lastConverted, lastConverted.nodeValue.length);
+                        else
+                            newRange.setEnd(lastConverted, 1);
+                    }
+                }
+            }
+            if (!newRange.isCollapsed)
+            {
+                s.removeRange(r);
+                s.addRange(newRange);
+            }
+            MyanmarConverterExtension._trace("Selection is " + newRange.startContainer.nodeName + " " +
+                newRange.endContainer.nodeName);
+        }
+    }
+    else
+    {
+        MyanmarConverterExtension._trace("Selection is " + typeof s);
+        for (var p in s)
+        {
+            MyanmarConverterExtension._trace("s " + p + ":" + s[p]);
+        }
+    }
+};
+
+MyanmarConverterExtension.convertSubTree = function(converter, toUnicode, node)
+{
+    try
+    {
+        var conv = tlsMyanmarConverters[converter.toLowerCase()];
+        if (conv)
+        {
+            var doc = node.ownerDocument;
+			doc.removeEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+			doc.removeEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+            if (node.ownerDocument.defaultView.getSelection())
+            {
+                MyanmarConverterExtension.convertSelection(node, conv, toUnicode);
+            }
+            else
+            {
+                MyanmarConverterExtension.parseNodes(node, conv, toUnicode);
+            }
+            doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+			doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+        }
+        else
+            MyanmarConverterExtension._trace("ConvertSubTree: " + converter + " not found" + conv);
+    }
+    catch (e)
+    {
+        MyanmarConverterExtension._fail(e);
+    }
+};
+
+MyanmarConverterExtension.onPopupShowing = function(popup, event)
+{
+    if (!popup.hasChildNodes())
+    {
+        for (var i = 0; i < this.legacyFonts.length; i++)
+        {
+            var mi = document.createElement("menuitem");
+            mi.setAttribute("id", "myanmarconverter.context.popup.menu." + this.legacyFonts[i] +"2unicode");
+            mi.setAttribute("label", this.messages.formatStringFromName("convertToUnicode",
+                [this.legacyFonts[i]], 1));
+            mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
+                this.legacyFonts[i] + "', true, document.popupNode);");
+            popup.appendChild(mi);
+            mi = document.createElement("menuitem");
+            mi.setAttribute("id", "myanmarconverter.context.popup.menu.unicode2" + this.legacyFonts[i]);
+            mi.setAttribute("label", this.messages.formatStringFromName("convertFromUnicode",
+                [this.legacyFonts[i]], 1));
+            mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
+                this.legacyFonts[i] + "', false, document.popupNode);");
+            popup.appendChild(mi);
+        }
+    }
+};
+
+MyanmarConverterExtension.onPopupHiding = function()
+{
+};
+
+MyanmarConverterExtension.optionsDialog = function()
+{
+    var currentLocation = document.getElementById("content").contentDocument.location;
+    window.openDialog("chrome://myanmar-converter/content/ConverterOptions.xul", "myanmar-converter-options",
+        "chrome", this, currentLocation);
+};
+
+if (typeof TlsDebug === "undefined")
+{
+    function TlsDebug()
+    {
+        this.print = MyanmarConverterExtension._trace;
+        this.FINE = 1;
+        this.DEBUG = 2;
+        this.INFO = 4;
+        this.WARN = 8;
+        this.dbgMsg = function(level, msg) {};
+        return this;
+    }
+}
+

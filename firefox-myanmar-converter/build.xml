@@ -89,7 +89,7 @@ Compiler options:
          	
          </exec>
     </target>
-
+<!--
     <target name="tools" depends="init">
     	<mkdir dir="${tools.build}"/>
         <javac sourcepath="" 
@@ -109,9 +109,9 @@ Compiler options:
 			includes="**/*">
 	</jar>
     </target>
-
+-->
 <!-- === Compile Java Code ================================================= -->
-
+<!--
     <target name="compile" depends="prepare">
         <mkdir dir="${build}"/>
         <javac sourcepath="" 
@@ -139,10 +139,10 @@ Compiler options:
             </filterset>
         </copy>
     </target>
-
+-->
 <!-- === Prepare The Distribution ================================================= -->
 
-    <target name="dist" depends="compile,tools" description="Create the distribution">
+    <target name="dist" depends="prepare" description="Create the distribution">
         <mkdir dir="${dist}"/>
         
         <copy todir="${dist}/chrome">
@@ -158,7 +158,7 @@ Compiler options:
             <fileset dir="${src.extension}/components" includes="*.js" />
             <fileset dir="${src.extension}/components" includes="*.xpt" />
         </copy>
-        
+        <!--
         <copy todir="${dist}/java/classes">
             <fileset dir="${build}"
                 includes="**" />
@@ -168,7 +168,7 @@ Compiler options:
                 includes="*.jar" />
         </copy>
         <copy file="${tools}/javaFirefoxExtensionUtils.jar" tofile="${dist}/java/javaFirefoxExtensionUtils.jar" />
-
+        -->
         <copy file="${src.extension}/install.rdf" tofile="${dist}/install.rdf" />
         <copy file="${src.extension}/chrome.manifest" tofile="${dist}/chrome.manifest"/>
         

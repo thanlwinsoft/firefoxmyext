@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://myanmar-converter/locale/ConverterOptions.dtd">
+
+<dialog id="myanmarConverter.options.dialog" title="&myanmarConverter.options.title;"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+        buttons="accept,cancel"
+        buttonlabelaccept="&myanmarConverter.options.accept;"
+        buttonlabelcancel="&myanmarConverter.options.cancel;"
+        persist="screenX screenY width height"
+        onload="MyanmarConverterOptions.onLoad();"
+        ondialogaccept="return MyanmarConverterOptions.doOk();"
+        ondialogcancel="return MyanmarConverterOptions.doCancel();">
+
+<script src="chrome://myanmar-converter/content/scripts/ConverterOptions.js" />
+
+<dialogheader title="&myanmarConverter.options.title;" description="&myanmarConverter.options.desc;"/>
+
+<!--
+<groupbox flex="1">
+  <caption label="&myanmarConverter.options.enableConverters;"/>
+  <checkbox id="zawgyi-one" selected="true" label="&myanmarConverter.options.converter.zawgyi;"/>
+  <checkbox id="winnwa" selected="true" label="&myanmarConverter.options.converter.wininnwa;"/>
+  <checkbox id="wwin_burmese1" selected="true" label="&myanmarConverter.options.converter.wwin_burmese1;"/>
+</groupbox>
+-->
+<vbox>
+    <grid>
+        <columns>
+            <column/>
+            <column flex="2"/>
+            <column flex="1"/>
+        </columns>
+        <rows>
+            <row>
+                <label control="myanmarConverter.options.urlHostname"
+                    value="&myanmarConverter.options.urlHostname;"/>
+                <textbox id="myanmarConverter.options.urlHostname"/>
+                <radiogroup>
+                    <radio id="myanmarConverter.options.urlHostnameExact"
+                        label="&myanmarConverter.options.urlHostnameExact;"/>
+                    <radio id="myanmarConverter.options.urlHostnameSuffix"
+                        label="&myanmarConverter.options.urlHostnameSuffix;"/>
+                </radiogroup>
+            </row>
+            <row>
+                <label control="myanmarConverter.options.urlPathname"
+                    value="&myanmarConverter.options.urlPathname;"/>
+                <textbox id="myanmarConverter.options.urlPathname"/>
+                <radiogroup>
+                    <radio id="myanmarConverter.options.urlPathnameExact"
+                        label="&myanmarConverter.options.urlPathnameExact;"/>
+                    <radio id="myanmarConverter.options.urlPathnamePrefix"
+                        label="&myanmarConverter.options.urlPathnamePrefix;"/>
+                </radiogroup>
+            </row>
+            <row>
+                <label />
+                <checkbox id="myanmarConverter.options.enableConversionForPattern" checked="true" label="&myanmarConverter.options.enableConversionForPattern;"/>
+            </row>
+        </rows>
+    </grid>
+    <hbox>
+        <spacer flex="1"/>
+        <button id="myanmarConverter.options.addUrl" label="&myanmarConverter.options.add;"
+    oncommand="MyanmarConverterOptions.addUrl();"/>
+        <button id="myanmarConverter.options.removeUrl" label="&myanmarConverter.options.remove;"
+    oncommand="MyanmarConverterOptions.removeUrl();"/>
+    </hbox>
+    <listbox id="myanmarConverter.options.urlList" onselect="MyanmarConverterOptions.urlOnSelect();">
+        <listhead>
+            <listheader label="&myanmarConverter.options.urlList.enable;"/>
+            <listheader label="&myanmarConverter.options.urlList.urlHostname;"/>
+            <listheader label="&myanmarConverter.options.urlList.urlPathname;"/>
+        </listhead>
+        <listcols><listcol/><listcol flex="1"/><listcol flex="1"/></listcols>
+    </listbox>
+    <vbox>
+        <description value="&myanmarConverter.options.defaultDescription;"/>
+        <checkbox id="myanmarConverter.options.defaultEnableConversion" selected="true" label="&myanmarConverter.options.defaultEnableConversion;"/>
+        <spacer flex="1"/>
+    </vbox>
+</vbox>
+</dialog>

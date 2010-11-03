@@ -168,7 +168,7 @@ MyConvComponent.prototype.initialize = function (packageLoader, trace) {
     
     this._trace("MyConvComponent.initialize {");
     try {
-        this._packageLoader = packageLoader;
+        //this._packageLoader = packageLoader;
         
         var extensionPath = this._getExtensionPath("myanmar-converter");
         
@@ -176,25 +176,19 @@ MyConvComponent.prototype.initialize = function (packageLoader, trace) {
         /*
          *  Enumerate URLs to our JARs and class directories
          */
-        var javaPath = extensionPath + "java/";
-        var jarFilepaths = [
-            javaPath + "classes/", // our own classes, compiled from myanmar-converter/src
-            javaPath + "lib/org.thanlwinsoft.myanmar.jar",
-            javaPath + "lib/org.thanlwinsoft.doccharconvert_1.2.2.jar"
-        ];
-        this._packages = this._packageLoader(jarFilepaths, this._traceFlag);
+        //var javaPath = extensionPath + "java/";
+        //var jarFilepaths = [
+        //    javaPath + "classes/", // our own classes, compiled from myanmar-converter/src
+        //    javaPath + "lib/org.thanlwinsoft.myanmar.jar",
+        //    javaPath + "lib/org.thanlwinsoft.doccharconvert_1.2.2.jar"
+        //];
+        //this._packages = this._packageLoader(jarFilepaths, this._traceFlag);
         
-        /*
-         *  Test out a static method
-         */
-        this._trace("About: " + 
-            this._packages.getClass("org.thanlwinsoft.myanmar.firefox.Conversion").m("getAbout")()
-        );
         
         /*
          *  Create a sample Java object
          */
-        this._test = this._packages.getClass("org.thanlwinsoft.myanmar.firefox.Conversion").n("ZawGyiOne");
+        //this._test = this._packages.getClass("org.thanlwinsoft.myanmar.firefox.Conversion").n("ZawGyiOne");
         //this._trace("Environment Variable PATH = " + this._test.getEnvironmentVariable("PATH"));
          
         this._initialized = true;

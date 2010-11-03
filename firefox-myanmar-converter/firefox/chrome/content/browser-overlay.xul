@@ -6,7 +6,8 @@
 <overlay id="myanmar-converter-browser-overlay" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
 
-    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/WrappedLoader.js"/>
+    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/tlsMyanmarConverter.js"/>
+    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/tlsMyanmarConverterData.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/browser-overlay.js"/>
     <script type="application/x-javascript">
         MyanmarConverterExtension.initialize(); // this starts the whole show;
@@ -20,14 +21,29 @@
             type        ="checkbox"
             oncommand   ="MyanmarConverterExtension.toggleEnable();"
             />
+        <menuitem
+            id          ="myanmarConverter.tools.options"
+            label       ="&myanmarConverter.tools.options.label;"
+            accesskey   ="&myanmarConverter.tools.options.accessKey;"
+            oncommand   ="MyanmarConverterExtension.optionsDialog();"
+            />
     </menupopup>
 
 	<popup id="contentAreaContextMenu">
-		<menuitem id="myanmarConverter.context.menu"
+
+		<menuitem id="myanmarConverter.context.menuDefault"
 			label="&myanmarConverter.context.label;"
 			accesskey="&myanmarConverter.context.accessKey;"
 			insertafter="context-sep-selectall"
 			oncommand="MyanmarConverterExtension.convertDocument(document.popupNode);"
 			/>
+
+	    <menu id="myanmarConverter.context.menu"
+	        label="&myanmarConverter.context.popup.label;"
+	        insertafter="context-sep-selectall">
+		    <menupopup id="myanmarConverter.context.menuPopup"
+              onpopupshowing="MyanmarConverterExtension.onPopupShowing(this, event);"
+              onpopuphiding="MyanmarConverterExtension.onPopupHiding();"/>
+        </menu> 
 	</popup>
 </overlay>

@@ -1,4 +1,8 @@
 <!ENTITY myanmarConverter.enable.label			"Convert Myanmar to Unicode 5.1">
 <!ENTITY myanmarConverter.enable.accessKey		"m">
-<!ENTITY myanmarConverter.context.label			"Convert ZawGyi to Unicode 5.1">
+<!ENTITY myanmarConverter.context.label			"Convert page to Myanmar Unicode 5.1">
 <!ENTITY myanmarConverter.context.accessKey		"u">
+<!ENTITY myanmarConverter.context.popup.label	"Myanmar Unicode Converter">
+<!ENTITY myanmarConverter.tools.options.label "Myanmar Converter Options">
+<!ENTITY myanmarConverter.tools.options.accessKey "">
+

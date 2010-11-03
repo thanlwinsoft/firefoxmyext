@@ -1,6 +1,7 @@
 @namespace url("http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul");
 
-/* define your styles here */*[lang|=my] {
-font-family: "serif", "Padauk", "Myanmar3", "MyMyanmar Unicode";
+/* define your styles here */
+*[lang|=my] {
+font-family: "serif", "Padauk", "ThanLwin", "Myanmar3", "Parabaik", "MyMyanmar Unicode";
 }
 

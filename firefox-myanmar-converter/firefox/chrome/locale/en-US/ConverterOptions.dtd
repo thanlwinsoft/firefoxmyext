@@ -1,0 +1,23 @@
+<!ENTITY myanmarConverter.options.title			"Myanmar Converter Options">
+<!ENTITY myanmarConverter.options.desc			"Choose when Myanmar text should be converted to Unicode.">
+<!ENTITY myanmarConverter.options.enableConverters "Choose which converters should be enabled:">
+<!ENTITY myanmarConverter.options.converter.zawgyi "Zawgyi-One">
+<!ENTITY myanmarConverter.options.converter.wininnwa "WinInnwa">
+<!ENTITY myanmarConverter.options.converter.wwin_burmese1 "Wwin_Burmese1">
+<!ENTITY myanmarConverter.options.urlPattern "URL Pattern:">
+<!ENTITY myanmarConverter.options.add "Add">
+<!ENTITY myanmarConverter.options.remove "Remove">
+<!ENTITY myanmarConverter.options.urlList.enable "Conversion Enabled">
+<!ENTITY myanmarConverter.options.urlList.urlHostname "Hostname">
+<!ENTITY myanmarConverter.options.urlList.urlPathname "Pathname">
+<!ENTITY myanmarConverter.options.enableConversionForPattern "Enable conversion for Pattern">
+<!ENTITY myanmarConverter.options.defaultEnableConversion "Enable conversion by default">
+<!ENTITY myanmarConverter.options.accept "OK">
+<!ENTITY myanmarConverter.options.cancel "Cancel">
+<!ENTITY myanmarConverter.options.urlHostname "Hostname">
+<!ENTITY myanmarConverter.options.urlHostnameExact "match exactly">
+<!ENTITY myanmarConverter.options.urlHostnameSuffix "match as suffix">
+<!ENTITY myanmarConverter.options.urlPathname "Pathname">
+<!ENTITY myanmarConverter.options.urlPathnameExact "match exactly">
+<!ENTITY myanmarConverter.options.urlPathnamePrefix "match as prefix">
+<!ENTITY myanmarConverter.options.defaultDescription "Behaviour for pages which do not match one of the above patterns:">
