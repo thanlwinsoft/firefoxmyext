@@ -11,41 +11,40 @@ const MODE_APPEND   = 0x10;
 const MODE_TRUNCATE = 0x20;
 
 var MyanmarConverterOptions = {
-    
+    traceEnabled : true,
     onLoad : function()
     {
         try
         {
-            if (typeof window.arguments != "undefined")
+            if (typeof window != "undefined" && window.arguments && typeof window.arguments != "undefined")
             {
                 this.extension = window.arguments[0];
                 var urlHostname = document.getElementById("myanmarConverter.options.urlHostname");
-                if (urlHostname && window.arguments[1]) urlHostname.value = window.arguments[1].hostname;
                 var urlPathname = document.getElementById("myanmarConverter.options.urlPathname");
-                if (urlPathname) urlPathname.value = window.arguments[1].pathname;
-                this.enabled = this.extension.enabled;
-                this.traceEnabled = this.extension.trace;
+                if (urlHostname && urlPathname && window.arguments[1])
+                {
+                    try
+                    {
+                        urlHostname.value = window.arguments[1].hostname;
+                        urlPathname.value = window.arguments[1].pathname;
+                    }
+                    catch(e)
+                    {
+                        for (var i in e)
+                            this.trace("MyanmarConverterOptions: Error getting location " + i + ":" + e[i]);
+                    }
+                }
             }
-            else
-            {
-                var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                          .getService(Components.interfaces.nsIPrefService)
-                                          .getBranch("extensions.myanmarconverter.");
+            var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
 
-                this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
-                this.traceEnabled = (prefs)? prefs.getBoolPref("trace") : false;
-            }
+            this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
+            this.traceEnabled = (prefs)? prefs.getBoolPref("trace") : false;
             var defaultEnable = document.getElementById("myanmarConverter.options.defaultEnableConversion");
             if (defaultEnable)
                 defaultEnable.checked = this.enabled;
-            if (this.extension && this.extension.urlPatterns)
-            {
-                this.urlPatterns = this.extension.urlPatterns;
-            }
-            else
-            {
-                this.urlPatterns = this.loadUrlPatterns();
-            }
+            this.urlPatterns = this.loadUrlPatterns();
             var urlList = document.getElementById("myanmarConverter.options.urlList");
             for (var i = 0; i < this.urlPatterns.length; i++)
             {
@@ -71,20 +70,6 @@ var MyanmarConverterOptions = {
 		                       .getService(Components.interfaces.nsIConsoleService)
 		                       .logStringMessage(msg);
 	    }
-    },
-    filePath : function()
-    {
-        var chromeRegistry = Components.classes["@mozilla.org/chrome/chrome-registry;1"]
-                .getService(Components.interfaces.nsIChromeRegistry);
-        var uri = Components.classes["@mozilla.org/network/standard-url;1"]
-            .createInstance(Components.interfaces.nsIURI);
-        uri.spec = "chrome://myanmar-converter/content/urlPatterns.json";
-        var path = chromeRegistry.convertChromeURL(uri);
-        if (typeof(path) == "object") {
-            path = path.spec;
-        }
-        this.trace("ConverterOptions path: " + path);
-        return path;
     },
     urlPatternsFile : function()
     {
@@ -213,15 +198,21 @@ var MyanmarConverterOptions = {
     },
     doOk : function()
     {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
         var defaultEnable = document.getElementById("myanmarConverter.options.defaultEnableConversion");
         if (this.enabled != defaultEnable.checked)
         {
-            var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                      .getService(Components.interfaces.nsIPrefService)
-                                      .getBranch("extensions.myanmarconverter.");
+            this.enabled = defaultEnable.checked;
             prefs.setBoolPref("enabled", this.enabled);
         }
-        // TODO save data
+        if (this.extension)
+        {
+            this.extension.enabled = this.enabled;
+            this.extension.urlPatterns = this.urlPatterns;
+        }
+        // save data
         var fos = Components.classes["@mozilla.org/network/file-output-stream;1"].
               createInstance(Components.interfaces.nsIFileOutputStream);
         var os = Components.classes["@mozilla.org/intl/converter-output-stream;1"]  
@@ -229,14 +220,15 @@ var MyanmarConverterOptions = {
         var file = this.urlPatternsFile();
         try
         {
-            //if (!file.exists())
-            //{
-            //    file.create(0, PERMS_FILE);
-            //}
+            if (!file.exists())
+            {
+                file.create(0, PERMS_FILE);
+            }
             fos.init(file, (MODE_RDWR | MODE_CREATE | MODE_TRUNCATE), PERMS_FILE, 0);
             os.init(fos, "UTF-8", 4096, 0x0000);
             var jsonString = JSON.stringify(this.urlPatterns);
             os.writeString(jsonString);
+            prefs.setIntPref("urlPatternsUpdateTime", (new Date()).getTime());
         }
         catch(ex)
         {

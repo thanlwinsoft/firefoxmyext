@@ -30,8 +30,12 @@ MyanmarConverterExtension.initialize = function() {
 
         this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
         this.trace = (prefs)? prefs.getBoolPref("trace") : false;
-        this.prefs = prefs;
-        this.urlPatterns = new Array();
+        this.urlPatternsLoadTime = prefs.getIntPref("urlPatternsUpdateTime");
+        this.urlPatterns = MyanmarConverterOptions.loadUrlPatterns();
+        var prefBranch2 = prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
+        prefBranch2.addObserver("extensions.myanmarconverter.enabled", this, false);
+        prefBranch2.addObserver("extensions.myanmarconverter.urlPatternsUpdateTime", this, false);
+        this.prefs = prefBranch2;
 
         this.messages = Components.classes["@mozilla.org/intl/stringbundle;1"]
             .getService(Components.interfaces.nsIStringBundleService)
@@ -44,10 +48,6 @@ MyanmarConverterExtension.initialize = function() {
         //var conversionData = [ "zawgyi", "wininnwa", "wwin_burmese" ];
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
-            //var data = {};
-            //Components.utils.import(path + "chrome/content/scripts/" + conversionData[i] + ".json", data);
-            // chrome urls are only supported in firefox 4
-            // Components.utils.import("chrome://myanmar-converter/content/scripts/" + conversionData[i] + ".json", data);
             new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
             MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
@@ -94,8 +94,10 @@ MyanmarConverterExtension._getExtensionPath = function(extensionName) {
 MyanmarConverterExtension.toggleEnable = function() {
     try {
     	this.enabled = ! this.enabled;
-
-    	this.prefs.setBoolPref("enabled", this.enabled);
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
+    	prefs.setBoolPref("enabled", this.enabled);
         
     } catch (e) {
         this._fail(e);
@@ -153,8 +155,8 @@ MyanmarConverterExtension.onPageLoad = function(event) {
         {
         	enableMenu.setAttribute("checked", MyanmarConverterExtension.enabled);
         }
-        else
-        	MyanmarConverterExtension._trace("enable.menu not found");
+        //else
+        //	MyanmarConverterExtension._trace("enable.menu not found");
 
 	    if (event.originalTarget.nodeName == "#document" &&
 		    ((!event.originalTarget.location) ||
@@ -162,7 +164,7 @@ MyanmarConverterExtension.onPageLoad = function(event) {
 	    {
 		    var doc = event.originalTarget;
 
-		    if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location.href)))
+		    if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location)))
 		    {
 			    MyanmarConverterExtension.processDoc(doc);
 		    }
@@ -212,13 +214,16 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
 	var doc = parent.ownerDocument;
 	if (converter == null)
 	{
-        if (doc.tlsMyanmarEncoding)
+        if (doc.tlsMyanmarEncoding && typeof doc.tlsMyanmarEncoding != "undefined")
     	    converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
 		if (typeof converter == "undefined")
 		{
             MyanmarConverterExtension.guessMyanmarEncoding(doc, parent);
-            if (doc.tlsMyanmarEncoding)
+            this._trace("doc.tlsMyanmarEncoding" + typeof doc.tlsMyanmarEncoding);
+            if (doc.tlsMyanmarEncoding && typeof doc.tlsMyanmarEncoding == "Object")
+            {
                 converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+            }
 	        if (typeof converter == "undefined")
 	        {
 			    MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
@@ -315,14 +320,6 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
 
 MyanmarConverterExtension.processDoc = function(doc) {
     var enc = MyanmarConverterExtension.guessMyanmarEncoding(doc, doc.body);
-    /*
-	if (!enc || enc === "unicode")
-	{
-		doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
-    	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
-		return;
-	}
-	*/
 
     if (doc.body)
     {
@@ -337,18 +334,17 @@ MyanmarConverterExtension.convertTitle = function(doc)
 {
 	try
 	{
-		var converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
-		//if (typeof doc.myconvDefaultToZawGyi != "undefined")
-		//{
-		//	defaultToZawGyi = doc.myconvDefaultToZawGyi;
-		//}
-		if (typeof converter != "undefined")
-		{
-		    doc.title = converter.convertToUnicode(doc.title);
-	    }
-	    else if (doc.tlsMyanmarEncoding != "unicode")
+	    if (typeof doc.tlsMyanmarEncoding != "undefined")
 	    {
-	        MyanmarConverterExtension._trace("No converter for: " + doc.tlsMyanmarEncoding);
+		    var converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+		    if (typeof converter != "undefined")
+		    {
+		        doc.title = converter.convertToUnicode(doc.title);
+	        }
+	        else if (doc.tlsMyanmarEncoding != "unicode")
+	        {
+	            MyanmarConverterExtension._trace("No converter for: " + doc.tlsMyanmarEncoding);
+	        }
 	    }
 	}
 	catch (e)
@@ -420,8 +416,53 @@ MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
 };
 
 MyanmarConverterExtension.isEnabledForUrl = function(url) {
-	// TODO
-	return MyanmarConverterExtension.enabled;
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
+
+    this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
+    try
+	{
+	    if (url && url.hostname && url.pathname)
+    	{
+	    
+	        var patternsTime = (prefs)? prefs.getIntPref("urlPatternsUpdateTime") : 0;
+	        if (patternsTime != this.urlPatternsLoadTime)
+	        {
+	            this.urlPatternsLoadTime = patternsTime;
+                this.urlPatterns = MyanmarConverterOptions.loadUrlPatterns();
+            }
+            for (var i = 0; i < this.urlPatterns.length; i++)
+            {
+                var hostMatch = false;
+                var pattern = this.urlPatterns[i];
+                if (pattern.hostnameExact)
+                {
+                    if (url.hostname == pattern.hostname)
+                        hostMatch = false;
+                }
+                else
+                {
+                    var pos = url.hostname.find(pattern.hostname);
+                    if (pos > -1 && pos + pattern.hostname.length == url.hostname.length)
+                    {
+                        hostMatch = true;
+                    }
+                }
+                if (hostMatch &&
+                    (pattern.pathnameExact && url.pathname == pattern.pathname) || 
+                    (url.pathname.indexOf(pattern.pathname) == 0))
+                {
+                    return pattern.enableConversion;
+                }
+            }
+        }
+    }
+    catch (e)
+    {
+        this._fail(e);
+    }
+	return this.enabled;
 };
 
 MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
@@ -854,6 +895,28 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
     }
 };
 
+MyanmarConverterExtension.observe = function(subject, topic, data)
+{
+    this._trace("MyanmarConverterExtension.observe " + subject + " " + topic +
+        " "  + data);
+    try
+    {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
+
+        this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
+        this.trace = (prefs)? prefs.getBoolPref("trace") : false;
+        this.urlPatterns = MyanmarConverterOptions.loadUrlPatterns();
+        
+        this._trace("MyanmarConverterExtension.observe reread settings");
+    }
+    catch (e)
+    {
+        this._fail(e);
+    }
+};
+
 MyanmarConverterExtension.onPopupHiding = function()
 {
 };
@@ -861,6 +924,7 @@ MyanmarConverterExtension.onPopupHiding = function()
 MyanmarConverterExtension.optionsDialog = function()
 {
     var currentLocation = document.getElementById("content").contentDocument.location;
+    MyanmarConverterExtension._trace("open ConverterOptions");
     window.openDialog("chrome://myanmar-converter/content/ConverterOptions.xul", "myanmar-converter-options",
         "chrome", this, currentLocation);
 };

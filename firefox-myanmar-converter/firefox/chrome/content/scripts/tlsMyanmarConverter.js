@@ -727,7 +727,7 @@ TlsMyanmarConverter.prototype.matchFrequency = function(inputText, isUnicode)
     var re = this.legacyPattern;
     if (isUnicode)
     {
-        utn11 = new TlsMyanmarUtn11();
+        var utn11 = new TlsMyanmarUtn11();
         re = utn11.pattern;
     }
     var legacyRange = "[" + String.fromCharCode(this.minCodePoint) + "-" + 

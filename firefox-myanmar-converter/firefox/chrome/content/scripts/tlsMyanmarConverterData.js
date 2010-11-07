@@ -575,7 +575,7 @@ tlsMyanmarConverterData["wwin_burmese1"]=
 "့_alt2":"\u2039",
 "့_left":"h",
 "့_left2":"\u2022",
-"့_left3":"\u203A",
+"့_left3":"\u203A"
 },
 "asat":{
 "်":"f"

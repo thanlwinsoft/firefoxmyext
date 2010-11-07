@@ -8,12 +8,14 @@
 
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/tlsMyanmarConverter.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/tlsMyanmarConverterData.js"/>
+    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/ConverterOptions.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/browser-overlay.js"/>
     <script type="application/x-javascript">
         MyanmarConverterExtension.initialize(); // this starts the whole show;
     </script>
 
     <menupopup id="menu_ToolsPopup">
+        <!--
         <menuitem
             id          ="myanmarConverter.enable.menu"
             label       ="&myanmarConverter.enable.label;"
@@ -21,6 +23,7 @@
             type        ="checkbox"
             oncommand   ="MyanmarConverterExtension.toggleEnable();"
             />
+            -->
         <menuitem
             id          ="myanmarConverter.tools.options"
             label       ="&myanmarConverter.tools.options.label;"
