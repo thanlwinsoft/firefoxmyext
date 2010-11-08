@@ -480,12 +480,16 @@ MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
             var conv = tlsMyanmarConverters[this.legacyFonts[i].toLowerCase()];
             if (i == 0)
                 unicodeFreq = conv.matchFrequency(testNode.textContent, true);
+            // converters using Latin script code points can match English with
+            // very bad consequences
+            if (!conv.isPseudoUnicode())
+                continue;
             var f = conv.matchFrequency(testNode.textContent, false);
             if (f > bestMatch && f > unicodeFreq)
             {
                 doc.tlsMyanmarEncoding = this.legacyFonts[i];
                 bestMatch = f;
-                this._trace(doc.location + ": encoding " + this.legacyFonts[i] + " f=" + f);
+                this._trace(doc.location + ": encoding " + this.legacyFonts[i] + " f=" + f + " ");
             }
             else
             {
