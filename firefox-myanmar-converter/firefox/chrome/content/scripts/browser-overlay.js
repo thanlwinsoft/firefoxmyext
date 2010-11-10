@@ -292,12 +292,87 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         }
         var oldValue = new String(textNode.nodeValue);
         var prevNode = textNode;
+        var hasWbr = false;
         textNode = walker.nextNode();
         if (convertText)
         {
+            while ((prevNode.nextSibling &&
+                (prevNode.nextSibling.nodeName.toLowerCase() == "wbr")) ||
+                (prevNode.nextSibling == null && prevNode.parentNode.nextSibling &&
+                 prevNode.parentNode.nextSibling.nodeName.toLowerCase() == "wbr"))
+            {
+                this._trace("found wbr");
+                var wbr = (prevNode.nextSibling)? prevNode.nextSibling :
+                    prevNode.parentNode.nextSibling;
+                if (wbr.nextSibling && wbr.nextSibling.nodeName.toLowerCase() == "span" &&
+                    wbr.nextSibling.hasAttribute("class") &&
+                    wbr.nextSibling.getAttribute("class") == "word-break")
+                {
+                    if (textNode.previousSibling == wbr.nextSibling)
+                    {
+                        hasWbr = true;
+                        oldValue += textNode.nodeValue;
+                        var nextNode = textNode;
+                        textNode = walker.nextNode();
+                        wbr.parentNode.removeChild(nextNode);
+                        wbr.parentNode.removeChild(wbr.nextSibling);
+                        wbr.parentNode.removeChild(wbr);
+                    }
+                    else if (textNode.parentNode.previousSibling == wbr.nextSibling)
+                    {
+                        var nextStyle = window.getComputedStyle(textNode.parentNode, null);
+                        if (nextStyle.fontFamily == style.fontFamily)
+                        {
+                            hasWbr = true;
+                            oldValue += textNode.nodeValue;
+                            var nextNode = textNode;
+                            textNode = walker.nextNode();
+                            if (nextNode.parentNode.childNodes.length == 1)
+                            {
+                                wbr.parentNode.removeChild(nextNode.parentNode);
+                            }
+                            else
+                            {
+                                nextNode.parentNode.removeChild(nextNode);
+                            }
+                            wbr.parentNode.removeChild(wbr.nextSibling);
+                            wbr.parentNode.removeChild(wbr);
+                        }
+                    }
+                }
+                else if (wbr.nextSibling == textNode)
+                {
+                    hasWbr = true;
+                    oldValue += textNode.nodeValue;
+                    var nextNode = textNode;
+                    textNode = walker.nextNode();
+                    wbr.parentNode.removeChild(nextNode);
+                    wbr.parentNode.removeChild(wbr);
+                }
+                else if (wbr.nextSibling == textNode.parentNode)
+                {
+                    var nextStyle = window.getComputedStyle(textNode.parentNode, null);
+                    if (nextStyle.fontFamily == style.fontFamily)
+                    {
+                        hasWbr = true;
+                        oldValue += textNode.nodeValue;
+                        var nextNode = textNode;
+                        textNode = walker.nextNode();
+                        if (nextNode.parentNode.childNodes.length == 1)
+                        {
+                            wbr.parentNode.removeChild(nextNode.parentNode);
+                        }
+                        else
+                        {
+                            nextNode.parentNode.removeChild(nextNode);
+                        }
+                        wbr.parentNode.removeChild(wbr);
+                    }
+                }
+            }
             var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
                 bestConv.convertFromUnicode(oldValue);
-            if (oldValue != newValue)
+            if (oldValue != newValue || wbr)
             {
                 var newNode = prevNode.ownerDocument.createTextNode(newValue);
                 if (theParent.childNodes.length == 1)
