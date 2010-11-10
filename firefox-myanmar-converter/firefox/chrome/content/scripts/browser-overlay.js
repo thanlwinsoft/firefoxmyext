@@ -306,7 +306,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                     prevNode.parentNode.nextSibling;
                 if (wbr.nextSibling && wbr.nextSibling.nodeName.toLowerCase() == "span" &&
                     wbr.nextSibling.hasAttribute("class") &&
-                    wbr.nextSibling.getAttribute("class") == "word-break")
+                    wbr.nextSibling.getAttribute("class") == "word_break")
                 {
                     if (textNode.previousSibling == wbr.nextSibling)
                     {
@@ -368,6 +368,11 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                         }
                         wbr.parentNode.removeChild(wbr);
                     }
+                }
+                else
+                {
+                    this._trace("MyanmarConverter: wbr ignored after '" + prevNode.nodeValue + "'");
+                    break;
                 }
             }
             var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
