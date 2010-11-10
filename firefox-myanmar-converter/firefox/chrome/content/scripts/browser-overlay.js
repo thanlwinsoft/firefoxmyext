@@ -53,15 +53,15 @@ MyanmarConverterExtension.initialize = function() {
         }
 
         //page load listener
-		var appcontent = document.getElementById("appcontent"); // browser
-		if (!appcontent)
-		{
-			appcontent = document.getElementById("frame_main_pane"); // songbird
-		}
-		if (appcontent)
-		{
-			appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
-		}
+        var appcontent = document.getElementById("appcontent"); // browser
+        if (!appcontent)
+        {
+            appcontent = document.getElementById("frame_main_pane"); // songbird
+        }
+        if (appcontent)
+        {
+            appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
+        }
     }
     catch (e)
     {
@@ -93,11 +93,11 @@ MyanmarConverterExtension._getExtensionPath = function(extensionName) {
 
 MyanmarConverterExtension.toggleEnable = function() {
     try {
-    	this.enabled = ! this.enabled;
+        this.enabled = ! this.enabled;
         var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                       .getService(Components.interfaces.nsIPrefService)
                                       .getBranch("extensions.myanmarconverter.");
-    	prefs.setBoolPref("enabled", this.enabled);
+        prefs.setBoolPref("enabled", this.enabled);
         
     } catch (e) {
         this._fail(e);
@@ -112,17 +112,17 @@ MyanmarConverterExtension.getMyConv = function() {
 */
 
 MyanmarConverterExtension._trace = function (msg) {
-	if (MyanmarConverterExtension.trace)
-	{
-		Components.classes["@mozilla.org/consoleservice;1"]
-		                   .getService(Components.interfaces.nsIConsoleService)
-		                   .logStringMessage(msg);
-	}
+    if (MyanmarConverterExtension.trace)
+    {
+        Components.classes["@mozilla.org/consoleservice;1"]
+                           .getService(Components.interfaces.nsIConsoleService)
+                           .logStringMessage(msg);
+    }
 };
 
 MyanmarConverterExtension._fail = function(e) {
     if (MyanmarConverterExtension.trace)
-	{
+    {
         var msg;
         if (e.getMessage) {
             msg = e;
@@ -141,181 +141,182 @@ MyanmarConverterExtension._fail = function(e) {
                 msg += p + ":" + e[p] + "\n";
             }
         }
-    	//alert(msg);
-    	MyanmarConverterExtension._trace(msg);
-	}
+        //alert(msg);
+        MyanmarConverterExtension._trace(msg);
+    }
 };
 
 MyanmarConverterExtension.onPageLoad = function(event) {
-	try
-	{
-	    MyanmarConverterExtension._trace("onPageLoad " + event.originalTarget.nodeName);
-	    var enableMenu = document.getElementById("myanmarConverter.enable.menu");
+    try
+    {
+        MyanmarConverterExtension._trace("onPageLoad " + event.originalTarget.nodeName);
+        var enableMenu = document.getElementById("myanmarConverter.enable.menu");
         if (enableMenu)
         {
-        	enableMenu.setAttribute("checked", MyanmarConverterExtension.enabled);
+            enableMenu.setAttribute("checked", MyanmarConverterExtension.enabled);
         }
         //else
-        //	MyanmarConverterExtension._trace("enable.menu not found");
+        //    MyanmarConverterExtension._trace("enable.menu not found");
 
-	    if (event.originalTarget.nodeName == "#document" &&
-		    ((!event.originalTarget.location) ||
-		     event.originalTarget.location.href.indexOf("chrome:") == -1))
-	    {
-		    var doc = event.originalTarget;
+        if (event.originalTarget.nodeName == "#document" &&
+            ((!event.originalTarget.location) ||
+             event.originalTarget.location.href.indexOf("chrome:") == -1))
+        {
+            var doc = event.originalTarget;
 
-		    if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location)))
-		    {
-			    MyanmarConverterExtension.processDoc(doc);
-		    }
-		
-	    }
-	}
-	catch (e) { MyanmarConverterExtension._fail(e); }
+            if (doc && (!doc.location || MyanmarConverterExtension.isEnabledForUrl(doc.location)))
+            {
+                MyanmarConverterExtension.processDoc(doc);
+            }
+        
+        }
+    }
+    catch (e) { MyanmarConverterExtension._fail(e); }
 };
 
-MyanmarConverterExtension.guessConverterForNode = function(node)
+MyanmarConverterExtension.guessConverterForNode = function(node, pageConverter)
 {
     var nodeFontFamily = window.getComputedStyle(node.parentNode, null).fontFamily;
-	var matchIndex = -1;
-	var nodeConverter = null;
-	var bestFreq = 0;
-	// take the converter matching the font in the style with the lowest index just in case the web 
+    var matchIndex = -1;
+    var nodeConverter = null;
+    var bestFreq = 0;
+    // take the converter matching the font in the style with the lowest index just in case the web 
     // page actually mixed different fonts in the same style!
-	for (var i = 0; i < MyanmarConverterExtension.legacyFonts.length; i++)
-	{
-	    var testConv = tlsMyanmarConverters[MyanmarConverterExtension.legacyFonts[i].toLowerCase()];
-	    var testIndex = nodeFontFamily.indexOf(MyanmarConverterExtension.legacyFonts[i]);
-	    if (testIndex > -1 && (matchIndex == -1 || testIndex < matchIndex))
-	    {
-	        nodeConverter = testConv;
-	        matchIndex = testIndex;
-	    }
-	    // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
-	    // change for any characters in Myanmar code range
-	    if (node.nodeValue.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
-	    {
-	        var uniFreq = testConv.matchFrequency(node.nodeValue, true);
-	        var pseudoFreq = testConv.matchFrequency(node.nodeValue, false);
-	        if (pseudoFreq > uniFreq && pseudoFreq > bestFreq)
-	        {
-	            nodeConverter = testConv;
-	            bestFreq = pseudoFreq;
-	        }
-	    }
-	}
-	if (nodeConverter == null)
-    	MyanmarConverterExtension._trace("No Converter matched: " + node.nodeValue);
-	return nodeConverter;
+    for (var i = 0; i < MyanmarConverterExtension.legacyFonts.length; i++)
+    {
+        var testConv = tlsMyanmarConverters[MyanmarConverterExtension.legacyFonts[i].toLowerCase()];
+        var testIndex = nodeFontFamily.indexOf(MyanmarConverterExtension.legacyFonts[i]);
+        if (testIndex > -1 && (matchIndex == -1 || testIndex < matchIndex))
+        {
+            nodeConverter = testConv;
+            matchIndex = testIndex;
+        }
+        // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
+        // change for any characters in Myanmar code range
+        if (node.nodeValue.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
+        {
+            var uniFreq = testConv.matchFrequency(node.nodeValue, true);
+            var pseudoFreq = testConv.matchFrequency(node.nodeValue, false);
+            if (((pseudoFreq > uniFreq) || (pageConverter == testConv && pseudoFreq == uniFreq))
+		&& pseudoFreq > bestFreq)
+            {
+                nodeConverter = testConv;
+                bestFreq = pseudoFreq;
+            }
+        }
+    }
+    if (nodeConverter == null)
+        MyanmarConverterExtension._trace("No Converter matched: " + node.nodeValue);
+    return nodeConverter;
 }
 
 MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
 {
-	var doc = parent.ownerDocument;
-	if (converter == null)
-	{
+    var doc = parent.ownerDocument;
+    if (converter == null)
+    {
         if (doc.tlsMyanmarEncoding && typeof doc.tlsMyanmarEncoding != "undefined")
-    	    converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
-		if (typeof converter == "undefined")
-		{
+            converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+        if (typeof converter == "undefined")
+        {
             MyanmarConverterExtension.guessMyanmarEncoding(doc, parent);
             this._trace("doc.tlsMyanmarEncoding" + typeof doc.tlsMyanmarEncoding);
             if (doc.tlsMyanmarEncoding && typeof doc.tlsMyanmarEncoding == "Object")
             {
                 converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
             }
-	        if (typeof converter == "undefined")
-	        {
-			    MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
-			    // still parse checking for specific styles
-		    }
-		}
-	}
-	var convertText = true;
-	// if this is directly called by the event it may not be a text node
-	if (parent.nodeType == Node.TEXT_NODE)
-	{
-		var node = parent;
-		var theParent = node.parentNode;
-		var oldValue = new String(node.nodeValue);
+            if (typeof converter == "undefined")
+            {
+                MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
+                // still parse checking for specific styles
+            }
+        }
+    }
+    var convertText = true;
+    // if this is directly called by the event it may not be a text node
+    if (parent.nodeType == Node.TEXT_NODE)
+    {
+        var node = parent;
+        var theParent = node.parentNode;
+        var oldValue = new String(node.nodeValue);
         var bestConv = converter;
         if (toUnicode)
         {
-            bestConv = MyanmarConverterExtension.guessConverterForNode(node);
-        }
-		if (bestConv)
-		{
-			var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
-			    bestConv.convertFromUnicode(oldValue);
-			if (oldValue != newValue)
-			{
-    			var newNode =  node.ownerDocument.createTextNode(newValue);
-				theParent.replaceChild(newNode, node);
-				theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
-				if (toUnicode) theParent.lang = "my";
-			}
-		}
-		return;
-	}
-	else if (parent.nodeType != Node.ELEMENT_NODE)
-	{
-		return;
-	}
-	var nodes = parent.childNodes;
-	var convertedCount = 0;
-	
-	var walker = parent.ownerDocument.createTreeWalker(parent,
-			NodeFilter.SHOW_TEXT, null, false);
-	var textNode = walker.currentNode;
-	if (textNode != null && textNode.nodeType != Node.TEXT_NODE)
-	{
-		textNode = walker.nextNode();
-	}
-	var parents = new Array();
-	while (textNode != null)
-	{
-		var theParent = textNode.parentNode;
-		var style = window.getComputedStyle(theParent, null);
-		var bestConv = converter;
-		if (toUnicode)
-        {
-            bestConv = MyanmarConverterExtension.guessConverterForNode(textNode);
+            bestConv = MyanmarConverterExtension.guessConverterForNode(node, converter);
         }
         if (bestConv)
-		{
-		    convertText = true;
-		}
-		else
-		{
-		    convertText = false;
-		}
-		var oldValue = new String(textNode.nodeValue);
-		var prevNode = textNode;
-		textNode = walker.nextNode();
-		if (convertText)
-		{
-			var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
-			    bestConv.convertFromUnicode(oldValue);
-			if (oldValue != newValue)
-			{
-    			var newNode = prevNode.ownerDocument.createTextNode(newValue);
-    			if (theParent.childNodes.length == 1)
-    			{
-				    theParent.replaceChild(newNode, prevNode);
-				    theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
-				    if (toUnicode) theParent.lang = "my";
-				}
-				else
-				{
-				    var span = prevNode.ownerDocument.createElement("span");
-				    span.style.fontFamily = bestConv.getFontFamily(toUnicode);
-				    if (toUnicode) span.lang = "my";
-				    span.appendChild(newNode);
-				    theParent.replaceChild(span, prevNode);
-				}
-			}
-		}
-	}
+        {
+            var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
+                bestConv.convertFromUnicode(oldValue);
+            if (oldValue != newValue)
+            {
+                var newNode =  node.ownerDocument.createTextNode(newValue);
+                theParent.replaceChild(newNode, node);
+                theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
+                if (toUnicode) theParent.lang = "my";
+            }
+        }
+        return;
+    }
+    else if (parent.nodeType != Node.ELEMENT_NODE)
+    {
+        return;
+    }
+    var nodes = parent.childNodes;
+    var convertedCount = 0;
+    
+    var walker = parent.ownerDocument.createTreeWalker(parent,
+            NodeFilter.SHOW_TEXT, null, false);
+    var textNode = walker.currentNode;
+    if (textNode != null && textNode.nodeType != Node.TEXT_NODE)
+    {
+        textNode = walker.nextNode();
+    }
+    var parents = new Array();
+    while (textNode != null)
+    {
+        var theParent = textNode.parentNode;
+        var style = window.getComputedStyle(theParent, null);
+        var bestConv = converter;
+        if (toUnicode)
+        {
+            bestConv = MyanmarConverterExtension.guessConverterForNode(textNode, converter);
+        }
+        if (bestConv)
+        {
+            convertText = true;
+        }
+        else
+        {
+            convertText = false;
+        }
+        var oldValue = new String(textNode.nodeValue);
+        var prevNode = textNode;
+        textNode = walker.nextNode();
+        if (convertText)
+        {
+            var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
+                bestConv.convertFromUnicode(oldValue);
+            if (oldValue != newValue)
+            {
+                var newNode = prevNode.ownerDocument.createTextNode(newValue);
+                if (theParent.childNodes.length == 1)
+                {
+                    theParent.replaceChild(newNode, prevNode);
+                    theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
+                    if (toUnicode) theParent.lang = "my";
+                }
+                else
+                {
+                    var span = prevNode.ownerDocument.createElement("span");
+                    span.style.fontFamily = bestConv.getFontFamily(toUnicode);
+                    if (toUnicode) span.lang = "my";
+                    span.appendChild(newNode);
+                    theParent.replaceChild(span, prevNode);
+                }
+            }
+        }
+    }
 }
 
 MyanmarConverterExtension.processDoc = function(doc) {
@@ -323,96 +324,96 @@ MyanmarConverterExtension.processDoc = function(doc) {
 
     if (doc.body)
     {
-    	MyanmarConverterExtension.parseNodes(doc.body, null, true);
-    	MyanmarConverterExtension.convertTitle(doc);
-    	doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
-    	doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+        MyanmarConverterExtension.parseNodes(doc.body, null, true);
+        MyanmarConverterExtension.convertTitle(doc);
+        doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+        doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
     }
 };
 
 MyanmarConverterExtension.convertTitle = function(doc)
 {
-	try
-	{
-	    if (typeof doc.tlsMyanmarEncoding != "undefined")
-	    {
-		    var converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
-		    if (typeof converter != "undefined")
-		    {
-		        doc.title = converter.convertToUnicode(doc.title);
-	        }
-	        else if (doc.tlsMyanmarEncoding != "unicode")
-	        {
-	            MyanmarConverterExtension._trace("No converter for: " + doc.tlsMyanmarEncoding);
-	        }
-	    }
-	}
-	catch (e)
-	{
-		MyanmarConverterExtension._trace(e);
-	}
+    try
+    {
+        if (typeof doc.tlsMyanmarEncoding != "undefined")
+        {
+            var converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
+            if (typeof converter != "undefined")
+            {
+                doc.title = converter.convertToUnicode(doc.title);
+            }
+            else if (doc.tlsMyanmarEncoding != "unicode")
+            {
+                MyanmarConverterExtension._trace("No converter for: " + doc.tlsMyanmarEncoding);
+            }
+        }
+    }
+    catch (e)
+    {
+        MyanmarConverterExtension._trace(e);
+    }
 };
 
 MyanmarConverterExtension.onTreeModified = function(event)
 {
-	MyanmarConverterExtension._trace(event.type + " " + event.target);
-	if (event.target)
-	{
-		try
-		{
-			// the parse may change nodes itself, so remove the event listener temporarily
-			var doc = event.target.ownerDocument;
-			doc.removeEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
-			doc.removeEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
-			if (event.type == "DOMCharacterDataModified")
-			{
-				MyanmarConverterExtension.updateText(event.target, event.prevValue, event.newValue);
-			}
-			else
-			{
-				MyanmarConverterExtension.parseNodes(event.target, null, true);
-			}
-			doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
-			doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
-		}
-		catch (e)
-		{
-			MyanmarConverterExtension._trace(e);
-		}
-	}
+    MyanmarConverterExtension._trace(event.type + " " + event.target);
+    if (event.target)
+    {
+        try
+        {
+            // the parse may change nodes itself, so remove the event listener temporarily
+            var doc = event.target.ownerDocument;
+            doc.removeEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+            doc.removeEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+            if (event.type == "DOMCharacterDataModified")
+            {
+                MyanmarConverterExtension.updateText(event.target, event.prevValue, event.newValue);
+            }
+            else
+            {
+                MyanmarConverterExtension.parseNodes(event.target, null, true);
+            }
+            doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+            doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+        }
+        catch (e)
+        {
+            MyanmarConverterExtension._trace(e);
+        }
+    }
 };
 
 MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
 {
-	if (!prevValue) prevValue = "";
-	if (!newValue) newValue = "";
-	var s = 0;
-	var prevE = prevValue.length - 1;
-	var newE = newValue.length - 1;
-	// find common text at start
-	for (s = 0; s < prevValue.length && s < newValue.length; s++)
-	{
-		if (prevValue[s] != newValue[s]) break;
-	}
-	// find common text at end
-	for (; prevE > s && newE > s; --prevE, --newE)
-	{
-		if (prevValue[prevE] != newValue[newE]) break;
-	}
-	var prefix = prevValue.substring(0, s);
-	var suffix = prevValue.substring(prevE+1, prevValue.length);
-	var toConvert = newValue.substring(s, newE+1);
-	var converter = tlsMyanmarConverters[target.ownerDocument.tlsMyanmarEncoding.toLowerCase()];
-	if (typeof converter == "undefined")
-	{
-	    MyanmarConverterExtension.guessMyanmarEncoding(target.ownerDocument, target);
-	    converter = tlsMyanmarConverters[target.ownerDocument.tlsMyanmarEncoding.toLowerCase()];
-	}
-	if (typeof converter != "undefined")
-	{
-	    var converted = converter.convertToUnicode(toConvert);
-    	target.textContent = new String(prefix + converted + suffix);
-	}
+    if (!prevValue) prevValue = "";
+    if (!newValue) newValue = "";
+    var s = 0;
+    var prevE = prevValue.length - 1;
+    var newE = newValue.length - 1;
+    // find common text at start
+    for (s = 0; s < prevValue.length && s < newValue.length; s++)
+    {
+        if (prevValue[s] != newValue[s]) break;
+    }
+    // find common text at end
+    for (; prevE > s && newE > s; --prevE, --newE)
+    {
+        if (prevValue[prevE] != newValue[newE]) break;
+    }
+    var prefix = prevValue.substring(0, s);
+    var suffix = prevValue.substring(prevE+1, prevValue.length);
+    var toConvert = newValue.substring(s, newE+1);
+    var converter = tlsMyanmarConverters[target.ownerDocument.tlsMyanmarEncoding.toLowerCase()];
+    if (typeof converter == "undefined")
+    {
+        MyanmarConverterExtension.guessMyanmarEncoding(target.ownerDocument, target);
+        converter = tlsMyanmarConverters[target.ownerDocument.tlsMyanmarEncoding.toLowerCase()];
+    }
+    if (typeof converter != "undefined")
+    {
+        var converted = converter.convertToUnicode(toConvert);
+        target.textContent = new String(prefix + converted + suffix);
+    }
 };
 
 MyanmarConverterExtension.isEnabledForUrl = function(url) {
@@ -422,14 +423,14 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
 
     this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
     try
-	{
-	    if (url && url.hostname && url.pathname)
-    	{
-	    
-	        var patternsTime = (prefs)? prefs.getIntPref("urlPatternsUpdateTime") : 0;
-	        if (patternsTime != this.urlPatternsLoadTime)
-	        {
-	            this.urlPatternsLoadTime = patternsTime;
+    {
+        if (url && url.hostname && url.pathname)
+        {
+        
+            var patternsTime = (prefs)? prefs.getIntPref("urlPatternsUpdateTime") : 0;
+            if (patternsTime != this.urlPatternsLoadTime)
+            {
+                this.urlPatternsLoadTime = patternsTime;
                 this.urlPatterns = MyanmarConverterOptions.loadUrlPatterns();
             }
             for (var i = 0; i < this.urlPatterns.length; i++)
@@ -439,7 +440,7 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
                 if (pattern.hostnameExact)
                 {
                     if (url.hostname == pattern.hostname)
-                        hostMatch = false;
+                        hostMatch = true;
                 }
                 else
                 {
@@ -462,7 +463,7 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
     {
         this._fail(e);
     }
-	return this.enabled;
+    return this.enabled;
 };
 
 MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
@@ -504,47 +505,47 @@ MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
 
 /*
 MyanmarConverterExtension.isZawGyi = function(doc) {
-	if (doc.body && doc.body.textContent.match("[\u1050-\u109F]"))
-	{
-		var myConv = MyanmarConverterExtension.getMyConv();
-		if (typeof myConv == "undefined")
-		{
-			MyanmarConverterExtension._trace("myConv undefined");
-			return false;
-		}
-		var converter = myConv.wrappedJSObject.getConv();
-		var testContent = doc.body.textContent;
-		var converted = converter.convert(testContent, false);
-		if (converted != doc.body.textContent)
-		{
-			doc.myconvDefaultToZawGyi = true;
-			MyanmarConverterExtension._trace(doc.location + " Default to ZawGyi");
-			return true;
-		}
-		return false;
-	}
-	return false;
+    if (doc.body && doc.body.textContent.match("[\u1050-\u109F]"))
+    {
+        var myConv = MyanmarConverterExtension.getMyConv();
+        if (typeof myConv == "undefined")
+        {
+            MyanmarConverterExtension._trace("myConv undefined");
+            return false;
+        }
+        var converter = myConv.wrappedJSObject.getConv();
+        var testContent = doc.body.textContent;
+        var converted = converter.convert(testContent, false);
+        if (converted != doc.body.textContent)
+        {
+            doc.myconvDefaultToZawGyi = true;
+            MyanmarConverterExtension._trace(doc.location + " Default to ZawGyi");
+            return true;
+        }
+        return false;
+    }
+    return false;
 };
 */
 
 MyanmarConverterExtension.convertDocument = function(node)
 {
-	try
-	{
-		if (node)
-		{
-			var doc = node.ownerDocument;
-			//MyanmarConverterExtension._trace(doc.location);
-			if (doc)
-			{
-				MyanmarConverterExtension.processDoc(doc);
-			}
-		}
-	}
-	catch (e)
-	{
-		MyanmarConverterExtension._fail(e);
-	}
+    try
+    {
+        if (node)
+        {
+            var doc = node.ownerDocument;
+            //MyanmarConverterExtension._trace(doc.location);
+            if (doc)
+            {
+                MyanmarConverterExtension.processDoc(doc);
+            }
+        }
+    }
+    catch (e)
+    {
+        MyanmarConverterExtension._fail(e);
+    }
 };
 
 MyanmarConverterExtension.convertTextNode = function(textNode, converter, toUnicode, startOffset, endOffset)
@@ -853,8 +854,8 @@ MyanmarConverterExtension.convertSubTree = function(converter, toUnicode, node)
         if (conv)
         {
             var doc = node.ownerDocument;
-			doc.removeEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
-			doc.removeEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+            doc.removeEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
+            doc.removeEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
             if (node.ownerDocument.defaultView.getSelection())
             {
                 MyanmarConverterExtension.convertSelection(node, conv, toUnicode);
@@ -864,7 +865,7 @@ MyanmarConverterExtension.convertSubTree = function(converter, toUnicode, node)
                 MyanmarConverterExtension.parseNodes(node, conv, toUnicode);
             }
             doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
-			doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
+            doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
         }
         else
             MyanmarConverterExtension._trace("ConvertSubTree: " + converter + " not found" + conv);

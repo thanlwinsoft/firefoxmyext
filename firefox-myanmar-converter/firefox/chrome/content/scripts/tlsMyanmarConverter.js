@@ -29,7 +29,7 @@ function TlsMyanmarConverter(data)
         "wasway","hatoh","eVowel","uVowel","lVowel","anusvara","aVowel","lDot","asat","lDot","visarga");
     this.legacySequence = new Array("eVowel","yayit",null,"lig",null,"cons","stack","kinzi",
         "uVowel","anusvara","asat","stack","yapin","wasway","hatoh","wasway","yapin","kinzi",
-        "uVowel","lVowel","anusvara","uVowel","lVowel","aVowel","lDot","asat","lDot","visarga","lDot");
+        "uVowel","lDot","lVowel","anusvara","uVowel","lVowel","aVowel","lDot","asat","lDot","visarga","lDot");
     this.unicodePattern = this.buildRegExp(this.unicodeSequence, true);
     this.legacyPattern = this.buildRegExp(this.legacySequence, false);
     this.fontFamily = "";
@@ -65,8 +65,11 @@ TlsMyanmarConverter.prototype.buildRegExp = function(sequence, isUnicode)
                 for (var k = 0; k < this.data[sequence[i]][j].length; k++)
                 {
                     var codePoint = this.data[sequence[i]][j].charCodeAt(k);
-                    if (codePoint > this.maxCodePoint) this.maxCodePoint = codePoint;
-                    if (codePoint < this.minCodePoint) this.minCodePoint = codePoint;
+		    if (codePoint != 0x20)
+		    {
+                    	if (codePoint > this.maxCodePoint) this.maxCodePoint = codePoint;
+                    	if (codePoint < this.minCodePoint) this.minCodePoint = codePoint;
+		    }
                 }
                 if (isUnicode)
                 {   
@@ -340,8 +343,17 @@ TlsMyanmarConverter.prototype.toUnicodeMapper = function(inputText, matchData)
         if (inputText.substr(matchData.index + matchData[0].length, 3) ==
           this.data["cons"]["င"] + this.data["asat"]["်"] + this.data["visarga"]["း"])
         {
-            syllable["cons"] == "၎";
+            syllable["cons"] = "၎";
         }
+    }
+     else if (syllable["cons"] == "၇" && (syllable["eVowel"]||syllable["uVowel"]||syllable["lVowel"]||syllable["anusvara"]||
+		syllable["aVowel"]||syllable["lDot"]||syllable["asat"]||syllable["wasway"]||syllable["hatoh"]))
+    {
+        // check for lagaun
+       // if (inputText.substr(matchData.index + matchData[0].length, 3) ==
+         // this.data["cons"]["င"] + this.data["asat"]["်"] + this.data["visarga"]["း"])
+            syllable["cons"] = "ရ";
+	    this.debug.print("7 found instead of ရ: " + inputText);
     }
     var outputOrder = new Array("kinzi","lig","cons","numbers","stack","contraction","yapin","yayit",
         "wasway","hatoh","eVowel","uVowel","lVowel","anusvara","aVowel","lDot","asat","visarga");

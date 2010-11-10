@@ -177,7 +177,9 @@ tlsMyanmarConverterData["zawgyi-one"]=
 "lDot":{
 "့":"\u1095",
 "့_alt":"\u1094",
-"့_left":"\u1037"
+"့_left":"\u1037",
+"့_spaceDot":" \u1037",
+"့_spaceDotAlt":" \u1094"
 },
 "asat":{
 "်":"\u1039"

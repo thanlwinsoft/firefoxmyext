@@ -139,7 +139,7 @@ var MyanmarConverterOptions = {
         urlData.pathnameExact = document.getElementById("myanmarConverter.options.urlPathnameExact").selected;
         urlData.enableConversion = document.getElementById("myanmarConverter.options.enableConversionForPattern").checked;
         var urlList = document.getElementById("myanmarConverter.options.urlList");
-        if (urlData.hostname.length) // ignore if no hostname
+        if (urlData.hostname.length || urlData.pathname.length) // ignore if no hostname
         {
             if (urlData.hostname.indexOf("/") == -1)
             {
