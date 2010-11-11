@@ -964,15 +964,16 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
         {
             var mi = document.createElement("menuitem");
             mi.setAttribute("id", "myanmarconverter.context.popup.menu." + this.legacyFonts[i] +"2unicode");
+            var fontName=this.messages.GetStringFromName(this.legacyFonts[i]);
             mi.setAttribute("label", this.messages.formatStringFromName("convertToUnicode",
-                [this.legacyFonts[i]], 1));
+                [fontName], 1));
             mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
                 this.legacyFonts[i] + "', true, document.popupNode);");
             popup.appendChild(mi);
             mi = document.createElement("menuitem");
             mi.setAttribute("id", "myanmarconverter.context.popup.menu.unicode2" + this.legacyFonts[i]);
             mi.setAttribute("label", this.messages.formatStringFromName("convertFromUnicode",
-                [this.legacyFonts[i]], 1));
+                [fontName], 1));
             mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
                 this.legacyFonts[i] + "', false, document.popupNode);");
             popup.appendChild(mi);

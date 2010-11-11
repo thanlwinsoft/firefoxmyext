@@ -4,7 +4,6 @@
 <!ENTITY myanmarConverter.options.converter.zawgyi "Zawgyi-One">
 <!ENTITY myanmarConverter.options.converter.wininnwa "WinInnwa">
 <!ENTITY myanmarConverter.options.converter.wwin_burmese1 "Wwin_Burmese1">
-<!ENTITY myanmarConverter.options.urlPattern "URL Pattern:">
 <!ENTITY myanmarConverter.options.add "Add">
 <!ENTITY myanmarConverter.options.remove "Remove">
 <!ENTITY myanmarConverter.options.urlList.enable "Conversion Enabled">

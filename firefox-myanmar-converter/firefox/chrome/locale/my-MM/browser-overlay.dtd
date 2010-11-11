@@ -1,7 +1,7 @@
-<!ENTITY myanmarConverter.enable.label			"မြန်မာစကား ယူနီကုတ် ၅.၁ အထိ ပြောင်းပါ">
+<!ENTITY myanmarConverter.enable.label			"မြန်မာယူနီကုတ် ၅.၁ အထိ ပြောင်းပါ">
 <!ENTITY myanmarConverter.enable.accessKey		"m">
-<!ENTITY myanmarConverter.context.label			"ဒီစာမျက်နှာ မြန်မာ ယူနီကုတ် ၅.၁ အထိ ပြောင်းပါ">
+<!ENTITY myanmarConverter.context.label			"ဒီစာမျက်နှာကို မြန်မာယူနီကုတ် ၅.၁ အထိ ပြောင်းပါ">
 <!ENTITY myanmarConverter.context.accessKey		"u">
-<!ENTITY myanmarConverter.context.popup.label	"မြန်မာယူနီကုတ်ပြောင်းပေးနိုင်းမှု">
-<!ENTITY myanmarConverter.tools.options.label "မြန်မာအပြောင်းခြင်ရွေးပိုင်ခြင်">
+<!ENTITY myanmarConverter.context.popup.label	"ရွေးချယ်ထားသောစကားလုံးဖွန့်ကို​အခြားဖွန့်များသို့​ပြောင်းချင်း">
+<!ENTITY myanmarConverter.tools.options.label "မြန်မာစာ ဖွန့် ပြောင်းလဲခြင်းရွေးချယ်ပိုင်ခွင့်များ">
 <!ENTITY myanmarConverter.tools.options.accessKey		"">
