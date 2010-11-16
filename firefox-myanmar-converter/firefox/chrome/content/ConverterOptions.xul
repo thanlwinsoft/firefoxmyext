@@ -7,7 +7,7 @@
         buttons="accept,cancel"
         buttonlabelaccept="&myanmarConverter.options.accept;"
         buttonlabelcancel="&myanmarConverter.options.cancel;"
-        persist="screenX screenY width height"
+        
         onload="MyanmarConverterOptions.onLoad();"
         ondialogaccept="return MyanmarConverterOptions.doOk();"
         ondialogcancel="return MyanmarConverterOptions.doCancel();">
@@ -16,7 +16,7 @@
 
 <dialogheader title="&myanmarConverter.options.title;" description="&myanmarConverter.options.desc;"/>
 
-<!--
+<!--persist="screenX screenY width height"
 <groupbox flex="1">
   <caption label="&myanmarConverter.options.enableConverters;"/>
   <checkbox id="zawgyi-one" selected="true" label="&myanmarConverter.options.converter.zawgyi;"/>
@@ -33,16 +33,17 @@
         </columns>
         <rows>
             <row>
-                <label control="myanmarConverter.options.urlHostname"
+                <label control="myanmarConverter.options.urlHostname" 
                     value="&myanmarConverter.options.urlHostname;"/>
                 <textbox id="myanmarConverter.options.urlHostname"/>
                 <radiogroup>
                     <radio id="myanmarConverter.options.urlHostnameExact"
                         label="&myanmarConverter.options.urlHostnameExact;"/>
                     <radio id="myanmarConverter.options.urlHostnameSuffix"
-                        label="&myanmarConverter.options.urlHostnameSuffix;"/>
+                        label="&myanmarConverter.options.urlHostnameSuffix;" selected="true"/>
                 </radiogroup>
             </row>
+            <spacer flex="1"/>
             <row>
                 <label control="myanmarConverter.options.urlPathname"
                     value="&myanmarConverter.options.urlPathname;"/>
@@ -51,22 +52,23 @@
                     <radio id="myanmarConverter.options.urlPathnameExact"
                         label="&myanmarConverter.options.urlPathnameExact;"/>
                     <radio id="myanmarConverter.options.urlPathnamePrefix"
-                        label="&myanmarConverter.options.urlPathnamePrefix;"/>
+                        label="&myanmarConverter.options.urlPathnamePrefix;" selected="true"/>
                 </radiogroup>
             </row>
             <row>
                 <label />
                 <checkbox id="myanmarConverter.options.enableConversionForPattern" checked="true" label="&myanmarConverter.options.enableConversionForPattern;"/>
+                <hbox>
+                    <spacer flex="1"/>
+                    <button id="myanmarConverter.options.addUrl" label="&myanmarConverter.options.add;"
+                oncommand="MyanmarConverterOptions.addUrl();"/>
+                    <button id="myanmarConverter.options.removeUrl" label="&myanmarConverter.options.remove;"
+                oncommand="MyanmarConverterOptions.removeUrl();"/>
+                </hbox>
             </row>
         </rows>
     </grid>
-    <hbox>
-        <spacer flex="1"/>
-        <button id="myanmarConverter.options.addUrl" label="&myanmarConverter.options.add;"
-    oncommand="MyanmarConverterOptions.addUrl();"/>
-        <button id="myanmarConverter.options.removeUrl" label="&myanmarConverter.options.remove;"
-    oncommand="MyanmarConverterOptions.removeUrl();"/>
-    </hbox>
+    
     <listbox id="myanmarConverter.options.urlList" onselect="MyanmarConverterOptions.urlOnSelect();">
         <listhead>
             <listheader label="&myanmarConverter.options.urlList.enable;"/>
@@ -75,10 +77,22 @@
         </listhead>
         <listcols><listcol/><listcol flex="1"/><listcol flex="1"/></listcols>
     </listbox>
-    <vbox>
-        <description value="&myanmarConverter.options.defaultDescription;"/>
-        <checkbox id="myanmarConverter.options.defaultEnableConversion" selected="true" label="&myanmarConverter.options.defaultEnableConversion;"/>
+    <hbox>
+        <vbox>
+            <groupbox>
+             <caption label="&myanmarConverter.options.defaultTitle;"/>
+             <label value="&myanmarConverter.options.defaultDescription;"/>
+             <checkbox id="myanmarConverter.options.defaultEnableConversion" selected="true" label="&myanmarConverter.options.defaultEnableConversion;"/>
+            </groupbox>
+        </vbox>
         <spacer flex="1"/>
-    </vbox>
+        <vbox>
+            <groupbox>
+             <caption label="&myanmarConverter.options.zwspaceTitle;"/>
+             <label value="&myanmarConverter.options.zeroWidthSpace;"/>
+            <checkbox id="myanmarConverter.options.zeroWidthSpaceEnableConversion" selected="true" label="&myanmarConverter.options.zeroWidthSpaceEnableConversion;"/>
+            </groupbox>
+        </vbox>
+    </hbox>
 </vbox>
 </dialog>

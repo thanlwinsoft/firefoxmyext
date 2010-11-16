@@ -48,7 +48,8 @@ MyanmarConverterExtension.initialize = function() {
         //var conversionData = [ "zawgyi", "wininnwa", "wwin_burmese" ];
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
-            new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
+            var conv = new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
+            conv.useZwsp= (prefs)? prefs.getBoolPref("useZwsp") :true;
             MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
 
@@ -232,6 +233,13 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
             }
         }
     }
+    if(converter != null)
+    {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
+        converter.useZwsp=(prefs)? prefs.getBoolPref("useZwsp") :true;
+    }
     var convertText = true;
     // if this is directly called by the event it may not be a text node
     if (parent.nodeType == Node.TEXT_NODE)
@@ -397,6 +405,29 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
             }
         }
     }
+    // convert alt text
+    if (converter != null)
+    {
+    var altConv = converter;
+    var images=parent.getElementsByTagName('img');
+    for(var i = 0 ;i < images.length ; i++)
+        {
+        if(images[i].hasAttribute("alt"))
+            {
+            var oldAlt=images[i].getAttribute('alt');
+            var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
+                altConv.convertFromUnicode(oldAlt);
+            images[i].setAttribute('alt',newAlt);
+            }
+        if(images[i].hasAttribute("title"))
+            {
+            var oldAlt=images[i].getAttribute('title');
+            var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
+                altConv.convertFromUnicode(oldAlt);
+            images[i].setAttribute("title",newAlt);
+            }
+        }
+    }
 }
 
 MyanmarConverterExtension.processDoc = function(doc) {
@@ -525,7 +556,7 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
                 else
                 {
                     var pos = url.hostname.find(pattern.hostname);
-                    if (pos > -1 && pos + pattern.hostname.length == url.hostname.length)
+                    if ((pos > -1) && (pos + pattern.hostname.length == url.hostname.length))
                     {
                         hostMatch = true;
                     }
@@ -960,16 +991,28 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
 {
     if (!popup.hasChildNodes())
     {
+    var mu=document.createElement("menu");
+    mu.setAttribute("id", "myanmarconverter.context.popup.form.menu");
+    var label=this.messages.GetStringFromName("formMenu");
+    mu.setAttribute("label", label);
+    popup.appendChild(mu);
+    var mupp=document.createElement("menupopup")
+    mupp.setAttribute("id","myanmarconverter.context.popup.form.menupopup");
+    mu.appendChild(mupp);
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var mi = document.createElement("menuitem");
             mi.setAttribute("id", "myanmarconverter.context.popup.menu." + this.legacyFonts[i] +"2unicode");
             var fontName=this.messages.GetStringFromName(this.legacyFonts[i]);
-            mi.setAttribute("label", this.messages.formatStringFromName("convertToUnicode",
+            mi.setAttribute("label", this.messages.formatStringFromName("asFont",
                 [fontName], 1));
+            mi.setAttribute("oncommand", "MyanmarConverterExtension.addFormEventHandlers('" +
+                this.legacyFonts[i] + "', document.popupNode);");
+            mupp.appendChild(mi);
+            /*
             mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
                 this.legacyFonts[i] + "', true, document.popupNode);");
-            popup.appendChild(mi);
+            mupp.appendChild(mi);
             mi = document.createElement("menuitem");
             mi.setAttribute("id", "myanmarconverter.context.popup.menu.unicode2" + this.legacyFonts[i]);
             mi.setAttribute("label", this.messages.formatStringFromName("convertFromUnicode",
@@ -977,8 +1020,163 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
             mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
                 this.legacyFonts[i] + "', false, document.popupNode);");
             popup.appendChild(mi);
+            */
+        }
+    mu=document.createElement("menu");
+    mu.setAttribute("id", "myanmarconverter.context.popup.toUnicode.menu");
+    label=this.messages.GetStringFromName("convertToUnicodeMenu");
+    mu.setAttribute("label", label);
+    popup.appendChild(mu);
+    mupp=document.createElement("menupopup")
+    mupp.setAttribute("id","myanmarconverter.context.popup.toUnicode.menupopup");
+    mu.appendChild(mupp);
+        for (var i = 0; i < this.legacyFonts.length; i++)
+        {
+            var mi = document.createElement("menuitem");
+            mi.setAttribute("id", "myanmarconverter.context.popup.menu." + this.legacyFonts[i] +"2unicode");
+            var fontName=this.messages.GetStringFromName(this.legacyFonts[i]);
+            mi.setAttribute("label", this.messages.formatStringFromName("fromFont",
+                [fontName], 1));
+            mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
+                this.legacyFonts[i] + "', true, document.popupNode);");
+            mupp.appendChild(mi);
+        }
+    mu=document.createElement("menu");
+    mu.setAttribute("id", "myanmarconverter.context.popup.toUnicode.menu");
+    label=this.messages.GetStringFromName("convertFromUnicodeMenu");
+    mu.setAttribute("label", label);
+    popup.appendChild(mu);
+    mupp=document.createElement("menupopup")
+    mupp.setAttribute("id","myanmarconverter.context.popup.toUnicode.menupopup");
+    mu.appendChild(mupp);
+        for (var i = 0; i < this.legacyFonts.length; i++)
+        {
+            var mi = document.createElement("menuitem");
+            mi.setAttribute("id", "myanmarconverter.context.popup.menu." + this.legacyFonts[i] +"2unicode");
+            var fontName=this.messages.GetStringFromName(this.legacyFonts[i]);
+            mi.setAttribute("label", this.messages.formatStringFromName("toFont",
+                [fontName], 1));
+            mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
+                this.legacyFonts[i] + "', false, document.popupNode);");
+            mupp.appendChild(mi);
         }
     }
+};
+
+function MyanmarConverterEventListener(conv)
+{
+    this.conv=conv;
+    return this;
+}
+
+MyanmarConverterEventListener.prototype.handleEvent = function(event)
+{
+try{
+
+    MyanmarConverterExtension._trace('myanmarConverterEvent' + event.type +
+        ' ' + event.target.nodeName + ' "' + event.target.value + '"');
+    if(event.type=='focus')
+    {
+        if(event.target.tlsUnicode == false)
+        {
+            event.target.value=this.conv.convertToUnicode(event.target.value);
+            event.target.tlsUnicode = true;
+        }
+    }
+    else if(event.type=='change' || event.type=='blur')
+    {
+        if(event.target.tlsUnicode == true)
+        {
+            event.target.value=this.conv.convertFromUnicode(event.target.value);
+            event.target.tlsUnicode = false;
+        }
+        else if(event.target.length == 0)
+        {
+            event.target.tlsUnicode = true;
+        }
+    }
+    else if(event.type=='keypress' || event.type=='keydown')
+    {
+        if((event.keyCode==13) && (event.shiftKey == false))
+        {
+            event.target.value=this.conv.convertFromUnicode(event.target.value);
+            MyanmarConverterExtension._trace('myanmarConverterEvent Enter');
+        }
+    }
+  }
+  catch (gm)
+  {
+     MyanmarConverterExtension._fail(gm);
+  }
+};
+
+MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
+{
+    try
+    {
+        var conv=tlsMyanmarConverters[converterName.toLowerCase()];
+        MyanmarConverterExtension._trace('addFormEventHandlers' + node.nodeName + ' "' + node.value + '"');
+        var doc = node.ownerDocument;
+        if(node.nodeName == 'TEXTAREA' || (node.nodeName == 'INPUT' && (!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')))
+        {
+            node.addEventListener('keydown',new MyanmarConverterEventListener(conv),false);
+            node.addEventListener('focus',new MyanmarConverterEventListener(conv),false);
+            node.addEventListener('change',new MyanmarConverterEventListener(conv),false);
+            node.addEventListener('blur',new MyanmarConverterEventListener(conv),false);
+            node.tlsUnicode = true;
+        }
+        else
+        {
+            var area=node.getElementsByTagName('textarea');
+            var input=node.getElementsByTagName('input');
+            
+            if(area.length > 0 || input.length > 0 )
+            {
+                if(doc.forms.length)
+                {
+                    for(var i=0 ; i<area.length ; i++)
+                    {
+                        area[i].addEventListener('focus',new MyanmarConverterEventListener(conv),false);
+                        area[i].addEventListener('change',new MyanmarConverterEventListener(conv),false);
+                        area[i].addEventListener('blur',new MyanmarConverterEventListener(conv),false);
+                        area[i].tlsUnicode = true;
+                    }
+                    for(var i=0 ; i<input.length ; i++)
+                    {
+                        if(!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')
+                        {
+                            input[i].addEventListener('focus',new MyanmarConverterEventListener(conv),false);
+                            input[i].addEventListener('change',new MyanmarConverterEventListener(conv),false);
+                            input[i].addEventListener('blur',new MyanmarConverterEventListener(conv),false);
+                            input[i].tlsUnicode = true;
+                        }
+                    }
+                }
+                else
+                {
+                    for(var i=0 ; i<area.length ; i++)
+                    {
+                        area[i].addEventListener('keydown',new MyanmarConverterEventListener(conv),false);
+                        MyanmarConverterExtension._trace("area Event Listener " + area[i].id);
+                    }
+                    for(var i=0 ; i<input.length ; i++)
+                    {
+                        if(!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')
+                        {
+                            input[i].addEventListener('keydown',new MyanmarConverterEventListener(conv),false);
+                        }
+                    }
+                    doc.defaultView.addEventListener('keydown', new MyanmarConverterEventListener(conv), false);
+                }
+
+            }
+        }
+    }
+    catch(gm)
+    {
+        MyanmarConverterExtension._fail(gm);
+    }
+    
 };
 
 MyanmarConverterExtension.observe = function(subject, topic, data)

@@ -36,25 +36,9 @@ var MyanmarConverterOptions = {
     {
         try
         {
-            if (typeof window != "undefined" && window.arguments && typeof window.arguments != "undefined")
-            {
-                this.extension = window.arguments[0];
-                var urlHostname = document.getElementById("myanmarConverter.options.urlHostname");
-                var urlPathname = document.getElementById("myanmarConverter.options.urlPathname");
-                if (urlHostname && urlPathname && window.arguments[1])
-                {
-                    try
-                    {
-                        urlHostname.value = window.arguments[1].hostname;
-                        urlPathname.value = window.arguments[1].pathname;
-                    }
-                    catch(e)
-                    {
-                        for (var i in e)
-                            this.trace("MyanmarConverterOptions: Error getting location " + i + ":" + e[i]);
-                    }
-                }
-            }
+            var suffix= document.getElementById("myanmarConverter.options.urlHostnameSuffix");
+            suffix.getParentNode().selectedItem = suffix;
+          
             var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                       .getService(Components.interfaces.nsIPrefService)
                                       .getBranch("extensions.myanmarconverter.");
@@ -64,11 +48,44 @@ var MyanmarConverterOptions = {
             var defaultEnable = document.getElementById("myanmarConverter.options.defaultEnableConversion");
             if (defaultEnable)
                 defaultEnable.checked = this.enabled;
+            this.zwspace = (prefs)? prefs.getBoolPref("useZwsp") : true;
+            var zwspaceEnable = document.getElementById("myanmarConverter.options.zeroWidthSpaceEnableConversion");
+            if (zwspaceEnable)
+                zwspaceEnable.checked = this.zwspace;
+                
             this.urlPatterns = this.loadUrlPatterns();
             var urlList = document.getElementById("myanmarConverter.options.urlList");
             for (var i = 0; i < this.urlPatterns.length; i++)
             {
                 urlList.appendChild(this.createUrlListEntry(this.urlPatterns[i]));
+            }
+            if (typeof window != "undefined" && window.arguments && typeof window.arguments != "undefined")
+            {
+                this.extension = window.arguments[0];
+                var urlHostname = document.getElementById("myanmarConverter.options.urlHostname");
+                var urlPathname = document.getElementById("myanmarConverter.options.urlPathname");
+                if (urlHostname && urlPathname && window.arguments[1])
+                {
+                    try
+                    {
+                        var patternIndex = this.findPatternForUrl(window.arguments[1]);
+                        if (patternIndex == -1)
+                        {
+                            urlHostname.value = window.arguments[1].hostname;
+                            urlPathname.value = window.arguments[1].pathname;
+                        }
+                        else
+                        {
+                            var urlList = document.getElementById("myanmarConverter.options.urlList");
+                            urlList.selectedIndex = patternIndex;
+                        }
+                    }
+                    catch(e)
+                    {
+                        for (var i in e)
+                            this.trace("MyanmarConverterOptions: Error getting location " + i + ":" + e[i]);
+                    }
+                }
             }
         }
         catch (e)
@@ -82,6 +99,36 @@ var MyanmarConverterOptions = {
             }
         }
     },
+    
+    findPatternForUrl : function(url)
+    {
+        for(var i = 0 ;i < this.urlPatterns.length ; i++ )
+        {
+            var hostMatch = false;
+            var pattern = this.urlPatterns[i];
+            if (pattern.hostnameExact)
+            {
+                if (url.hostname == pattern.hostname)
+                    hostMatch = true;
+            }
+            else
+            {
+                var pos = url.hostname.find(pattern.hostname);
+                if ((pos > -1) && (pos + pattern.hostname.length == url.hostname.length))
+                {
+                    hostMatch = true;
+                }
+            }
+            if (hostMatch &&
+                (pattern.pathnamePrefix && url.pathname == pattern.pathname) || 
+                (url.pathname.indexOf(pattern.pathname) == 0))
+            {
+                return i;
+            }
+        }
+        return -1;
+    },
+    
     trace : function(msg)
     {
         if (this.traceEnabled)
@@ -227,11 +274,18 @@ var MyanmarConverterOptions = {
             this.enabled = defaultEnable.checked;
             prefs.setBoolPref("enabled", this.enabled);
         }
+         var zwspaceEnable = document.getElementById("myanmarConverter.options.zeroWidthSpaceEnableConversion");
+        if (this.zwspace != zwspaceEnable.checked)
+        {
+            this.zwspace = zwspaceEnable.checked;
+            prefs.setBoolPref("useZwsp", this.zwspace);
+        }
         if (this.extension)
         {
             this.extension.enabled = this.enabled;
             this.extension.urlPatterns = this.urlPatterns;
         }
+        
         // save data
         var fos = Components.classes["@mozilla.org/network/file-output-stream;1"].
               createInstance(Components.interfaces.nsIFileOutputStream);

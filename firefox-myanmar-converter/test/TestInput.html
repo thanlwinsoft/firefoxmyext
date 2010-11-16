@@ -1,0 +1,36 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+<title>Testing for gmail</title>
+<script>
+function testKeyPress(event)
+{
+
+    var key=event.keyCode;
+    var keyDiv=document.getElementById('key');
+    var eventDesc=document.createTextNode(" k:"+ event.keyCode +" c:"+ event.charCode);
+    keyDiv.appendChild(eventDesc);
+    if(key==13 && (event.shiftKey == false))
+    {
+     event.target.value=event.target.value.toUpperCase();
+    }
+
+}
+function testOnChange(event)
+{
+event.target.value=event.target.value.toUpperCase();
+}
+</script>
+</head>
+<body>
+<form action="TestInput.html" method="GET">
+<input type="text" onkeypress="testKeyPress(event);" id="testKey" name="testKey"/>
+
+<textarea onchange="testOnChange(event);" onkeypress="testKeyPress(event);"  id="gmailKey" name="gmailKey" cols="100" rows="10">
+</textarea>
+<button type="submit">Submit</button>
+</form>
+<div id="key">
+</div>
+</body>
+</html>

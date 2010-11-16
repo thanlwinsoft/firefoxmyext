@@ -1,22 +1,26 @@
-<!ENTITY myanmarConverter.options.title			"မြန်မာစာ​ဖွန့်ပြောင်းလဲ​ရာ၌ ရွေးပိုင်ခွင့်များ ">
-<!ENTITY myanmarConverter.options.desc			"အခြားမြန်မာစာသားမှ ယူနီကုတ်သို့ ပြောင်းလဲသင့်သောအခါ ရွေးပါ။">
+<!ENTITY myanmarConverter.options.title			"မြန်မာစာ​ဖွန့်ပြောင်းလဲ​ရာ၌ ရွေးချယ်ပိုင်ခွင့်များ ">
+<!ENTITY myanmarConverter.options.desc			"အခြားမြန်မာစာသားပုံစံများမှ ယူနီကုတ်ပုံစံသို့ ပြောင်းလဲသင့်သောအခါ သုံးပါ။">
 <!ENTITY myanmarConverter.options.enableConverters "ပြောင်းလဲခြင်းများကို လုပ်ဆောင်နိုင်သည့်နေရာကိုရွေးသင့်သည်။">
 <!ENTITY myanmarConverter.options.converter.zawgyi "Zawgyi-One">
 <!ENTITY myanmarConverter.options.converter.wininnwa "WinInnwa">
 <!ENTITY myanmarConverter.options.converter.wwin_burmese1 "Wwin_Burmese1">
-<!ENTITY myanmarConverter.options.add "ပေါင်းထည်.သည်">
-<!ENTITY myanmarConverter.options.remove "ဖယ်ရှားသည်">
-<!ENTITY myanmarConverter.options.urlList.enable "​ပြောင်းလဲရန်လုပ်ဆောင်နိုင်သောအရာ">
-<!ENTITY myanmarConverter.options.urlList.urlHostname "အဓိကအမည်">
+<!ENTITY myanmarConverter.options.add "ပေါင်းထည့်">
+<!ENTITY myanmarConverter.options.remove "ဖယ်ရှား">
+<!ENTITY myanmarConverter.options.urlList.enable "​ပြောင်းလဲနိုင်(သို့)မနိုင်">
+<!ENTITY myanmarConverter.options.urlList.urlHostname "အဓိကဆာလ်ဗာအမည်">
 <!ENTITY myanmarConverter.options.urlList.urlPathname "လမ်း​ကြောင်းခွဲအမည်">
 <!ENTITY myanmarConverter.options.enableConversionForPattern "ပုံစံအလိုက်​ပြောင်းလဲနိုင်သောစနစ်">
 <!ENTITY myanmarConverter.options.defaultEnableConversion "ပုံသေ​ပုံစံပြောင်းလဲနိုင်သောစနစ်">
+<!ENTITY myanmarConverter.options.zeroWidthSpaceEnableConversion "သုညအကျယ်ထည့်နိုင်သောစနစ်">
 <!ENTITY myanmarConverter.options.accept "လုပ်ဆောင်မည်။">
 <!ENTITY myanmarConverter.options.cancel "မလုပ်ဆောင်ပါ။">
-<!ENTITY myanmarConverter.options.urlHostname "အဓိကအမည်">
+<!ENTITY myanmarConverter.options.urlHostname "အဓိကဆာလ်ဗာအမည်">
 <!ENTITY myanmarConverter.options.urlHostnameExact "အားလုံးကိုတိတိကျကျတွဲပါ">
-<!ENTITY myanmarConverter.options.urlHostnameSuffix "အနောက်မှစ​၍အားလုံးကိုတွဲပါ">
+<!ENTITY myanmarConverter.options.urlHostnameSuffix "ရှေ့မှစ​၍အားလုံးကိုတွဲပါ">
 <!ENTITY myanmarConverter.options.urlPathname "လမ်း​ကြောင်းခွဲအမည်">
 <!ENTITY myanmarConverter.options.urlPathnameExact "အားလုံးကိုတိတိကျကျတွဲပါ">
-<!ENTITY myanmarConverter.options.urlPathnamePrefix "အရှေ့မှစ၍အားလုံးကိုတွဲပါ">
-<!ENTITY myanmarConverter.options.defaultDescription "အထက်ပါပုံစံစနစ်ြဖင်.မယှဉ်တွဲနိုင်သောစာမျက်နှာများအတွက်လုပ်ဆောင်ချက်:">
+<!ENTITY myanmarConverter.options.urlPathnamePrefix "အနောက်မှစ​၍အားလုံးကိုတွဲပါ">
+<!ENTITY myanmarConverter.options.defaultTitle "ပုံသေ​ပြောင်းလဲမှုစနစ်">
+<!ENTITY myanmarConverter.options.defaultDescription "အထက်ပါစနစ်ြဖင်.မပြောင်းလဲနိုင်သောစကားလုံးများအတွက်">
+<!ENTITY myanmarConverter.options.zwspaceTitle "သုညအကျယ်ထည့်သောစနစ်">
+<!ENTITY myanmarConverter.options.zeroWidthSpace "စကားလုံးတခုနှင်.တခုကြားသုညအကျယ်ထည်.ခြင်း">

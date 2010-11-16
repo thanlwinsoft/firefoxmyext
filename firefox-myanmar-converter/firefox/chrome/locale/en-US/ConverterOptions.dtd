@@ -11,6 +11,7 @@
 <!ENTITY myanmarConverter.options.urlList.urlPathname "Pathname">
 <!ENTITY myanmarConverter.options.enableConversionForPattern "Enable conversion for Pattern">
 <!ENTITY myanmarConverter.options.defaultEnableConversion "Enable conversion by default">
+<!ENTITY myanmarConverter.options.zeroWidthSpaceEnableConversion "Enable conversion by '0' width space">
 <!ENTITY myanmarConverter.options.accept "OK">
 <!ENTITY myanmarConverter.options.cancel "Cancel">
 <!ENTITY myanmarConverter.options.urlHostname "Hostname">
@@ -19,4 +20,7 @@
 <!ENTITY myanmarConverter.options.urlPathname "Pathname">
 <!ENTITY myanmarConverter.options.urlPathnameExact "match exactly">
 <!ENTITY myanmarConverter.options.urlPathnamePrefix "match as prefix">
+<!ENTITY myanmarConverter.options.defaultTitle "Other Pages">
 <!ENTITY myanmarConverter.options.defaultDescription "Behaviour for pages which do not match one of the above patterns:">
+<!ENTITY myanmarConverter.options.zwspaceTitle "Zero Width Space">
+<!ENTITY myanmarConverter.options.zeroWidthSpace "Insert ZWSP between syllables">

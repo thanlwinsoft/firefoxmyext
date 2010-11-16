@@ -121,7 +121,7 @@ TlsMyanmarConverter.prototype.buildRegExp = function(sequence, isUnicode)
         else if (sequence[i] == "lig") { pattern += "|" }
         else if (sequence[i] == "stack" && sequence[i-1] == "cons") { pattern += "?))"; }
         else if (sequence[i] == "wasway" || sequence[i] == "hatoh" ||
-            sequence[i] == "uVowel" || sequence[i] == "lVowel")
+            sequence[i] == "uVowel" || sequence[i] == "lVowel" ||sequence[i] == "aVowel")
         {
             if (isUnicode)
                 pattern += "?";
