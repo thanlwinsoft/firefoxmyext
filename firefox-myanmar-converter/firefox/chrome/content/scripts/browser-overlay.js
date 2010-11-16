@@ -206,8 +206,8 @@ MyanmarConverterExtension.guessConverterForNode = function(node, pageConverter)
             }
         }
     }
-    if (nodeConverter == null)
-        MyanmarConverterExtension._trace("No Converter matched: " + node.nodeValue);
+    //if (nodeConverter == null)
+    //    MyanmarConverterExtension._trace("No Converter matched: " + node.nodeValue);
     return nodeConverter;
 }
 
@@ -216,19 +216,19 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
     var doc = parent.ownerDocument;
     if (converter == null)
     {
-        if (doc.tlsMyanmarEncoding && typeof doc.tlsMyanmarEncoding != "undefined")
+        if (doc.tlsMyanmarEncoding && (typeof doc.tlsMyanmarEncoding != "undefined"))
             converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
         if (typeof converter == "undefined")
         {
             MyanmarConverterExtension.guessMyanmarEncoding(doc, parent);
             this._trace("doc.tlsMyanmarEncoding" + typeof doc.tlsMyanmarEncoding);
-            if (doc.tlsMyanmarEncoding && typeof doc.tlsMyanmarEncoding == "Object")
+            if (doc.tlsMyanmarEncoding && (typeof doc.tlsMyanmarEncoding == "Object"))
             {
                 converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
             }
             if (typeof converter == "undefined")
             {
-                MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
+                // MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
                 // still parse checking for specific styles
             }
         }
