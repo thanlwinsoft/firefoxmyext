@@ -435,6 +435,17 @@ MyanmarConverterExtension.processDoc = function(doc) {
 
     if (doc.body)
     {
+        // status TODO
+        var statusBar = document.getElementById('myanmarConverter.status.text');
+        if((enc != null) && (enc != 'unicode'))
+        {
+            var fontName=this.messages.GetStringFromName(enc);
+            statusBar.setAttribute("label", this.messages.formatStringFromName("converted",[fontName],1));
+        }
+        else
+        {
+            statusBar.setAttribute("label","");
+        }
         MyanmarConverterExtension.parseNodes(doc.body, null, true);
         MyanmarConverterExtension.convertTitle(doc);
         doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
@@ -1065,6 +1076,9 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
 
 function MyanmarConverterEventListener(conv)
 {
+    this.messages = Components.classes["@mozilla.org/intl/stringbundle;1"]
+                .getService(Components.interfaces.nsIStringBundleService)
+                .createBundle("chrome://myanmar-converter/locale/MyanmarConverter.properties");
     this.conv=conv;
     return this;
 }
@@ -1077,6 +1091,9 @@ try{
         ' ' + event.target.nodeName + ' "' + event.target.value + '"');
     if(event.type=='focus')
     {
+        var fontName=this.messages.GetStringFromName(this.conv.data.fonts[0]);
+        var statusBar = document.getElementById('myanmarConverter.status.text');
+        statusBar.setAttribute("label", this.messages.formatStringFromName("sendAs",[fontName],1));
         if(event.target.tlsUnicode == false)
         {
             event.target.value=this.conv.convertToUnicode(event.target.value);
@@ -1094,6 +1111,8 @@ try{
         {
             event.target.tlsUnicode = true;
         }
+        var statusBar = document.getElementById('myanmarConverter.status.text');
+        statusBar.setAttribute("label","");
     }
     else if(event.type=='keypress' || event.type=='keydown')
     {
@@ -1115,15 +1134,30 @@ MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
     try
     {
         var conv=tlsMyanmarConverters[converterName.toLowerCase()];
+        var eListener=new MyanmarConverterEventListener(conv);
         MyanmarConverterExtension._trace('addFormEventHandlers' + node.nodeName + ' "' + node.value + '"');
         var doc = node.ownerDocument;
+        
         if(node.nodeName == 'TEXTAREA' || (node.nodeName == 'INPUT' && (!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')))
         {
-            node.addEventListener('keydown',new MyanmarConverterEventListener(conv),false);
-            node.addEventListener('focus',new MyanmarConverterEventListener(conv),false);
-            node.addEventListener('change',new MyanmarConverterEventListener(conv),false);
-            node.addEventListener('blur',new MyanmarConverterEventListener(conv),false);
+            if(typeof node.tlsEventListener == "object")
+            {
+                node.removeEventListener('keydown',node.tlsEventListener,false);
+                node.removeEventListener('focus',node.tlsEventListener,false);
+                node.removeEventListener('change',node.tlsEventListener,false);
+                node.removeEventListener('blur',node.tlsEventListener,false);
+            }
+            node.addEventListener('keydown',eListener,false);
+            node.addEventListener('focus',eListener,false);
+            node.addEventListener('change',eListener,false);
+            node.addEventListener('blur',eListener,false);
+            node.tlsEventListener = eListener;
             node.tlsUnicode = true;
+            // status TODO
+            var fontName=this.messages.GetStringFromName(converterName);
+            MyanmarConverterExtension._trace('Font As::::' + fontName);
+            var statusBar = document.getElementById('myanmarConverter.status.text');
+            statusBar.setAttribute("label", this.messages.formatStringFromName("sendAs",[fontName],1));
         }
         else
         {
@@ -1136,18 +1170,30 @@ MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
                 {
                     for(var i=0 ; i<area.length ; i++)
                     {
-                        area[i].addEventListener('focus',new MyanmarConverterEventListener(conv),false);
-                        area[i].addEventListener('change',new MyanmarConverterEventListener(conv),false);
-                        area[i].addEventListener('blur',new MyanmarConverterEventListener(conv),false);
+                        if(typeof node.tlsEventListener == "object")
+                        {
+                            node.removeEventListener('focus',node.tlsEventListener,false);
+                            node.removeEventListener('change',node.tlsEventListener,false);
+                            node.removeEventListener('blur',node.tlsEventListener,false);
+                        }
+                        area[i].addEventListener('focus',eListener,false);
+                        area[i].addEventListener('change',eListener,false);
+                        area[i].addEventListener('blur',eListener,false);
                         area[i].tlsUnicode = true;
                     }
                     for(var i=0 ; i<input.length ; i++)
                     {
                         if(!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')
                         {
-                            input[i].addEventListener('focus',new MyanmarConverterEventListener(conv),false);
-                            input[i].addEventListener('change',new MyanmarConverterEventListener(conv),false);
-                            input[i].addEventListener('blur',new MyanmarConverterEventListener(conv),false);
+                            if(typeof node.tlsEventListener == "object")
+                            {
+                                node.removeEventListener('focus',node.tlsEventListener,false);
+                                node.removeEventListener('change',node.tlsEventListener,false);
+                                node.removeEventListener('blur',node.tlsEventListener,false);
+                            }
+                            input[i].addEventListener('focus',eListener,false);
+                            input[i].addEventListener('change',eListener,false);
+                            input[i].addEventListener('blur',eListener,false);
                             input[i].tlsUnicode = true;
                         }
                     }
@@ -1156,17 +1202,25 @@ MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
                 {
                     for(var i=0 ; i<area.length ; i++)
                     {
-                        area[i].addEventListener('keydown',new MyanmarConverterEventListener(conv),false);
+                        if(typeof node.tlsEventListener == "object")
+                        {
+                            node.removeEventListener('keydown',node.tlsEventListener,false);   
+                        }
+                        area[i].addEventListener('keydown',eListener,false);
                         MyanmarConverterExtension._trace("area Event Listener " + area[i].id);
                     }
                     for(var i=0 ; i<input.length ; i++)
                     {
                         if(!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')
                         {
-                            input[i].addEventListener('keydown',new MyanmarConverterEventListener(conv),false);
+                            if(typeof node.tlsEventListener == "object")
+                            {
+                                node.removeEventListener('keydown',node.tlsEventListener,false);   
+                            }
+                            input[i].addEventListener('keydown',eListener,false);
                         }
                     }
-                    doc.defaultView.addEventListener('keydown', new MyanmarConverterEventListener(conv), false);
+                    doc.defaultView.addEventListener('keydown', eListener, false);
                 }
 
             }

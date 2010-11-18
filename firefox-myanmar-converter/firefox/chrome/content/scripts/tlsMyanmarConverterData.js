@@ -188,10 +188,10 @@ tlsMyanmarConverterData["zawgyi-one"]=
 "း":"း"
 }
 }
-;
+; new TlsMyanmarConverter(tlsMyanmarConverterData["zawgyi-one"]);
 tlsMyanmarConverterData["wininnwa"]=
 {
-"fonts":["Wininnwa", "Win Researcher", "Win Innwa", "Win   Innwa", "Win---Innwa", "Win---Researcher"],
+"fonts":["WinInnwa", "Win Researcher", "Win Innwa", "Win   Innwa", "Win---Innwa", "Win---Researcher"],
 "kinzi":{
 "င်္":"F",
 "င်္ိ_lig":"\u00D8",
@@ -378,7 +378,7 @@ tlsMyanmarConverterData["wininnwa"]=
 "း":";"
 }
 }
-;
+;new TlsMyanmarConverter(tlsMyanmarConverterData["wininnwa"]);
 tlsMyanmarConverterData["wwin_burmese1"]=
 {
 "fonts":["Wwin_Burmese1","Wwin_Burmese"],
@@ -586,4 +586,4 @@ tlsMyanmarConverterData["wwin_burmese1"]=
 "း":";"
 }
 }
-;
+;new TlsMyanmarConverter(tlsMyanmarConverterData["wwin_burmese1"]);

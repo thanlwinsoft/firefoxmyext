@@ -51,6 +51,6 @@
 	</popup>
 	<statusbar id="status-bar">
 	    <statusbarpanel id="myanmarConverter.status.text" onclick=""
-      mode="patterns" persist="mode hidden" hidden="true" mousethrough="never"/>
+       mousethrough="never" label="test"/>
 	</statusbar>
 </overlay>
