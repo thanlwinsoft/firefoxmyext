@@ -113,7 +113,7 @@ var MyanmarConverterOptions = {
             }
             else
             {
-                var pos = url.hostname.find(pattern.hostname);
+                var pos = url.hostname.indexOf(pattern.hostname);
                 if ((pos > -1) && (pos + pattern.hostname.length == url.hostname.length))
                 {
                     hostMatch = true;

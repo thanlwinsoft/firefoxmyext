@@ -49,4 +49,8 @@
               onpopuphiding="MyanmarConverterExtension.onPopupHiding();"/>
         </menu> 
 	</popup>
+	<statusbar id="status-bar">
+	    <statusbarpanel id="myanmarConverter.status.text" onclick=""
+      mode="patterns" persist="mode hidden" hidden="true" mousethrough="never"/>
+	</statusbar>
 </overlay>
