@@ -36,8 +36,6 @@ var MyanmarConverterOptions = {
     {
         try
         {
-            var suffix= document.getElementById("myanmarConverter.options.urlHostnameSuffix");
-            suffix.getParentNode().selectedItem = suffix;
           
             var prefs = Components.classes["@mozilla.org/preferences-service;1"]
                                       .getService(Components.interfaces.nsIPrefService)
@@ -64,15 +62,25 @@ var MyanmarConverterOptions = {
                 this.extension = window.arguments[0];
                 var urlHostname = document.getElementById("myanmarConverter.options.urlHostname");
                 var urlPathname = document.getElementById("myanmarConverter.options.urlPathname");
-                if (urlHostname && urlPathname && window.arguments[1])
+                if (urlHostname && urlPathname && window.arguments[1] &&
+                    window.arguments[1].protocol != "about")
                 {
                     try
                     {
                         var patternIndex = this.findPatternForUrl(window.arguments[1]);
+                        this.trace('location='+window.arguments[1] + " found at " + patternIndex);
                         if (patternIndex == -1)
                         {
+                            urlList.selectedIndex = -1;
                             urlHostname.value = window.arguments[1].hostname;
                             urlPathname.value = window.arguments[1].pathname;
+                            if( window.arguments[1].hostname.length == 0)
+                            {
+                               var hostExact=document
+                                .getElementById("myanmarConverter.options.urlHostnameExact");
+                                hostExact.parentNode.selectedItem = hostExact;
+                            }
+                            
                         }
                         else
                         {
@@ -106,10 +114,13 @@ var MyanmarConverterOptions = {
         {
             var hostMatch = false;
             var pattern = this.urlPatterns[i];
-            if (pattern.hostnameExact)
+            if (pattern.hostnameExact || (url.hostname.length == 0))
             {
-                if (url.hostname == pattern.hostname)
+                if (pattern.hostname == url.hostname)
+                {
                     hostMatch = true;
+                    //this.trace("MyanmarConverterOptions:: host exact match" + url.hostname + " at " + i);
+                }
             }
             else
             {
@@ -117,11 +128,12 @@ var MyanmarConverterOptions = {
                 if ((pos > -1) && (pos + pattern.hostname.length == url.hostname.length))
                 {
                     hostMatch = true;
+                    //this.trace("MyanmarConverterOptions:: host matched at pos " + pos);
                 }
             }
             if (hostMatch &&
-                (pattern.pathnamePrefix && url.pathname == pattern.pathname) || 
-                (url.pathname.indexOf(pattern.pathname) == 0))
+                ((pattern.pathnamePrefix && (url.pathname == pattern.pathname)) || 
+                 (url.pathname.indexOf(pattern.pathname) == 0)))
             {
                 return i;
             }
@@ -202,6 +214,10 @@ var MyanmarConverterOptions = {
         var urlData = new Object();
         urlData.hostname = document.getElementById("myanmarConverter.options.urlHostname").value;
         urlData.hostnameExact = document.getElementById("myanmarConverter.options.urlHostnameExact").selected;
+        if(urlData.hostname.length == 0)
+        {
+        urlData.hostnameExact=true;
+        }
         urlData.pathname = document.getElementById("myanmarConverter.options.urlPathname").value;
         urlData.pathnameExact = document.getElementById("myanmarConverter.options.urlPathnameExact").selected;
         urlData.enableConversion = document.getElementById("myanmarConverter.options.enableConversionForPattern").checked;
@@ -251,14 +267,19 @@ var MyanmarConverterOptions = {
             var urlData = MyanmarConverterOptions.urlPatterns[selectedIndex];
             document.getElementById("myanmarConverter.options.urlHostname").value = urlData.hostname;
             document.getElementById("myanmarConverter.options.urlPathname").value = urlData.pathname;
+            var hostExact = document.getElementById("myanmarConverter.options.urlHostnameExact");
+            var hostSuffix = document.getElementById("myanmarConverter.options.urlHostnameSuffix");
+            var pathExact = document.getElementById("myanmarConverter.options.urlPathnameExact");
+            var pathPrefix = document.getElementById("myanmarConverter.options.urlPathnamePrefix");
+            
             if (urlData.hostnameExact)
-                document.getElementById("myanmarConverter.options.urlHostnameExact").selected = true;
+                hostExact.parentNode.selectedItem = hostExact;
             else
-                document.getElementById("myanmarConverter.options.urlHostnameSuffix").selected = true;
+               hostSuffix.parentNode.selectedItem = hostSuffix;
             if (urlData.pathnameExact)
-                document.getElementById("myanmarConverter.options.urlPathnameExact").selected = true;
+                pathExact.parentNode.selectItem = pathExact;
             else
-                document.getElementById("myanmarConverter.options.urlPathnamePrefix").selected = true;
+                pathPrefix.parentNode.selectItem = pathPrefix;
             document.getElementById("myanmarConverter.options.enableConversionForPattern").checked =
                 urlData.enableConversion;
         }

@@ -535,7 +535,7 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
     this.enabled = (prefs)? prefs.getBoolPref("enabled") : true;
     try
     {
-        if (url && url.hostname && url.pathname)
+        if (url)
         {
         
             var patternsTime = (prefs)? prefs.getIntPref("urlPatternsUpdateTime") : 0;
@@ -562,8 +562,8 @@ MyanmarConverterExtension.isEnabledForUrl = function(url) {
                     }
                 }
                 if (hostMatch &&
-                    (pattern.pathnameExact && url.pathname == pattern.pathname) || 
-                    (url.pathname.indexOf(pattern.pathname) == 0))
+                    ((pattern.pathnameExact && url.pathname == pattern.pathname) || 
+                    (url.pathname.indexOf(pattern.pathname) == 0)))
                 {
                     return pattern.enableConversion;
                 }
