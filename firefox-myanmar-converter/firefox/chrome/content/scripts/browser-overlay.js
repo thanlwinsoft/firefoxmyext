@@ -62,6 +62,8 @@ MyanmarConverterExtension.initialize = function() {
         if (appcontent)
         {
             appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
+            var container = gBrowser.tabContainer;
+            container.addEventListener("TabSelect", this, false);
         }
     }
     catch (e)
@@ -408,24 +410,41 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
     // convert alt text
     if (converter != null)
     {
-    var altConv = converter;
-    var images=parent.getElementsByTagName('img');
-    for(var i = 0 ;i < images.length ; i++)
+        var altConv = converter;
+        var images=parent.getElementsByTagName('img');
+        for(var i = 0 ;i < images.length ; i++)
         {
-        if(images[i].hasAttribute("alt"))
+            if(images[i].hasAttribute("alt"))
             {
             var oldAlt=images[i].getAttribute('alt');
             var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
                 altConv.convertFromUnicode(oldAlt);
             images[i].setAttribute('alt',newAlt);
             }
-        if(images[i].hasAttribute("title"))
+            if(images[i].hasAttribute("title"))
             {
             var oldAlt=images[i].getAttribute('title');
             var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
                 altConv.convertFromUnicode(oldAlt);
             images[i].setAttribute("title",newAlt);
             }
+        }
+    }
+    //convert title text
+    if(converter != null)
+    {
+        var treeWalker = parent.ownerDocument.createTreeWalker(parent,
+                    NodeFilter.SHOW_ELEMENT,{ acceptNode: function(node) {
+                        if (node.hasAttribute("title"))
+                        {return NodeFilter.FILTER_ACCEPT;} 
+                        else return NodeFilter.FILTER_SKIP; }} 
+                    , false);
+        while(treeWalker.nextNode())
+        {
+            var oldAlt=treeWalker.currentNode.getAttribute('title');
+            var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
+                altConv.convertFromUnicode(oldAlt);
+            treeWalker.currentNode.setAttribute("title",newAlt);
         }
     }
 }
@@ -1156,6 +1175,7 @@ MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
             // status TODO
             var fontName=this.messages.GetStringFromName(converterName);
             MyanmarConverterExtension._trace('Font As::::' + fontName);
+            
             var statusBar = document.getElementById('myanmarConverter.status.text');
             statusBar.setAttribute("label", this.messages.formatStringFromName("sendAs",[fontName],1));
         }
@@ -1232,6 +1252,35 @@ MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
     }
     
 };
+
+MyanmarConverterExtension.handleEvent = function(event)
+{
+    try
+    {
+        if(event.type == 'TabSelect')
+        {
+            this._trace("MyanmarConverterExtension.handleEvent " + event.type 
+                + gBrowser.contentDocument.tlsMyanmarEncoding);
+                
+            var doc = gBrowser.contentDocument;
+            var statusBar = document.getElementById('myanmarConverter.status.text');
+            if((typeof doc.tlsMyanmarEncoding != "undefined") &&
+               (doc.tlsMyanmarEncoding != "unicode"))
+            {
+                var fontName=this.messages.GetStringFromName(doc.tlsMyanmarEncoding);
+                statusBar.setAttribute("label", this.messages.formatStringFromName("converted",[fontName],1));
+            }
+            else
+            {
+                statusBar.setAttribute("label", "");
+            }
+        }
+    }
+    catch(gm)
+    {
+        MyanmarConverterExtension._fail(gm);
+    }
+}
 
 MyanmarConverterExtension.observe = function(subject, topic, data)
 {
