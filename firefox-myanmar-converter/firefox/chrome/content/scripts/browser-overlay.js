@@ -416,6 +416,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                 if ((converter == null) && toUnicode)
                 {
                     doc.tlsMyanmarEncoding = bestConv.data.fonts[0];
+                    converter = bestConv;
                 }
             }
         }

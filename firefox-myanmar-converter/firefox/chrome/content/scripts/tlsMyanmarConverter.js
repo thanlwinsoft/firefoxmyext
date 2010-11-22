@@ -30,7 +30,8 @@ function TlsMyanmarConverter(data)
         "wasway","hatoh","eVowel","uVowel","lVowel","anusvara","aVowel","lDot","asat","lDot","visarga");
     this.legacySequence = new Array("eVowel","yayit",null,"lig",null,"cons","stack","kinzi",
         "uVowel","anusvara","asat","stack","yapin","wasway","hatoh","wasway","yapin","kinzi",
-        "uVowel","lDot","lVowel","anusvara","uVowel","lVowel","aVowel","stack","lDot","asat","lDot","visarga","lDot");
+        "uVowel","lDot","lVowel","anusvara","uVowel","lVowel","aVowel","stack",
+        "lDot","visarga","asat","lDot","visarga","lDot");
     this.unicodePattern = this.buildRegExp(this.unicodeSequence, true);
     this.legacyPattern = this.buildRegExp(this.legacySequence, false);
     this.fontFamily = "";
@@ -754,7 +755,7 @@ TlsMyanmarConverter.prototype.matchFrequency = function(inputText, isUnicode)
     }
     var legacyRange = "[" + String.fromCharCode(this.minCodePoint) + "-" + 
         String.fromCharCode(this.maxCodePoint) + "]+";
-    this.debug.print(legacyRange + " " + this.minCodePoint + " " + this.maxCodePoint);
+    //this.debug.print(legacyRange + " " + this.minCodePoint + " " + this.maxCodePoint);
     var codeRange = isUnicode? new RegExp("[က-႟ꩠ-ꩻ]+", "g") : new RegExp(legacyRange, "g");
     re.lastIndex = 0;
     var pos = 0;
