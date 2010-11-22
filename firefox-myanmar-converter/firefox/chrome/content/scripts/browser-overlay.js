@@ -194,17 +194,21 @@ MyanmarConverterExtension.guessConverterForNode = function(node, pageConverter)
             nodeConverter = testConv;
             matchIndex = testIndex;
         }
-        // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
-        // change for any characters in Myanmar code range
-        if (node.nodeValue.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
+        else
         {
-            var uniFreq = testConv.matchFrequency(node.nodeValue, true);
-            var pseudoFreq = testConv.matchFrequency(node.nodeValue, false);
-            if (((pseudoFreq > uniFreq) || (pageConverter == testConv && pseudoFreq == uniFreq))
-		&& pseudoFreq > bestFreq)
+            // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
+            // change for any characters in Myanmar code range
+            if (node.nodeValue.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
             {
-                nodeConverter = testConv;
-                bestFreq = pseudoFreq;
+                var uniFreq = testConv.matchFrequency(node.nodeValue, true);
+                var pseudoFreq = testConv.matchFrequency(node.nodeValue, false);
+                if (((pseudoFreq > uniFreq) || ((pageConverter == testConv) && (pseudoFreq == uniFreq)))
+		    && (pseudoFreq > bestFreq))
+                {
+                    nodeConverter = testConv;
+                    bestFreq = pseudoFreq;
+                }
+                //this._trace("guess " + node.nodeValue +" " +uniFreq + "/" +pseudoFreq+"/"+pageConverter+         "/"+testConv);
             }
         }
     }
@@ -230,7 +234,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
             }
             if (typeof converter == "undefined")
             {
-                // MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
+                //MyanmarConverterExtension._trace("converter undefined: " + doc.tlsMyanmarEncoding);
                 // still parse checking for specific styles
             }
         }
@@ -254,6 +258,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         {
             bestConv = MyanmarConverterExtension.guessConverterForNode(node, converter);
         }
+        //this._trace("ForOldValueInParseNodes::"+oldValue+" "+typeof bestConv);
         if (bestConv)
         {
             var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
@@ -264,6 +269,10 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                 theParent.replaceChild(newNode, node);
                 theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
                 if (toUnicode) theParent.lang = "my";
+            }
+            if((converter == null) && toUnicode)
+            {
+                doc.tlsMyanmarEncoding = bestConv.data.fonts[0];
             }
         }
         return;
@@ -403,6 +412,10 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                     if (toUnicode) span.lang = "my";
                     span.appendChild(newNode);
                     theParent.replaceChild(span, prevNode);
+                }
+                if ((converter == null) && toUnicode)
+                {
+                    doc.tlsMyanmarEncoding = bestConv.data.fonts[0];
                 }
             }
         }
@@ -555,6 +568,7 @@ MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
         var converted = converter.convertToUnicode(toConvert);
         target.textContent = new String(prefix + converted + suffix);
     }
+    this._trace("target.textContent::"+target.textContent);
 };
 
 MyanmarConverterExtension.isEnabledForUrl = function(url) {
