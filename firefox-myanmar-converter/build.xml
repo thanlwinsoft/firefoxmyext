@@ -89,57 +89,7 @@ Compiler options:
          	
          </exec>
     </target>
-<!--
-    <target name="tools" depends="init">
-    	<mkdir dir="${tools.build}"/>
-        <javac sourcepath="" 
-            srcdir="${tools.java}"
-            destdir="${tools.build}"
-            debug="${compiler.debug}"
-            optimize="${compiler.optimize}"
-            deprecation="${compiler.deprecation}"
-            target="${target.vm}"
-            source="${target.vm}"
-            nowarn="${compiler.nowarn}"
-            compiler="${compiler}">
-            
-            <include name="**/*.java"/>
-        </javac>
-        <jar destfile="${tools}/javaFirefoxExtensionUtils.jar" basedir="${tools.build}"
-			includes="**/*">
-	</jar>
-    </target>
--->
-<!-- === Compile Java Code ================================================= -->
-<!--
-    <target name="compile" depends="prepare">
-        <mkdir dir="${build}"/>
-        <javac sourcepath="" 
-            srcdir="${src.java}"
-            destdir="${build}"
-            debug="${compiler.debug}"
-            optimize="${compiler.optimize}"
-            deprecation="${compiler.deprecation}"
-            target="${target.vm}"
-            source="${target.vm}"
-            nowarn="${compiler.nowarn}"
-            compiler="${compiler}"
-            classpathref="classpath">
-            
-            <include name="**/*.java"/>
-        </javac>
-    	<copy todir="${build}">
-    		<fileset dir="converters" includes="*.xml" />
-    	</copy>
-        <copy todir="${build}">
-            <fileset dir="${src.java}" includes="**/*.properties" />
-            <filterset>
-                <filter token="version" value="${version}"/>
-                <filter token="fullname" value="${fullname}"/>
-            </filterset>
-        </copy>
-    </target>
--->
+
 <!-- === Prepare The Distribution ================================================= -->
 
     <target name="dist" depends="prepare" description="Create the distribution">
@@ -150,6 +100,10 @@ Compiler options:
                 includes="**" />
         </copy>
     	
+    	   <copy todir="${dist}/dictionaries">
+            <fileset dir="${src.extension}/dictionaries" includes="**" />
+        </copy>
+    	
     	<copy todir="${dist}/defaults">
 	    	<fileset dir="${src.extension}/defaults" includes="**" />
     	</copy>
@@ -158,17 +112,7 @@ Compiler options:
             <fileset dir="${src.extension}/components" includes="*.js" />
             <fileset dir="${src.extension}/components" includes="*.xpt" />
         </copy>
-        <!--
-        <copy todir="${dist}/java/classes">
-            <fileset dir="${build}"
-                includes="**" />
-        </copy>
-        <copy todir="${dist}/java/lib">
-            <fileset dir="${lib}"
-                includes="*.jar" />
-        </copy>
-        <copy file="${tools}/javaFirefoxExtensionUtils.jar" tofile="${dist}/java/javaFirefoxExtensionUtils.jar" />
-        -->
+
         <copy file="${src.extension}/install.rdf" tofile="${dist}/install.rdf" />
         <copy file="${src.extension}/chrome.manifest" tofile="${dist}/chrome.manifest"/>
         

@@ -1,4 +1,4 @@
-<!ENTITY myanmarConverter.options.title			"မြန်မာစာ​ဖွန့်ပြောင်းလဲ​ရာ၌ ရွေးချယ်ပိုင်ခွင့်များ ">
+<!ENTITY myanmarConverter.options.title			"မြန်မာစာ​ဖောင့်ပြောင်းလဲ​ရာ၌ ရွေးချယ်ပိုင်ခွင့်များ ">
 <!ENTITY myanmarConverter.options.desc			"အခြားမြန်မာစာသားပုံစံများမှ ယူနီကုတ်ပုံစံသို့ ပြောင်းလဲသင့်သောအခါ သုံးပါ။">
 <!ENTITY myanmarConverter.options.enableConverters "ပြောင်းလဲခြင်းများကို လုပ်ဆောင်နိုင်သည့်နေရာကိုရွေးသင့်သည်။">
 <!ENTITY myanmarConverter.options.converter.zawgyi "Zawgyi-One">

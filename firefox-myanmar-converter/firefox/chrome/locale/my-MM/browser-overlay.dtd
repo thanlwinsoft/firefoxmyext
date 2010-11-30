@@ -2,6 +2,6 @@
 <!ENTITY myanmarConverter.enable.accessKey		"m">
 <!ENTITY myanmarConverter.context.label			"ဒီစာမျက်နှာကို မြန်မာယူနီကုတ် ၅.၁ အထိ ပြောင်းပါ">
 <!ENTITY myanmarConverter.context.accessKey		"u">
-<!ENTITY myanmarConverter.context.popup.label	"ရွေးချယ်ထားသောစကားလုံးဖွန့်ကို​အခြားဖွန့်များသို့​ပြောင်းချင်း">
-<!ENTITY myanmarConverter.tools.options.label "မြန်မာစာ ဖွန့် ပြောင်းလဲခြင်းရွေးချယ်ပိုင်ခွင့်">
+<!ENTITY myanmarConverter.context.popup.label	"မြန်မာယူနီကုတ် ပြောင်းလဲခြင်း">
+<!ENTITY myanmarConverter.tools.options.label "မြန်မာစာ ဖောင့် ပြောင်းလဲခြင်း">
 <!ENTITY myanmarConverter.tools.options.accessKey		"">
