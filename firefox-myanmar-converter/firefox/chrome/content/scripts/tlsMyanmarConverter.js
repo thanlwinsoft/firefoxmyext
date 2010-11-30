@@ -158,23 +158,49 @@ TlsMyanmarConverter.prototype.sortLongestFirst = function(a,b)
 */
 TlsMyanmarConverter.prototype.convertToUnicode = function(inputText)
 {
-    var outputText = "";
+    return this.convertToUnicodeSyllables(inputText).outputText;
+}
+
+
+/**
+* Convert text to Unicode
+* @param inputText in legacy encoding
+* @return converted text in Unicode 5.1
+*/
+TlsMyanmarConverter.prototype.convertToUnicodeSyllables = function(inputText)
+{
+    var outputText = new String();
+    var syllables = new Array();
     var pos = 0;
     this.legacyPattern.lastIndex = 0;
     var prevSyllable = null;
     var match = this.legacyPattern.exec(inputText);
     while (match)
     {
-        if (match.index != pos) prevSyllable = null;
-        outputText += inputText.substring(pos, match.index);
+        if (match.index != pos) 
+        {
+            prevSyllable = null;
+            var nonMatched = inputText.substring(pos, match.index);
+            outputText += nonMatched;
+            syllables.push(nonMatched);
+        }
         pos = this.legacyPattern.lastIndex;
         this.debug.dbgMsg(this.debug.DEBUG, "To Unicode Match: " + match);
         prevSyllable = this.toUnicodeMapper(inputText, match, prevSyllable);
+        syllables.push(prevSyllable);
         outputText += prevSyllable;
         match = this.legacyPattern.exec(inputText);
     }
-    if (pos < inputText.length) outputText += inputText.substring(pos, inputText.length);
-    return outputText;
+    if (pos < inputText.length)
+    {
+        var nonMatched = inputText.substring(pos, inputText.length);
+        outputText += nonMatched;
+        syllables.push(nonMatched);
+    }
+    var ret = new Object();
+    ret.outputText = outputText;
+    ret.syllables = syllables;
+    return ret;
 }
 
 /**
@@ -748,6 +774,8 @@ TlsMyanmarConverter.prototype.fromUnicodeMapper = function(inputText, matchData)
 TlsMyanmarConverter.prototype.matchFrequency = function(inputText, isUnicode)
 {
     var re = this.legacyPattern;
+    var retValue = new Object();
+    retValue.syllables = new Array();
     if (isUnicode)
     {
         var utn11 = new TlsMyanmarUtn11();
@@ -766,9 +794,12 @@ TlsMyanmarConverter.prototype.matchFrequency = function(inputText, isUnicode)
     while (match)
     {
         var nonMatched = inputText.substring(pos, match.index);
+        if (nonMatched.length)
+            retValue.syllables.push(nonMatched);
         var strippedNonMatched = nonMatched.replace(codeRange, "");
         nonMyanmarCount += strippedNonMatched.length;
         pos = re.lastIndex;
+        retValue.syllables.push(match[0]);
         matchCharCount += match[0].length;
         match = re.exec(inputText);
     }
@@ -777,12 +808,14 @@ TlsMyanmarConverter.prototype.matchFrequency = function(inputText, isUnicode)
         var nonMatched = inputText.substring(pos, inputText.length);
         var strippedNonMatched = nonMatched.replace(codeRange, "");
         nonMyanmarCount += strippedNonMatched.length;
+        retValue.syllables.push(nonMatched);
     }
     var freq = (matchCharCount)? matchCharCount / (inputText.length - nonMyanmarCount) : 0;
     this.debug.print("match uni=" + isUnicode + " freq=" + freq + " match count=" + matchCharCount +
         " unmatched=" + (inputText.length - nonMyanmarCount - matchCharCount) +
         " length=" + inputText.length);
-    return freq;
+    retValue.freq = freq;
+    return retValue;
 }
 
 TlsMyanmarConverter.prototype.getFontFamily = function (isUnicode)

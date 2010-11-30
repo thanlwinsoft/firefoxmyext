@@ -1,9 +1,6 @@
 /*
 Copyright 2009 Keith Stribley http://www.thanlwinsoft.org/
 
-The java wrapper code is based on the java-firefox-extension which is
-Copyright The SIMILE Project 2003-2005.
-
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
 License as published by the Free Software Foundation; either
@@ -65,6 +62,25 @@ MyanmarConverterExtension.initialize = function() {
             var container = gBrowser.tabContainer;
             container.addEventListener("TabSelect", this, false);
         }
+        
+        // Different versions of Firefox have different contract IDs
+        var spellClass = "@mozilla.org/spellchecker/myspell;1";
+        if ("@mozilla.org/spellchecker/hunspell;1" in Components.classes)
+	        spellClass = "@mozilla.org/spellchecker/hunspell;1";
+        if ("@mozilla.org/spellchecker/engine;1" in Components.classes)
+	        spellClass = "@mozilla.org/spellchecker/engine;1";
+	    this.spellChecker = Components.classes[spellClass]
+	        .createInstance(Components.interfaces.mozISpellCheckingEngine);
+	    var list = new Object();
+	    var dictCount = new Object();
+	    this.spellChecker.getDictionaryList(list, dictCount);
+	    this._trace(list.value);
+	    this.spellChecker.dictionary = "my_MM";
+	    this._trace("Dict: " + " Lang: " + this.spellChecker.language);
+	    
+	    this.personalDict = Components.classes["@mozilla.org/spellchecker/personaldictionary;1"]
+            .getService(Components.interfaces.mozIPersonalDictionary);
+        
     }
     catch (e)
     {
@@ -177,12 +193,63 @@ MyanmarConverterExtension.onPageLoad = function(event) {
     catch (e) { MyanmarConverterExtension._fail(e); }
 };
 
-MyanmarConverterExtension.guessConverterForNode = function(node, pageConverter)
+MyanmarConverterExtension.spellCheckSyllables = function(syllables)
 {
-    var nodeFontFamily = window.getComputedStyle(node.parentNode, null).fontFamily;
+    var convertedText = "";
+    var unknownSyllables = 0;
+    var knownWordCount = 0;
+    for (var j = 0 ; j< syllables.length; j++)
+    {
+        var testWord = syllables[j];
+        var checkedWord = "";
+        var matchedSyllables = 0;
+        if (this.spellChecker.check(testWord))
+        {
+            checkedWord = testWord;
+            matchedSyllables = 1;
+        }
+        // assume max of 8 'syllables' per word
+        var k = j + 1;
+        for (; k < j + 8 && k < syllables.length; k++)
+        {
+            if (!(syllables[k].match("[\u1000-\u109F]")))
+                break;
+            testWord += syllables[k];
+            if (this.spellChecker.check(testWord))
+            {
+                checkedWord = testWord;
+                matchedSyllables = k - j + 1;
+            }
+        }
+        if (matchedSyllables > 0)
+        {
+            convertedText += checkedWord;
+            j += matchedSyllables - 1;
+            knownWordCount += 1;
+        }
+        else
+        {
+            convertedText += syllables[j];
+            if (syllables[j].match("[\u1000-\u109F]"))
+                unknownSyllables += 1;
+        }
+    }
+    var ret = new Object();
+    ret.text = convertedText;
+    ret.knownWords = knownWordCount;
+    ret.unknownSyllables = unknownSyllables;
+    this._trace(ret.text + " Known: " + ret.knownWords + " Unknown: " + ret.unknownSyllables);
+    return ret;
+}
+
+MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConverter, toUnicode)
+{
+    var ret = new Object();
+    var nodeFontFamily = window.getComputedStyle(parentNode, null).fontFamily;
     var matchIndex = -1;
     var nodeConverter = null;
     var bestFreq = 0;
+    var convertedText = nodeText;
     // take the converter matching the font in the style with the lowest index just in case the web 
     // page actually mixed different fonts in the same style!
     for (var i = 0; i < MyanmarConverterExtension.legacyFonts.length; i++)
@@ -194,27 +261,51 @@ MyanmarConverterExtension.guessConverterForNode = function(node, pageConverter)
             nodeConverter = testConv;
             matchIndex = testIndex;
         }
-        else
+        else if (toUnicode)
         {
             // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
             // change for any characters in Myanmar code range
-            if (node.nodeValue.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
+            if (nodeText.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
             {
-                var uniFreq = testConv.matchFrequency(node.nodeValue, true);
-                var pseudoFreq = testConv.matchFrequency(node.nodeValue, false);
-                if (((pseudoFreq > uniFreq) || ((pageConverter == testConv) && (pseudoFreq == uniFreq)))
-		    && (pseudoFreq > bestFreq))
+                var uniFreqMatch = testConv.matchFrequency(nodeText, true);
+                var uniFreq = uniFreqMatch.freq;
+                var pseudoFreq = testConv.matchFrequency(nodeText, false).freq;
+                if ((pseudoFreq > uniFreq) && (pseudoFreq > bestFreq))
                 {
                     nodeConverter = testConv;
                     bestFreq = pseudoFreq;
                 }
-                //this._trace("guess " + node.nodeValue +" " +uniFreq + "/" +pseudoFreq+"/"+pageConverter+         "/"+testConv);
+                else if (pseudoFreq == uniFreq)
+                {
+                    this._trace("pf:" + pseudoFreq + " uf:" + uniFreq); 
+                    convertedText = testConv.convertToUnicodeSyllables(nodeText);
+                    var syllables = convertedText.syllables;
+                    var convertedResult = this.spellCheckSyllables(syllables);
+                    var unconvertedResult = this.spellCheckSyllables(uniFreqMatch.syllables);
+                    if (convertedResult.unknownSyllables >= unconvertedResult.unknownSyllables)
+                    {
+                        ret.converted = nodeText;
+                        ret.converter = null;
+                        return ret;
+                    }
+                    else
+                    {
+                        ret.converted = convertedText.outputText;
+                        ret.converter = testConv;
+                        return ret;
+                    }
+                }
             }
         }
     }
-    //if (nodeConverter == null)
-    //    MyanmarConverterExtension._trace("No Converter matched: " + node.nodeValue);
-    return nodeConverter;
+
+    ret.converter = nodeConverter;
+    if (nodeConverter)
+        ret.converted = (toUnicode)? nodeConverter.convertToUnicode(nodeText) : 
+                nodeConverter.convertFromUnicode(nodeText);
+    else
+        ret.converted = nodeText;
+    return ret;
 }
 
 MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
@@ -256,13 +347,13 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         var bestConv = converter;
         if (toUnicode)
         {
-            bestConv = MyanmarConverterExtension.guessConverterForNode(node, converter);
+            var convResult = MyanmarConverterExtension.guessConvert(node.parentNode, node.nodeValue, converter, toUnicode);
+            bestConv = convResult.converter;
         }
         //this._trace("ForOldValueInParseNodes::"+oldValue+" "+typeof bestConv);
         if (bestConv)
         {
-            var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
-                bestConv.convertFromUnicode(oldValue);
+            var newValue = convResult.converted;
             if (oldValue != newValue)
             {
                 var newNode =  node.ownerDocument.createTextNode(newValue);
@@ -297,23 +388,24 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         var theParent = textNode.parentNode;
         var style = window.getComputedStyle(theParent, null);
         var bestConv = converter;
-        if (toUnicode)
-        {
-            bestConv = MyanmarConverterExtension.guessConverterForNode(textNode, converter);
-        }
-        if (bestConv)
-        {
-            convertText = true;
-        }
-        else
-        {
-            convertText = false;
-        }
+//        if (toUnicode)
+//        {
+//            var nodeResult = MyanmarConverterExtension.guessConvert(textNode.parentNode, textNode.nodeValue, converter, toUnicode);
+//            bestConv = nodeResult.converter;
+//        }
+//        if (bestConv)
+//        {
+//            convertText = true;
+//        }
+//        else
+//        {
+//            convertText = false;
+//        }
         var oldValue = new String(textNode.nodeValue);
         var prevNode = textNode;
         var hasWbr = false;
         textNode = walker.nextNode();
-        if (convertText)
+        if (converter || toUnicode)
         {
             while ((prevNode.nextSibling &&
                 (prevNode.nextSibling.nodeName.toLowerCase() == "wbr")) ||
@@ -394,9 +486,11 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                     break;
                 }
             }
-            var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
-                bestConv.convertFromUnicode(oldValue);
-            if (oldValue != newValue || wbr)
+            //var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
+            //    bestConv.convertFromUnicode(oldValue);
+            var guessResult = this.guessConvert(walker.currentNode.parentNode, oldValue, converter, toUnicode);    
+            var newValue = guessResult.converted;
+            if ((oldValue != newValue) || wbr)
             {
                 var newNode = prevNode.ownerDocument.createTextNode(newValue);
                 if (theParent.childNodes.length == 1)
@@ -422,7 +516,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         }
     }
     // convert alt text
-    if (converter != null)
+    if (converter != null || toUnicode)
     {
         var altConv = converter;
         var images=parent.getElementsByTagName('img');
@@ -430,23 +524,13 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         {
             if(images[i].hasAttribute("alt"))
             {
-            var oldAlt=images[i].getAttribute('alt');
-            var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
-                altConv.convertFromUnicode(oldAlt);
-            images[i].setAttribute('alt',newAlt);
-            }
-            if(images[i].hasAttribute("title"))
-            {
-            var oldAlt=images[i].getAttribute('title');
-            var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
-                altConv.convertFromUnicode(oldAlt);
-            images[i].setAttribute("title",newAlt);
+                var oldAlt=images[i].getAttribute('alt');
+                var guess = this.guessConvert(images[i], oldAlt, converter, toUnicode);
+                var newAlt = guess.converted;
+                images[i].setAttribute('alt',newAlt);
             }
         }
-    }
-    //convert title text
-    if(converter != null)
-    {
+        //convert title text
         var treeWalker = parent.ownerDocument.createTreeWalker(parent,
                     NodeFilter.SHOW_ELEMENT,{ acceptNode: function(node) {
                         if (node.hasAttribute("title"))
@@ -455,10 +539,10 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                     , false);
         while(treeWalker.nextNode())
         {
-            var oldAlt=treeWalker.currentNode.getAttribute('title');
-            var newAlt = (toUnicode)? altConv.convertToUnicode(oldAlt) : 
-                altConv.convertFromUnicode(oldAlt);
-            treeWalker.currentNode.setAttribute("title",newAlt);
+            var oldTitle=treeWalker.currentNode.getAttribute('title');
+            var guess = this.guessConvert(treeWalker.currentNode, oldTitle, converter, toUnicode);
+            var newTitle = guess.converted;
+            treeWalker.currentNode.setAttribute("title",newTitle);
         }
     }
 }
@@ -569,7 +653,7 @@ MyanmarConverterExtension.updateText = function(target, prevValue, newValue)
         var converted = converter.convertToUnicode(toConvert);
         target.textContent = new String(prefix + converted + suffix);
     }
-    this._trace("target.textContent::"+target.textContent);
+    //this._trace("target.textContent:"+target.textContent);
 };
 
 MyanmarConverterExtension.isEnabledForUrl = function(url) {
@@ -636,12 +720,12 @@ MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
         {
             var conv = tlsMyanmarConverters[this.legacyFonts[i].toLowerCase()];
             if (i == 0)
-                unicodeFreq = conv.matchFrequency(testNode.textContent, true);
+                unicodeFreq = conv.matchFrequency(testNode.textContent, true).freq;
             // converters using Latin script code points can match English with
             // very bad consequences
             if (!conv.isPseudoUnicode())
                 continue;
-            var f = conv.matchFrequency(testNode.textContent, false);
+            var f = conv.matchFrequency(testNode.textContent, false).freq;
             if (f > bestMatch && f > unicodeFreq)
             {
                 doc.tlsMyanmarEncoding = this.legacyFonts[i];
@@ -1274,8 +1358,8 @@ MyanmarConverterExtension.handleEvent = function(event)
     {
         if(event.type == 'TabSelect')
         {
-            this._trace("MyanmarConverterExtension.handleEvent " + event.type 
-                + gBrowser.contentDocument.tlsMyanmarEncoding);
+//            this._trace("MyanmarConverterExtension.handleEvent " + event.type 
+//                + gBrowser.contentDocument.tlsMyanmarEncoding);
                 
             var doc = gBrowser.contentDocument;
             var statusBar = document.getElementById('myanmarConverter.status.text');
