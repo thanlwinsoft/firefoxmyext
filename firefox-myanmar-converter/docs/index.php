@@ -61,14 +61,14 @@ This extension automatically detects if a web page is using Zaw Gyi One fonts an
 This means that you only need to install a Unicode font, you don't need to have ZawGyi installed.
 </p>
 <p lang="my" class="myTranslation">
-web page တစ်ခုက စကားလုံးများကို ဇော်ဂျီဖောင့်ဖြင့် အသုံးပြုရေးသားထားလျှင် ဤတိုးချဲ့အထူးပြုချက်က ယူနီကုတ်သို့ အလိုအ​​လျောက် ရှာဖွေပြောင်းလဲပေးနိုင်သည်။ ထိုကြောင့် သင်သည် ယူနီကုတ်ဖောင့်ကိုသား ထည့်သွင်းရန်လိုအပ်ပြီး၊ ဇော်ဂျီဖောင့်ကို ထည့်သွင်းရန်လုံးဝမလိုအပ်ပါဟုဆိုလိုခြင်းပင်ဖြစ်သည်။
+web page တစ်ခုက စကားလုံးများကို ဇော်ဂျီဖောင့်ဖြင့် အသုံးပြုရေးသားထားလျှင် ဤတိုးချဲ့အထူးပြုချက်က ယူနီကုတ်သို့ အလိုအ​​လျောက် ရှာဖွေပြောင်းလဲပေးနိုင်သည်။ ထိုကြောင့် သင်သည် ယူနီကုတ်ဖောင့်ကိုသာ ထည့်သွင်းရန်လိုအပ်ပြီး၊ ဇော်ဂျီဖောင့်ကို ထည့်သွင်းရန်လုံးဝမလိုအပ်ပါဟုဆိုလိုခြင်းပင်ဖြစ်သည်။
 </p>
 
 <h2 class="enTranslation">Requirements</h2>
 <h2 lang="my" class="myTranslation">လိုအပ်ချက်များ</h2>
 <ul>
 <li class="enTranslation">A Myanmar Unicode font to be installed such as <a href="http://scripts.sil.org/Padauk">Padauk</a> or Myanmar3.</li>
-<li lang="my" class="myTranslation">ဤကဲ့သို့သောမြန်မာယူနီကုတ်ဖောင့်များ၊ ဥပမာ <a href="http://scripts.sil.org/Padauk">ပိတောက်</a> သို့မဟုက် မြန်မာ-၃ ဖောင့်များ ထည့်သွင်းအသုံးပြု၍ရပါသည်။</li>
+<li lang="my" class="myTranslation">ဖော်ပြပါ မြန်မာယူနီကုတ်ဖောင့်များ၊ ဥပမာ <a href="http://scripts.sil.org/Padauk">ပိတောက်</a> သို့မဟုက် မြန်မာ-၃ ဖောင့်များ ထည့်သွင်းအသုံးပြု၍ရပါသည်။</li>
 </ul>
 
 <h2 class="enTranslation">Why convert from ZawGyi to Unicode?</h2>
@@ -79,7 +79,7 @@ If the wrong font is selected, then the Myanmar text will display wrongly.
 Unicode has many advantages over Zaw Gyi:
 </p>
 <p lang="my" class="myTranslation">
-ဇော်ဂျီဖောင့်နှင့်ယူနီကုတ်ဖောင့် နှစ်ခုလုံးရှိနေသောအခါ web pageအနေဖြင့် မည်သည့်ဖောင့်ဆိုတာကို ပြတ်သားစွာ မဖော်ပြနိုင်တဲ့ ပြဿနာများကို ဖြစ်စေနိုင်ပါသည်။ မှားယွင်းတဲ့ ဖောင့်ကို​ရွေးချယ်မိခဲ့မယ်ဆိုလျှင်ဖြင့် မြန်မာစာလုံးများသည်လည်း မှန်ကန်စွာ ဖေါ်ပြနိုင်တော့မည်မဟုတ်ပေ။ ယူနီကုတ်တွင် ဇော်ဂျီထက်သာလွန်သော အကျိုးကျေးဇူးများရှိပေသည်။
+ဇော်ဂျီဖောင့်နှင့်ယူနီကုတ်ဖောင့် နှစ်ခုလုံးရှိနေသောအခါ web page အနေဖြင့် မည်သည့်ဖောင့်ဆိုသည်ကို ပြတ်သားစွာ မဖော်ပြနိုင်တဲ့ ပြဿနာများကို ဖြစ်စေနိုင်ပါသည်။ မှားယွင်းတဲ့ ဖောင့်ကို​ရွေးချယ်မိခဲ့မယ်ဆိုလျှင်ဖြင့် မြန်မာစာလုံးများသည်လည်း မှန်ကန်စွာ ဖော်ပြနိုင်တော့မည်မဟုတ်ပေ။ ယူနီကုတ်တွင် ဇော်ဂျီထက်သာလွန်သော အကျိုးကျေးဇူးများရှိပေသည်။
 </p>
 <ul class="enTranslation">
 <li>Unicode has only one spelling for a Myanmar word, Zaw Gyi can have multiple spellings for the same word.</li>
@@ -91,7 +91,7 @@ Unicode has many advantages over Zaw Gyi:
 <ul lang="my" class="myTranslation">
 <li>မြန်မာစကားလုံး တစ်လုံးအတွက် ယူနီကုတ်တွင် စာလုံးပေါင်းပုံ တစ်မျိုးတည်းသာ ရှိပါသည်။ တူညီတဲ့ စကားလုံးအတွက်ဇော်ဂျီတွင် စာလုံးပေါင်းပုံများ အများအပြား ရှိနိုင်ပါသည်။</li>
 <li>ယူနီကုတ်ဖြင့် အမျိုးအစားခွဲခြင်း၊ ရှာဖွေခြင်းတွေကို လွယ်ကူစွာလုပ်​ဆောင်နိုင်ပါသည်။</li>
-<li>နိုင်ငံတကာအဆင့်မှီဆော့ဝဲလ်တွင် ယူနီကုတ်ကိုသာ အသုံးပြုပါသည်။ </li>
+<li>အများနှင့်ဆိုင်သောအဆင့်မှီဆော့ဝဲလ်များတွင် ယူနီကုတ်ကိုသာ အသုံးပြုပါလိမ့်မည်။ </li>
 <li>ယူနီကုတ်ဖြင့် မြန်မာစာ စာလုံးပေါင်းသတ်ပုံ စစ်ဆေးခြင်းများ ဖြစ်လာနိုင်ဖွယ်ရှိပါသည်။</li>
 <li>ယူနီကုတ်ဖြင့် မွန်၊ ကရင်၊ ရှမ်း စကားလုံးများကို မှန်ကန်စွာ ပြသနိုင်ပါသည်။</li>
 </ul>
@@ -107,7 +107,7 @@ $dir->listDir();
 Many web pages are using ZawGyi-One or other fonts which are not following the Unicode Standard correctly. The "Myanmar Converter" Firefox Extension allows people with only genuine Myanmar Unicode fonts installed to read these pages by converting the text to Unicode when the page opens.
 </p>
 <p lang="my" class="myTranslation">
-web page ​တော်တော်များများဟာ ယူနီကုတ်အဆင့်အတန်းကို မှန်ကန်စွာမလိုက်နာတဲ့ ဇော်ဂျီ သို့မဟုတ် အခြားဖောင့် များကို အသုံးပြုနေကြပါတယ်။ Firefox ကိုတိုးချဲ့အထူးပြုထားသော မြန်မာစာပြောင်းလဲခြင်း (The "Myanmar Converter" Firefox Extension) ဟာ အစစ်အမှန်ဖြစ်သော မြန်မာယူနီကုတ်ဖောင့် တစ်မျိုးတည်းကိုသာ ထည့်သွင်းအသုံးပြုထားသော သူများအတွက် ဤစာမျက်နှာများကို ဖတ်ရှုနိုင်ရန် စာမျက်နှာဖွင့်လိုက်သောအခါ စာသားများကို ယူနီကုတ်သို့ ပြောင်းလဲပေးခြင်းအားဖြင့် ခွင့်ပြုထားပါတယ်။
+web page ​တော်တော်များများသည် ယူနီကုတ်အဆင့်အတန်းကို မှန်ကန်စွာမလိုက်နာသော ဇော်ဂျီ သို့မဟုတ် အခြားဖောင့် များကို အသုံးပြုနေကြပါသည်။ ဤစာမျက်နှာများကို ဖတ်ရှုနိုင်ရန် စစ်မှန်သော မြန်မာယူနီကုတ်ဖောင့် တစ်မျိုးတည်းကိုသာ ထည့်သွင်းအသုံးပြုထားသော သူများအနေဖြင့် စာမျက်နှာဖွင့်လိုက်သောအခါ Firefox ကိုတိုးချဲ့အထူးပြုထားသော မြန်မာစာပြောင်းလဲခြင်း (The "Myanmar Converter" Firefox Extension) သည် စာသားများကို ယူနီကုတ်သို့ ပြောင်းလဲပေးနိုင်ပါသည်။
 </p>
 <p class="enTranslation">
 The Myanmar text will display wrongly like this:
