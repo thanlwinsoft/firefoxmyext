@@ -1,0 +1,22 @@
+SET UTF-8
+TRY ်ာုိေးသကငမတ့ရြအှညနလပစျူခါွ၏ထယဘံီဖ၍ဆဝဟဲ၌္ဒဇဗ၎ဉဂဣဤဏဧဥဦဃဌဩဓဋဿဍဈဠဪ
+
+# not sure if its wise to have these replacements for numbers, but they won't be shown otherwise
+REP 9
+REP င်း ၎င်း
+REP ါ ဝါ
+REP င် ဝင်
+REP န် ဝန်
+REP ပ် ဝပ်
+REP မ်း ဝမ်း
+REP က် ဝက်
+REP ယ် ဝယ်
+REP စျ ဈ
+
+MAP 5
+MAP ြျ
+MAP ကဂဃခ
+MAP စဆ
+MAP တဒဓဍဌထ
+MAP ပဘဗဖ
+
