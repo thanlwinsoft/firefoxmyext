@@ -830,29 +830,65 @@ TlsMyanmarConverter.prototype.isPseudoUnicode = function()
 
 function TlsMyanmarUtn11()
 {
-    this.kinzi = "((င|ရ|ၚ)်\u1039)?";
-    this.cons = "(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ဣ|ဤ|ဥ|ဦ|ဧ|ဩ|ဪ|ဿ|၀|၁|၂|၃|၄|၅|၆|၇|၈|၉|၌|၍|၎|၏|ၐ|ၑ|ၒ|ၓ|ၔ|ၕ|ၚ|ၛ|ၜ|ၝ|ၡ|ၥ|ၦ|ၮ|ၯ|ၰ|ၵ|ၶ|ၷ|ၸ|ၹ|ၺ|ၻ|ၼ|ၽ|ၾ|ၿ|ႀ|ႁ|ႎ|႐|႑|႒|႓|႔|႕|႖|႗|႘|႙|႟|ꩠ|ꩡ|ꩢ|ꩣ|ꩤ|ꩥ|ꩦ|ꩧ|ꩨ|ꩩ|ꩪ|ꩫ|ꩬ|ꩭ|ꩮ|ꩯ|ꩱ|ꩲ|ꩳ|ꩴ|ꩵ|ꩶ|꩷|꩸|꩹|ꩺ)";
-    this.stack = "(\u1039(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ၚ|ၛ|ၜ|ၝ)){0,2}";
-    this.asat = "(\u103A)?";
-    this.medialY = "(ျ|ၞ|ၟ)?";
-    this.medialR = "(ြ)?";
-    this.medialW = "(ွ|ႂ)?";
-    this.medialH = "(ှ|ၠ)?";
-    this.eVowel = "(\u1031\u1031|\u1084\u1031|\u1031|\u1084)?";
-    this.uVowel = "(ိ|ီ|ဲ|ဳ|ဴ|ဵ|ံ|ၱ|ၲ|ၳ|ၴ|ႅ|ႝ)?";
-    this.lVowel = "(ု|ူ)?";
-    this.karenVowel = "(ၢ|့)?";
-    this.shanVowel = "(ႆ)?";
-    this.aVowel = "(ါ|ာ|ၢ|ၣ|ၧ|ၨ|ႃ)?";
-    this.anusvara = "(ဲ|ံ)?";
-    this.pwoTone = "(ၤ|ၩ|ၪ|ၫ|ၬ|ၭ)?";
-    this.lowerDot = "(့)?";
-    this.monH = "(ှ)?";
-    this.visarga = "(း|ႇ|ႈ|ႉ|ႊ|ႋ|ႌ|ႍ|ႏ|ႚ|ႛ|ႜ)?";
-    this.redup = "(ႝꩰ)?";
-    this.section = "(၊|။)?";
+    this.kinzi = "((င|ရ|ၚ)်\u1039)?";//1
+    this.cons = "(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ဣ|ဤ|ဥ|ဦ|ဧ|ဩ|ဪ|ဿ|၀|၁|၂|၃|၄|၅|၆|၇|၈|၉|၌|၍|၎|၏|ၐ|ၑ|ၒ|ၓ|ၔ|ၕ|ၚ|ၛ|ၜ|ၝ|ၡ|ၥ|ၦ|ၮ|ၯ|ၰ|ၵ|ၶ|ၷ|ၸ|ၹ|ၺ|ၻ|ၼ|ၽ|ၾ|ၿ|ႀ|ႁ|ႎ|႐|႑|႒|႓|႔|႕|႖|႗|႘|႙|႟|ꩠ|ꩡ|ꩢ|ꩣ|ꩤ|ꩥ|ꩦ|ꩧ|ꩨ|ꩩ|ꩪ|ꩫ|ꩬ|ꩭ|ꩮ|ꩯ|ꩱ|ꩲ|ꩳ|ꩴ|ꩵ|ꩶ|꩷|꩸|꩹|ꩺ)";//3
+    this.stack = "(\u1039(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ၚ|ၛ|ၜ|ၝ)){0,2}";//4
+    this.asat = "(\u103A)?";//6,11,22
+    this.medialY = "(ျ|ၞ|ၟ)?";//7
+    this.medialR = "(ြ)?";//8
+    this.medialW = "(ွ|ႂ)?";//9
+    this.medialH = "(ှ|ၠ)?";//10
+    // asat 11
+    this.eVowel = "(\u1031\u1031|\u1084\u1031|\u1031|\u1084)?";//12
+    this.uVowel = "(ိ|ီ|ဲ|ဳ|ဴ|ဵ|ံ|ၱ|ၲ|ၳ|ၴ|ႅ|ႝ)?";//13
+    this.lVowel = "(ု|ူ)?";//14
+    this.karenVowel = "(ၢ|့)?";//15
+    this.shanVowel = "(ႆ)?";//16
+    this.aVowel = "(ါ|ာ|ၢ|ၣ|ၧ|ၨ|ႃ)?";//17
+    this.anusvara = "(ဲ|ံ)?";//18
+    this.pwoTone = "(ၤ|ၩ|ၪ|ၫ|ၬ|ၭ)?";//19
+    this.lowerDot = "(့)?";//20
+    this.monH = "(ှ)?";//21
+    // asat 22
+    this.visarga = "(း|ႇ|ႈ|ႉ|ႊ|ႋ|ႌ|ႍ|ႏ|ႚ|ႛ|ႜ)?";//23
+    this.redup = "(ႝꩰ)?";//24
+    this.section = "(၊|။)?";//25
     this.pattern = new RegExp(this.kinzi + this.cons + this.stack + this.asat  +this.medialY + this.medialR + this.medialW + this.medialH + this.asat + this.eVowel + this.uVowel + this.lVowel + this.karenVowel + this.shanVowel + this.aVowel + this.anusvara + this.pwoTone + this.lowerDot + this.monH + this.asat + this.visarga + this.redup + this.section, "g");
     return this;
+}
+
+TlsMyanmarUtn11.prototype.findSyllables = function(inputText)
+{
+    var syllables = new Array();
+    var pos = 0;
+    var match = this.pattern.exec(inputText);
+    while (match)
+    {
+        var nonMatched = inputText.substring(pos, match.index);
+        if (nonMatched.length)
+            syllables.push(nonMatched);
+        pos = this.pattern.lastIndex;
+        // check for asat or virama and append to previous syllable
+        if (syllables.length && ((match[1] != null || match[4] != null ||
+            match[6] != null || match[11] != null || match[22] != null) ||
+            (syllables[syllables.length-1] == "အ")))
+        {
+            var lastSyl = syllables.pop();
+            lastSyl += match[0];
+            syllables.push(lastSyl);
+        }
+        else
+        {
+            syllables.push(match[0]);
+        }
+        match = this.pattern.exec(inputText);
+    }
+    if (pos != inputText.length)
+    {
+        var nonMatched = inputText.substring(pos, inputText.length);
+        syllables.push(nonMatched);
+    }
+    return syllables;
 }
 
 /** Convert the text in a given element from source to target encoding

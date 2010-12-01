@@ -8,6 +8,7 @@
 
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/tlsMyanmarConverter.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/tlsMyanmarConverterData.js"/>
+    <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/ConverterListeners.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/ConverterOptions.js"/>
     <script type="application/x-javascript" src="chrome://myanmar-converter/content/scripts/browser-overlay.js"/>
     <script type="application/x-javascript">

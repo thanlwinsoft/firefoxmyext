@@ -14,7 +14,7 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library; if not, write to the Free Software
 Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
- */
+*/
 
 var MyanmarConverterExtension = new Object();
 
@@ -60,7 +60,8 @@ MyanmarConverterExtension.initialize = function() {
         {
             appcontent.addEventListener("DOMContentLoaded", MyanmarConverterExtension.onPageLoad, true);
             var container = gBrowser.tabContainer;
-            container.addEventListener("TabSelect", this, false);
+            if (typeof container != "undefined")
+                container.addEventListener("TabSelect", this, false);
         }
         
         // Different versions of Firefox have different contract IDs
@@ -80,7 +81,6 @@ MyanmarConverterExtension.initialize = function() {
 	    
 	    this.personalDict = Components.classes["@mozilla.org/spellchecker/personaldictionary;1"]
             .getService(Components.interfaces.mozIPersonalDictionary);
-        
     }
     catch (e)
     {
@@ -193,11 +193,61 @@ MyanmarConverterExtension.onPageLoad = function(event) {
     catch (e) { MyanmarConverterExtension._fail(e); }
 };
 
+/**
+* Segment between Myanmar words in an input or textarea element using ZWSP
+* and adjust the selection accordingly.
+*/
+MyanmarConverterExtension.segmentWords = function(inputElement)
+{
+    var text = inputElement.value;
+    if (!text.match("[\u1000-\u109F]"))
+        return;
+    var oldSelStart = inputElement.selectionStart;
+    var oldSelEnd = inputElement.selectionEnd;
+    var newSelStart = oldSelStart;
+    var newSelEnd = oldSelEnd;
+    var utn11 = new TlsMyanmarUtn11();
+    var syllables = utn11.findSyllables(text);
+    var checkResult = this.spellCheckSyllables(syllables);
+    var output = "";
+    var origIndex = 0;
+    var newIndex = 0;
+    for (var i = 0; i < syllables.length; i++)
+    {
+        if ((oldSelStart > origIndex) && (oldSelStart < origIndex + syllables[i].length))
+        {
+            newSelStart += (newIndex - oldIndex);
+        }
+        if ((oldSelEnd > origIndex) && (oldSelEnd < origIndex + syllables[i].length))
+        {
+            newSelEnd += (newIndex - oldIndex);
+        }
+        output += syllables[i];
+        origIndex += syllables[i].length;
+        newIndex += syllables[i].length;
+        
+        if ((checkResult.wordBreaks.length > 0) && (checkResult.wordBreaks[0] == i))
+        {
+            newIndex += 1;
+            output += "\u200B";
+            checkResult.wordBreaks.shift();
+        }
+    }
+    inputElement.value = output;
+    inputElement.startSelection = newSelStart;
+    inputElement.endSelection = newSelEnd;
+}
+
+/**
+* Spell check an array of Myanmar syllables counting the number of known Myanmar
+* words and number of unknown syllables.
+*/
 MyanmarConverterExtension.spellCheckSyllables = function(syllables)
 {
     var convertedText = "";
     var unknownSyllables = 0;
     var knownWordCount = 0;
+    var wordBreaks = new Array();
     for (var j = 0 ; j< syllables.length; j++)
     {
         var testWord = syllables[j];
@@ -225,19 +275,30 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
         {
             convertedText += checkedWord;
             j += matchedSyllables - 1;
+            if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u109F]")))
+            {
+                wordBreaks.push(j);
+            }
             knownWordCount += 1;
         }
         else
         {
             convertedText += syllables[j];
             if (syllables[j].match("[\u1000-\u109F]"))
+            {
                 unknownSyllables += 1;
+                if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u109F]")))
+                {
+                    wordBreaks.push(j);
+                }
+            }
         }
     }
     var ret = new Object();
     ret.text = convertedText;
     ret.knownWords = knownWordCount;
     ret.unknownSyllables = unknownSyllables;
+    ret.wordBreaks = wordBreaks;
     this._trace(ret.text + " Known: " + ret.knownWords + " Unknown: " + ret.unknownSyllables);
     return ret;
 }
@@ -490,6 +551,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
             //    bestConv.convertFromUnicode(oldValue);
             var guessResult = this.guessConvert(walker.currentNode.parentNode, oldValue, converter, toUnicode);    
             var newValue = guessResult.converted;
+            bestConv = guessResult.converter;
             if ((oldValue != newValue) || wbr)
             {
                 var newNode = prevNode.ownerDocument.createTextNode(newValue);
@@ -1120,14 +1182,14 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
 {
     if (!popup.hasChildNodes())
     {
-    var mu=document.createElement("menu");
-    mu.setAttribute("id", "myanmarconverter.context.popup.form.menu");
-    var label=this.messages.GetStringFromName("formMenu");
-    mu.setAttribute("label", label);
-    popup.appendChild(mu);
-    var mupp=document.createElement("menupopup")
-    mupp.setAttribute("id","myanmarconverter.context.popup.form.menupopup");
-    mu.appendChild(mupp);
+        var mu=document.createElement("menu");
+        mu.setAttribute("id", "myanmarconverter.context.popup.form.menu");
+        var label=this.messages.GetStringFromName("formMenu");
+        mu.setAttribute("label", label);
+        popup.appendChild(mu);
+        var mupp=document.createElement("menupopup")
+        mupp.setAttribute("id","myanmarconverter.context.popup.form.menupopup");
+        mu.appendChild(mupp);
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var mi = document.createElement("menuitem");
@@ -1138,27 +1200,15 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
             mi.setAttribute("oncommand", "MyanmarConverterExtension.addFormEventHandlers('" +
                 this.legacyFonts[i] + "', document.popupNode);");
             mupp.appendChild(mi);
-            /*
-            mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
-                this.legacyFonts[i] + "', true, document.popupNode);");
-            mupp.appendChild(mi);
-            mi = document.createElement("menuitem");
-            mi.setAttribute("id", "myanmarconverter.context.popup.menu.unicode2" + this.legacyFonts[i]);
-            mi.setAttribute("label", this.messages.formatStringFromName("convertFromUnicode",
-                [fontName], 1));
-            mi.setAttribute("oncommand", "MyanmarConverterExtension.convertSubTree('" +
-                this.legacyFonts[i] + "', false, document.popupNode);");
-            popup.appendChild(mi);
-            */
         }
-    mu=document.createElement("menu");
-    mu.setAttribute("id", "myanmarconverter.context.popup.toUnicode.menu");
-    label=this.messages.GetStringFromName("convertToUnicodeMenu");
-    mu.setAttribute("label", label);
-    popup.appendChild(mu);
-    mupp=document.createElement("menupopup")
-    mupp.setAttribute("id","myanmarconverter.context.popup.toUnicode.menupopup");
-    mu.appendChild(mupp);
+        mu=document.createElement("menu");
+        mu.setAttribute("id", "myanmarconverter.context.popup.toUnicode.menu");
+        label=this.messages.GetStringFromName("convertToUnicodeMenu");
+        mu.setAttribute("label", label);
+        popup.appendChild(mu);
+        mupp=document.createElement("menupopup")
+        mupp.setAttribute("id","myanmarconverter.context.popup.toUnicode.menupopup");
+        mu.appendChild(mupp);
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var mi = document.createElement("menuitem");
@@ -1170,18 +1220,18 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
                 this.legacyFonts[i] + "', true, document.popupNode);");
             mupp.appendChild(mi);
         }
-    mu=document.createElement("menu");
-    mu.setAttribute("id", "myanmarconverter.context.popup.toUnicode.menu");
-    label=this.messages.GetStringFromName("convertFromUnicodeMenu");
-    mu.setAttribute("label", label);
-    popup.appendChild(mu);
-    mupp=document.createElement("menupopup")
-    mupp.setAttribute("id","myanmarconverter.context.popup.toUnicode.menupopup");
-    mu.appendChild(mupp);
+        mu=document.createElement("menu");
+        mu.setAttribute("id", "myanmarconverter.context.popup.fromUnicode.menu");
+        label=this.messages.GetStringFromName("convertFromUnicodeMenu");
+        mu.setAttribute("label", label);
+        popup.appendChild(mu);
+        mupp=document.createElement("menupopup")
+        mupp.setAttribute("id","myanmarconverter.context.popup.fromUnicode.menupopup");
+        mu.appendChild(mupp);
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var mi = document.createElement("menuitem");
-            mi.setAttribute("id", "myanmarconverter.context.popup.menu." + this.legacyFonts[i] +"2unicode");
+            mi.setAttribute("id", "myanmarconverter.context.popup.menu.unicode2" + this.legacyFonts[i]);
             var fontName=this.messages.GetStringFromName(this.legacyFonts[i]);
             mi.setAttribute("label", this.messages.formatStringFromName("toFont",
                 [fontName], 1));
@@ -1189,63 +1239,31 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
                 this.legacyFonts[i] + "', false, document.popupNode);");
             mupp.appendChild(mi);
         }
+        var splitWordsMenu = document.createElement("menuitem");
+        splitWordsMenu.setAttribute("id", "myanmarconverter.context.popup.menu.separateWords");
+        splitWordsMenu.setAttribute("label", this.messages.GetStringFromName("separateWordsWithZwsp"));
+        splitWordsMenu.setAttribute("oncommand", "MyanmarConverterExtension.addSegmentWordListener(document.popupNode);");
+        popup.appendChild(splitWordsMenu);
     }
 };
 
-function MyanmarConverterEventListener(conv)
+
+MyanmarConverterExtension.addSegmentWordListener = function(n)
 {
-    this.messages = Components.classes["@mozilla.org/intl/stringbundle;1"]
-                .getService(Components.interfaces.nsIStringBundleService)
-                .createBundle("chrome://myanmar-converter/locale/MyanmarConverter.properties");
-    this.conv=conv;
-    return this;
+    try
+    {
+        if (n.nodeName == 'TEXTAREA' || (n.nodeName == 'INPUT' && (!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')))
+        {
+            MyanmarConverterExtension.segmentWords(n);
+            var eListener = new MyanmarConverterWordSeparatorListener(n);
+            n.addEventListener('keydown', eListener, false);
+        }
+    }
+    catch(e)
+    {
+        MyanmarConverterExtension._fail(e);
+    }
 }
-
-MyanmarConverterEventListener.prototype.handleEvent = function(event)
-{
-try{
-
-    MyanmarConverterExtension._trace('myanmarConverterEvent' + event.type +
-        ' ' + event.target.nodeName + ' "' + event.target.value + '"');
-    if(event.type=='focus')
-    {
-        var fontName=this.messages.GetStringFromName(this.conv.data.fonts[0]);
-        var statusBar = document.getElementById('myanmarConverter.status.text');
-        statusBar.setAttribute("label", this.messages.formatStringFromName("sendAs",[fontName],1));
-        if(event.target.tlsUnicode == false)
-        {
-            event.target.value=this.conv.convertToUnicode(event.target.value);
-            event.target.tlsUnicode = true;
-        }
-    }
-    else if(event.type=='change' || event.type=='blur')
-    {
-        if(event.target.tlsUnicode == true)
-        {
-            event.target.value=this.conv.convertFromUnicode(event.target.value);
-            event.target.tlsUnicode = false;
-        }
-        else if(event.target.length == 0)
-        {
-            event.target.tlsUnicode = true;
-        }
-        var statusBar = document.getElementById('myanmarConverter.status.text');
-        statusBar.setAttribute("label","");
-    }
-    else if(event.type=='keypress' || event.type=='keydown')
-    {
-        if((event.keyCode==13) && (event.shiftKey == false))
-        {
-            event.target.value=this.conv.convertFromUnicode(event.target.value);
-            MyanmarConverterExtension._trace('myanmarConverterEvent Enter');
-        }
-    }
-  }
-  catch (gm)
-  {
-     MyanmarConverterExtension._fail(gm);
-  }
-};
 
 MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
 {
