@@ -10,6 +10,7 @@
     <em:id>myanmar-converter@thanlwinsoft.org</em:id>
     <em:version>0.4.0</em:version>
     <em:type>2</em:type>
+    <em:unpack>true</em:unpack>
     <em:creator>ThanLwinSoft</em:creator>
     <em:description>
     Converts Myanmar webpages in ZawGyi encoding to Unicode 5.1.
