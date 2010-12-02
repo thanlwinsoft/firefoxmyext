@@ -558,18 +558,20 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                 if (theParent.childNodes.length == 1)
                 {
                     theParent.replaceChild(newNode, prevNode);
-                    theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
+                    if (bestConv != null)
+                        theParent.style.fontFamily = bestConv.getFontFamily(toUnicode);
                     if (toUnicode) theParent.lang = "my";
                 }
                 else
                 {
                     var span = prevNode.ownerDocument.createElement("span");
-                    span.style.fontFamily = bestConv.getFontFamily(toUnicode);
+                    if (bestConv != null)
+                        span.style.fontFamily = bestConv.getFontFamily(toUnicode);
                     if (toUnicode) span.lang = "my";
                     span.appendChild(newNode);
                     theParent.replaceChild(span, prevNode);
                 }
-                if ((converter == null) && toUnicode)
+                if ((converter == null) && (bestConv != null) && toUnicode)
                 {
                     doc.tlsMyanmarEncoding = bestConv.data.fonts[0];
                     converter = bestConv;
