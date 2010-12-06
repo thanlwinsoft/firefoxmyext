@@ -46,7 +46,7 @@ MyanmarConverterExtension.initialize = function() {
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var conv = new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
-            conv.useZwsp= (prefs)? prefs.getBoolPref("useZwsp") :true;
+            //conv.useZwsp= (prefs)? prefs.getBoolPref("useZwsp") :true;
             MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
 
@@ -216,11 +216,11 @@ MyanmarConverterExtension.segmentWords = function(inputElement)
     {
         if ((oldSelStart > origIndex) && (oldSelStart < origIndex + syllables[i].length))
         {
-            newSelStart += (newIndex - oldIndex);
+            newSelStart += (newIndex - origIndex);
         }
         if ((oldSelEnd > origIndex) && (oldSelEnd < origIndex + syllables[i].length))
         {
-            newSelEnd += (newIndex - oldIndex);
+            newSelEnd += (newIndex - origIndex);
         }
         output += syllables[i];
         origIndex += syllables[i].length;
@@ -305,8 +305,18 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
 
 MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConverter, toUnicode)
 {
+
     var ret = new Object();
-    var nodeFontFamily = window.getComputedStyle(parentNode, null).fontFamily;
+    var nodeFontFamily = "";
+    try
+    {
+        window.getComputedStyle(parentNode, null).fontFamily;
+    }
+    catch(e)
+    {
+        this._trace("ParentNode::" + parentNode );
+        this._fail(e);
+    }
     var matchIndex = -1;
     var nodeConverter = null;
     var bestFreq = 0;
@@ -351,8 +361,27 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
                     }
                     else
                     {
-                        ret.converted = convertedText.outputText;
+                        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+                                      .getService(Components.interfaces.nsIPrefService)
+                                      .getBranch("extensions.myanmarconverter.");
+                        if (prefs.getBoolPref("useZwsp"))
+                        {
+                            ret.converted = "";
+                            for (var i = 0; i < syllables.length; i++)
+                            {
+                                ret.converted += syllables[i];
+                                if ((convertedResult.wordBreaks.length > 0) &&
+                                    (convertedResult.wordBreaks[0] == i))
+                                {
+                                    ret.converted += "\u200B";
+                                    convertedResult.wordBreaks.shift();
+                                }
+                            }
+                        }
+                        else
+                            ret.converted = convertedText.outputText;
                         ret.converter = testConv;
+                        
                         return ret;
                     }
                 }
@@ -1259,6 +1288,8 @@ MyanmarConverterExtension.addSegmentWordListener = function(n)
             MyanmarConverterExtension.segmentWords(n);
             var eListener = new MyanmarConverterWordSeparatorListener(n);
             n.addEventListener('keydown', eListener, false);
+            n.addEventListener('keyup', eListener, false);
+            n.addEventListener('keypress', eListener, false);
         }
     }
     catch(e)
