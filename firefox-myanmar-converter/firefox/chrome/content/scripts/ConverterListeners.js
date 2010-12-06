@@ -81,8 +81,8 @@ MyanmarConverterWordSeparatorListener.prototype.handleEvent = function(event)
 {
     try
     {
-        MyanmarConverterExtension._trace("wordsep key: " + event.keyCode + " char:" + event.charCode);
-        if((event.type=='keydown') && (event.keyCode == 32)) // space
+        MyanmarConverterExtension._trace("Event.type:" + event.type + " wordsep key: " + event.keyCode + " char:" + event.charCode);
+        if(((event.type=='keydown')||(event.type=='keyup')) && (event.keyCode == 32)) // space
         {
             MyanmarConverterExtension.segmentWords(event.target);
         }
