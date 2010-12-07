@@ -34,21 +34,22 @@
     </menupopup>
 
 	<popup id="contentAreaContextMenu">
-
+<!--
 		<menuitem id="myanmarConverter.context.menuDefault"
 			label="&myanmarConverter.context.label;"
 			accesskey="&myanmarConverter.context.accessKey;"
 			insertafter="context-sep-selectall"
 			oncommand="MyanmarConverterExtension.convertDocument(document.popupNode);"
 			/>
-
+-->
 	    <menu id="myanmarConverter.context.menu"
 	        label="&myanmarConverter.context.popup.label;"
 	        insertafter="context-sep-selectall">
 		    <menupopup id="myanmarConverter.context.menuPopup"
               onpopupshowing="MyanmarConverterExtension.onPopupShowing(this, event);"
               onpopuphiding="MyanmarConverterExtension.onPopupHiding();"/>
-        </menu> 
+        </menu>
+
 	</popup>
 	<statusbar id="status-bar">
 	    <statusbarpanel id="myanmarConverter.status.text" onclick=""

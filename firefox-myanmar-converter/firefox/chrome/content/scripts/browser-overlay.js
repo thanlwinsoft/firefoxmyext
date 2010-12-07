@@ -46,7 +46,6 @@ MyanmarConverterExtension.initialize = function() {
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var conv = new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
-            //conv.useZwsp= (prefs)? prefs.getBoolPref("useZwsp") :true;
             MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
 
@@ -197,7 +196,7 @@ MyanmarConverterExtension.onPageLoad = function(event) {
 * Segment between Myanmar words in an input or textarea element using ZWSP
 * and adjust the selection accordingly.
 */
-MyanmarConverterExtension.segmentWords = function(inputElement)
+MyanmarConverterExtension.segmentInputWords = function(inputElement)
 {
     var text = inputElement.value;
     if (!text.match("[\u1000-\u109F]"))
@@ -212,6 +211,7 @@ MyanmarConverterExtension.segmentWords = function(inputElement)
     var output = "";
     var origIndex = 0;
     var newIndex = 0;
+    var startIndex = 0;
     for (var i = 0; i < syllables.length; i++)
     {
         if ((oldSelStart > origIndex) && (oldSelStart < origIndex + syllables[i].length))
@@ -228,9 +228,34 @@ MyanmarConverterExtension.segmentWords = function(inputElement)
         
         if ((checkResult.wordBreaks.length > 0) && (checkResult.wordBreaks[0] == i))
         {
-            newIndex += 1;
-            output += "\u200B";
-            checkResult.wordBreaks.shift();
+            var nextWord = "";
+            if (checkResult.wordBreaks.length > 1)
+            {
+                for (var j = i+1; j <= checkResult.wordBreaks[1]; j++)
+                {
+                    nextWord += syllables[j];
+                }
+            }
+            this._trace("NextWord::" + nextWord);
+            if((nextWord.length > 0) &&
+                (newIndex - startIndex == nextWord.length) &&
+                (output.substring(startIndex,newIndex) == nextWord))
+            {
+                newIndex += 1;
+                output += "\u2060";
+                checkResult.wordBreaks.shift();
+            }
+            else
+            {
+                newIndex += 1;
+                startIndex = newIndex;
+                output += "\u200B";
+                checkResult.wordBreaks.shift();
+            }
+        }
+        else if (!syllables[i].match("[\u1000-\u1049\u104C-\u109F]"))
+        {
+            startIndex = newIndex;
         }
     }
     inputElement.value = output;
@@ -275,7 +300,7 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
         {
             convertedText += checkedWord;
             j += matchedSyllables - 1;
-            if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u109F]")))
+            if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u1049\u104C-\u109F]")))
             {
                 wordBreaks.push(j);
             }
@@ -287,7 +312,7 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
             if (syllables[j].match("[\u1000-\u109F]"))
             {
                 unknownSyllables += 1;
-                if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u109F]")))
+                if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u1049\u104C-\u109F]")))
                 {
                     wordBreaks.push(j);
                 }
@@ -321,6 +346,10 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
     var nodeConverter = null;
     var bestFreq = 0;
     var convertedText = nodeText;
+    var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+              .getService(Components.interfaces.nsIPrefService)
+              .getBranch("extensions.myanmarconverter.");
+
     // take the converter matching the font in the style with the lowest index just in case the web 
     // page actually mixed different fonts in the same style!
     for (var i = 0; i < MyanmarConverterExtension.legacyFonts.length; i++)
@@ -345,6 +374,15 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
                 {
                     nodeConverter = testConv;
                     bestFreq = pseudoFreq;
+                    if (prefs.getBoolPref("useZwsp"))
+                    {
+                        convertedText = testConv.convertToUnicodeSyllables(nodeText);
+                        var syllables = convertedText.syllables;
+                        var convertedResult = this.spellCheckSyllables(syllables);
+                        ret.converted = this.segmentWords(syllables, convertedResult.wordBreaks);
+                        ret.converter = testConv;
+                        return ret;
+                    }
                 }
                 else if (pseudoFreq == uniFreq)
                 {
@@ -361,27 +399,14 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
                     }
                     else
                     {
-                        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                      .getService(Components.interfaces.nsIPrefService)
-                                      .getBranch("extensions.myanmarconverter.");
                         if (prefs.getBoolPref("useZwsp"))
                         {
-                            ret.converted = "";
-                            for (var i = 0; i < syllables.length; i++)
-                            {
-                                ret.converted += syllables[i];
-                                if ((convertedResult.wordBreaks.length > 0) &&
-                                    (convertedResult.wordBreaks[0] == i))
-                                {
-                                    ret.converted += "\u200B";
-                                    convertedResult.wordBreaks.shift();
-                                }
-                            }
+                            ret.converted = this.segmentWords(syllables, convertedResult.wordBreaks);
+                            
                         }
                         else
                             ret.converted = convertedText.outputText;
                         ret.converter = testConv;
-                        
                         return ret;
                     }
                 }
@@ -396,6 +421,22 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
     else
         ret.converted = nodeText;
     return ret;
+}
+
+MyanmarConverterExtension.segmentWords = function (syllables, wordBreaks)
+{
+    var converted = "";
+    for (var i = 0; i < syllables.length; i++)
+    {
+        converted += syllables[i];
+        if ((wordBreaks.length > 0) &&
+            (wordBreaks[0] == i))
+        {
+            converted += "\u200B";
+            wordBreaks.shift();
+        }
+    }
+    return converted;
 }
 
 MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
@@ -419,13 +460,6 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                 // still parse checking for specific styles
             }
         }
-    }
-    if(converter != null)
-    {
-        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
-                                      .getService(Components.interfaces.nsIPrefService)
-                                      .getBranch("extensions.myanmarconverter.");
-        converter.useZwsp=(prefs)? prefs.getBoolPref("useZwsp") :true;
     }
     var convertText = true;
     // if this is directly called by the event it may not be a text node
@@ -1275,6 +1309,13 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
         splitWordsMenu.setAttribute("label", this.messages.GetStringFromName("separateWordsWithZwsp"));
         splitWordsMenu.setAttribute("oncommand", "MyanmarConverterExtension.addSegmentWordListener(document.popupNode);");
         popup.appendChild(splitWordsMenu);
+        
+        var convertToUnicodeMenu = document.createElement("menuitem");
+        splitWordsMenu.setAttribute("id", "myanmarConverter.context.menuDefault");
+        splitWordsMenu.setAttribute("label", this.messages.GetStringFromName("convertPageToUnicode"));
+        splitWordsMenu.setAttribute("oncommand", "MyanmarConverterExtension.convertDocument(document.popupNode);");
+        popup.appendChild(splitWordsMenu);
+        
     }
 };
 
@@ -1285,7 +1326,7 @@ MyanmarConverterExtension.addSegmentWordListener = function(n)
     {
         if (n.nodeName == 'TEXTAREA' || (n.nodeName == 'INPUT' && (!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')))
         {
-            MyanmarConverterExtension.segmentWords(n);
+            MyanmarConverterExtension.segmentInputWords(n);
             var eListener = new MyanmarConverterWordSeparatorListener(n);
             n.addEventListener('keydown', eListener, false);
             n.addEventListener('keyup', eListener, false);
