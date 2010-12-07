@@ -61,15 +61,15 @@ This extension automatically detects if a web page is using Zaw Gyi One fonts an
 This means that you only need to install a Unicode font, you don't need to have ZawGyi installed.
 </p>
 <p lang="my" class="myTranslation">
-web page တစ်ခုက စကားလုံးများကို ဇော်ဂျီဖောင့်ဖြင့် အသုံးပြုရေးသားထားလျှင် ဤတိုးချဲ့အထူးပြုချက်က ယူနီကုတ်သို့ အလိုအ​​လျောက် ရှာဖွေပြောင်းလဲပေးနိုင်သည်။ ထိုကြောင့် သင်သည် ယူနီကုတ်ဖောင့် တစ်မျိုးတည်းကိုသာ ထည့်သွင်းရန်လိုအပ်ပြီး၊ ဇော်ဂျီဖောင့်ကို ထည့်သွင်းရန် မလိုအပ်ပါဟု ဆိုလိုခြင်းပင်ဖြစ်သည်။
+web page တစ်ခုသည် စကားလုံးများကို ဇော်ဂျီဖောင့်ဖြင့် အသုံးပြုရေးသားထားလျှင် ဤတိုးချဲ့အထူးပြုချက်မှ ယူနီကုတ်သို့ အလိုအ​​လျောက် ရှာဖွေပြောင်းလဲပေးနိုင်သည်။ ထိုကြောင့် သင်သည် ယူနီကုတ်ဖောင့် တစ်မျိုးတည်းကိုသာ ထည့်သွင်းရန်လိုအပ်ပြီး၊ ဇော်ဂျီဖောင့်ကို ထည့်သွင်းရန် မလိုအပ်ပါဟု ဆိုလိုခြင်းပင်ဖြစ်သည်။
 </p>
 
 <h2 class="enTranslation">Requirements</h2>
 <h2 lang="my" class="myTranslation">လိုအပ်ချက်များ</h2>
-<ul>
-<li class="enTranslation">A Myanmar Unicode font to be installed such as <a href="http://scripts.sil.org/Padauk">Padauk</a> or Myanmar3.</li>
-<li lang="my" class="myTranslation">ဖော်ပြပါ မြန်မာယူနီကုတ်ဖောင့်များ၊ ဥပမာ <a href="http://scripts.sil.org/Padauk">ပိတောက်</a> သို့မဟုက် မြန်မာ-၃ ဖောင့်များ ထည့်သွင်းအသုံးပြု၍ရပါသည်။</li>
-</ul>
+<p class="enTranslation">
+A Myanmar Unicode font to be installed such as <a href="http://scripts.sil.org/Padauk">Padauk</a> or Myanmar3.</p>
+<p lang="my" class="myTranslation">
+ဖော်ပြပါ မြန်မာယူနီကုတ်ဖောင့်များ၊ ဥပမာ <a href="http://scripts.sil.org/Padauk">ပိတောက်</a> သို့မဟုက် မြန်မာ-၃ ဖောင့်များ ထည့်သွင်းအသုံးပြု၍ရပါသည်။</p>
 
 <h2 class="enTranslation">Why convert from ZawGyi to Unicode?</h2>
 <h2 lang="my" class="myTranslation">ဘာလို့ ဇော်ဂျီကနေ ယူနီကုတ်ကို ပြောင်းတာလဲ?</h2>
@@ -83,14 +83,14 @@ web page အနေဖြင့် မည်သည့်ဖောင့်ဆိ�
 </p>
 <ul class="enTranslation">
 <li>Unicode has only one spelling for a Myanmar word, Zaw Gyi can have multiple spellings for the same word.</li>
-<li>Sorting and searching are much easier with Unicode.</li>
+<li>Alphabetical sorting and searching for words are much easier with Unicode.</li>
 <li>Localized software will use Unicode.</li>
 <li>Myanmar spell checking becomes possible with Unicode.</li>
 <li>Mon, Karen, Shan can be displayed correctly with Unicode.</li>
 </ul>
 <ul lang="my" class="myTranslation">
 <li>မြန်မာစကားလုံး တစ်လုံးအတွက် ယူနီကုတ်တွင် စာလုံးပေါင်းပုံ တစ်မျိုးတည်းသာ ရှိပါသည်။ တူညီတဲ့ စကားလုံးအတွက်ဇော်ဂျီတွင် စာလုံးပေါင်းပုံများ အများအပြား ရှိနိုင်ပါသည်။</li>
-<li>ယူနီကုတ်ဖြင့် စကားလုံး အမျိုးအစားခွဲခြင်း၊ ရှာဖွေခြင်းများကို ပိုမိုလွယ်ကူစွာလုပ်​ဆောင်နိုင်ပါသည်။</li>
+<li>ယူနီကုတ်ဖြင့် အက္ခရာစဉ်အလိုက် စကားလုံး အမျိုးအစားခွဲခြင်း၊ ရှာဖွေခြင်းများကို ပိုမိုလွယ်ကူစွာလုပ်​ဆောင်နိုင်ပါသည်။</li>
 <li>အများနှင့်ဆိုင်သောအဆင့်မှီဆော့ဝဲလ်များသည် ယူနီကုတ်ကိုသာ အသုံးပြုပါလိမ့်မည်။ </li>
 <li>ယူနီကုတ်ဖြင့် မြန်မာစာ စာလုံးပေါင်းသတ်ပုံ စစ်ဆေးခြင်းများ ဖြစ်လာနိုင်ဖွယ်ရှိပါသည်။</li>
 <li>ယူနီကုတ်ဖြင့် မွန်၊ ကရင်၊ ရှမ်း စကားလုံးများကို မှန်ကန်စွာ ပြသနိုင်ပါသည်။</li>
@@ -121,10 +121,10 @@ The Myanmar text will display wrongly like this:
 <br></br>
 
 <p class="enTranslation">
-First, we must select the Tools,Myanmar Converter on toolbar.
+Select Tools/Myanmar Converter from the menu.
 </p>
 <p lang="my" class="myTranslation">
-ပထမဆုံး​အနေဖြင့် ကျွန်တော်တို့သည် toolbar(ကိရိယာတန်ဆာပလာဘား) ပေါ်က Tools ဆိုသည့် ကိရိယာထဲမှ Myanmar Converter ဆိုသည့် အရာကို ရွေးချယ်ရပါမည်။ 
+မီနူး ပေါ်မှ Tools ဆိုသည့် ကိရိယာထဲမှ Myanmar Converter ဆိုသည့် အရာကို ရွေးချယ်ပါ။ 
 </p>
 <p class="centre">
 <img src="images/state1.png" alt="Ubuntu Software Center/Myanmar"/>
@@ -133,26 +133,26 @@ First, we must select the Tools,Myanmar Converter on toolbar.
 <br></br>
 
 <p class="enTranslation">
-The Myanmar Converter Options box is appeared and we can choose match exactly or match as suffix for Hostname and match exactly or match as prefix for Partname.And we must check Enable conversion for Pattern check box and click the Add button.
+The Myanmar Converter Options dialog should appear. You can choose to match the Hostname exactly or with a suffix. The Pathname can also be match exactly or with a prefix. Check the Enable conversion for Pattern check box and click the Add button.
 </p>
 <p lang="my" class="myTranslation">
-မြန်မာစာဖောင့်ပြောင်းလဲရာ၌ ရွေးချယ်ပိုင်ခွင့်များ (Myanmar Converter Options) ဆိုသည့် box တစ်ခု ပေါ်လာပါမည်၊ ပြီးနောက်ကျွန်တော်တို့သည် အဓိကဆာလ်ဗာအမည် (Hostname) အတွက် အားလုံးကိုတိတိကျကျတွဲပါ (match exactyl) သို့မဟုတ် ​ရှေ့မှစ၍အားလုံးကိုတွဲပါ (match as suffix) ကိုရွေးချယ်ရပြီး လမ်းကြောင်းခွဲအမည် (Partname) အတွက်လည်း အားလုံး ကိုတိတိကျကျတွဲပါ (match exactyl) သို့မဟုတ် အနောက်မှစ၍အားလုံးကိုတွဲပါ (match as prefix) ကို ရွေးချယ်ရပါမည်။ ထို့နောက် ကျွန်တော်တို့သည် ပုံစံအလိုက်ပြောင်းလဲ​နိုင်သောစနစ် (Enable conversion for Pattern) ဆိုသည့် check box လေးကို အမှန်ပေးပြီး Add ဆိုသည့် ခလုပ်ကိုနှိပ်လိုက်ရပါမည်။</p>
+မြန်မာစာဖောင့်ပြောင်းလဲရာ၌ ရွေးချယ်ပိုင်ခွင့်များ (Myanmar Converter Options) ဆိုသည့် dialog တစ်ခု ပေါ်လာပါမည်၊ ပြီးနောက် သင်သည် အဓိကဆာလ်ဗာအမည် (Hostname) အတွက် အားလုံးကိုတိတိကျကျတွဲပါ (match exactyl) သို့မဟုတ် ​ရှေ့မှစ၍အားလုံးကိုတွဲပါ (match as suffix) ကိုရွေးချယ်ရပြီး လမ်းကြောင်းခွဲအမည် (Partname) အတွက်လည်း အားလုံး ကိုတိတိကျကျတွဲပါ (match exactyl) သို့မဟုတ် အနောက်မှစ၍အားလုံးကိုတွဲပါ (match as prefix) ကို ရွေးချယ်ရပါမည်။ ထို့နောက် ပုံစံအလိုက်ပြောင်းလဲ​နိုင်သောစနစ် (Enable conversion for Pattern) ဆိုသည့် check box လေးကို အမှန်ပေးပြီး Add ဆိုသည့် ခလုပ်ကိုနှိပ်လိုက်ရပါမည်။</p>
 <p  class="centre">
 <img src="images/state2.png" />
 </p>
 <br></br>
 <br></br>
 
-<p class="enTranslation">After above states we can click the Ok button.</p>
-<p lang="my" class="myTranslation">အထက်ပါအချက်များပြည့်စုံပြီဆိုလျှင်ဖြင့် OK ဆိုသည့်ခလုပ်ကို နှိပ်နိုင်ပါပြီ။</p> 
+<p class="enTranslation">Add more entries as required. Click the OK button when finished.</p>
+<p lang="my" class="myTranslation">လိုအပ်သောအခြား အချက်အလက်များကို ပေါင်းထည့်ပါ။ အားလုံးပြည့်စုံပြီးသည့်နောက် OK ဆိုသည့်ခလုပ်ကို ပါ။</p> 
 <p  class="centre">
 <img src="images/state3.png" />
 </p>
 <br></br>
 <br></br>
 
-<p class="enTranslation">And reload the web page, the Myanmar text will display correctly.</p>
-<p lang="my" class="myTranslation">ထိုနောက် web page ကို reload ပြန်လုပ်ခိုင်းပြီးလျှင်ဖြင့် မြန်မာစာလုံးများသည် တိကျမှန်ကန်စွာ ထွက်ပေါ်လာပါလိမ့်မည်။</p>
+<p class="enTranslation">Reload the web page and the Myanmar text should display correctly.</p>
+<p lang="my" class="myTranslation">web page ကို reload ပြန်လုပ်ခိုင်းပြီးလျှင်ဖြင့် မြန်မာစာလုံးများသည် တိကျမှန်ကန်စွာ ထွက်ပေါ်လာပါလိမ့်မည်။</p>
 <p  class="centre">
 <img src="images/afterConversion.png" />
 </p>
@@ -160,10 +160,10 @@ The Myanmar Converter Options box is appeared and we can choose match exactly or
 <br></br>
 
 <p class="enTranslation">
-If you want to send Myanmar text to another person with Zawgyi or other fonts, select the textarea and right click on mouse and then choose Myanmar Unicode Converter, Send form as: ,Zawgyi-One or as you like.You can send from Unicode to other fonts who can not use Unicode by using this states.
+It is also possible to send Myanmar text to people using Zawgyi or other fonts from within a web page such as Gmail or Facebook. Select the textarea, right click with the mouse and then choose Myanmar Unicode Converter/Send form as:Zawgyi-One or whichever font is appropriate.
 </p>
 <p lang="my" class="myTranslation">
-သင်သည် မြန်မာစကားလုံးများကို ဇော်ဂျီ သို့မဟုတ် အခြားဖောင့်များဖြင့် အခြားသူတစ်ဦးကို ပေးပို့ချင်လျှင်ဖြင့်၊ ​ပေးပို့ချင်သည့် စာသားပါရှိသော textarea ပေါ်ကိုမောက်စ်​တင်လိုက်ပါ။ ထို့နောက် မောက်စ်ညာဘက်ကို တချက်ကလစ်လိုက်ပါ၊ ပြီး​လျှင်ဖြင့် မြန်မာယူနီကုတ်ပြောင်းလဲခြင်း (Myanmar Unicode Converter) ထဲမှ ဤပုံစံဖြင့်ပို့ပါ- (Send form as:) ကိုရွေးပါ၊ ထို့နောက်ဇော်ဂျီ သို့မဟုတ် မိမိပို့ချင်သောဖောင့်ကို ရွေးလိုက်ပါ။ ဤပုံစံကိုအသုံးပြုခြင်းဖြင့် သင်ဟာ ယူနီကုတ်အသုံးမပြုနိုင်သေးသော သူများကို ယူနီကုတ်မှတဆင့် အခြားဖောင့်များသို့ ပြောင်းလည်းဆက်သွယ်၍ ရနိုင်ပါသည်။
+ဤတိုးချဲ့အထူးပြုချက်သည် Gmail သို့မဟုတ် Facebook ကဲ့သို့သော web page များတွင် ဇော်ဂျီ သို့မဟုတ် အခြား​ဖောင့်များ အသုံးပြုနေသော လူများအတွက် မြန်မာစကားလုံးများ​ ပေးပို့ရန်လည်းပဲ ဖြစ်နိုင်ပါသည်။ စာသားပါရှိသော textarea ကိုမောက်စ်​တင်လိုက်ပါ၊ ထို့နောက် မောက်စ်ညာဘက်ကို တချက်ကလစ်လိုက်ပါ၊ ပြီး​လျှင်ဖြင့် မြန်မာယူနီကုတ်ပြောင်းလဲခြင်း (Myanmar Unicode Converter) ထဲမှ ဤပုံစံဖြင့်ပို့ပါ- (Send form as:) ကိုရွေးပါ၊ ထို့နောက်ဇော်ဂျီ သို့မဟုတ် သင့်လျော်သောဖောင့်ကို ရွေးလိုက်ပါ။
 </p>
 <p  class="centre">
 <img src="images/gmail.png" />
