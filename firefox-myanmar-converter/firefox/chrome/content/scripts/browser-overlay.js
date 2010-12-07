@@ -1311,10 +1311,10 @@ MyanmarConverterExtension.onPopupShowing = function(popup, event)
         popup.appendChild(splitWordsMenu);
         
         var convertToUnicodeMenu = document.createElement("menuitem");
-        splitWordsMenu.setAttribute("id", "myanmarConverter.context.menuDefault");
-        splitWordsMenu.setAttribute("label", this.messages.GetStringFromName("convertPageToUnicode"));
-        splitWordsMenu.setAttribute("oncommand", "MyanmarConverterExtension.convertDocument(document.popupNode);");
-        popup.appendChild(splitWordsMenu);
+        convertToUnicodeMenu.setAttribute("id", "myanmarConverter.context.menuDefault");
+        convertToUnicodeMenu.setAttribute("label", this.messages.GetStringFromName("convertPageToUnicode"));
+        convertToUnicodeMenu.setAttribute("oncommand", "MyanmarConverterExtension.convertDocument(document.popupNode);");
+        popup.appendChild(convertToUnicodeMenu);
         
     }
 };
