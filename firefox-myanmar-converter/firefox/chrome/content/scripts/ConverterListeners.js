@@ -74,17 +74,52 @@ try{
 function MyanmarConverterWordSeparatorListener(input)
 {
     this.input = input;
+    this.spaceCount = this.countSpaces();
     return this;
+}
+
+MyanmarConverterWordSeparatorListener.prototype.countSpaces = function()
+{
+    var count = 0;
+    var i = this.input.value.indexOf(' ');
+    while (i > -1)
+    {
+        ++count;
+         i = this.input.value.indexOf(' ', i + 1);
+    }
+    return count;
 }
 
 MyanmarConverterWordSeparatorListener.prototype.handleEvent = function(event)
 {
     try
     {
-        MyanmarConverterExtension._trace("Event.type:" + event.type + " wordsep key: " + event.keyCode + " char:" + event.charCode);
-        if(((event.type=='keydown')||(event.type=='keyup')) && (event.keyCode == 32)) // space
+        MyanmarConverterExtension._trace("Event.type:" + event.type + " wordsep key: " + event.keyCode +
+            " char:" + event.charCode + " which: " + event.which);
+        // tab, space or arrow keys
+        if(((event.type=='keydown')||(event.type=='keyup')) && (event.keyCode == 9 || event.keyCode == 32 ||
+             event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40))
         {
             MyanmarConverterExtension.segmentInputWords(event.target);
+        }
+        else if ((event.type=='keyup') && (event.keyCode == 229) && (this.input.value.length > 0)) // Windows IME
+        {
+            MyanmarConverterExtension._trace("input.value='" + this.input.value + "'");
+            // check for a trailing space
+            if (this.input.value.charAt(this.input.value.length - 1) == ' ')
+            {
+                MyanmarConverterExtension.segmentInputWords(event.target);
+                this.spaceCount++;
+            }
+            else // count number of spaces in case inserting in middle of paragraph
+            {
+                var newSpaceCount = this.countSpaces();
+                if (newSpaceCount > this.spaceCount)
+                {
+                    MyanmarConverterExtension.segmentInputWords(event.target);
+                }
+                this.spaceCount = newSpaceCount;
+            }
         }
     }
     catch (except)
