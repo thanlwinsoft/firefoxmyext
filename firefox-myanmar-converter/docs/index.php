@@ -43,6 +43,8 @@ h2.myTranslation, h3.myTranslation { font-weight: bold; }
 	margin-left: 1%;
 }
 
+ul.myTranslation, ul.enTranslation { width: 40%; }
+
   </style>
    <?php
   include('../ThanLwinSoft/_shared/DownloadList.php');
@@ -95,11 +97,25 @@ web page အနေဖြင့် မည်သည့်ဖောင့်ဆိ�
 <li>ယူနီကုတ်ဖြင့် မြန်မာစာ စာလုံးပေါင်းသတ်ပုံ စစ်ဆေးခြင်းများ ဖြစ်လာနိုင်ဖွယ်ရှိပါသည်။</li>
 <li>ယူနီကုတ်ဖြင့် မွန်၊ ကရင်၊ ရှမ်း စကားလုံးများကို မှန်ကန်စွာ ပြသနိုင်ပါသည်။</li>
 </ul>
+<br />
 <h2 class="enTranslation">Install</h2>
 <h2 lang="my" class="myTranslation">ထည့်သွင်းသည်</h2>
 <?php
-$dir = new DownloadList("/var/www/MyanmarConverter/","/MyanmarConverter");
+# <!--
+$uri = $_SERVER['REQUEST_URI'];
+// remove trailing slash
+if (substr($uri, -1) == '/')
+{
+    $uri = substr($uri, 0, strlen($uri) - 1);
+}
+else
+{
+    $uri = dirname($uri);
+}
+$dir = new DownloadList(".",$uri);
+$dir->setIncludePattern(".*\.xpi");
 $dir->listDir();
+#-->
 ?>
 <h2 class="enTranslation">Usage</h2>
 <h2 lang="my" class="myTranslation">အသုံးပြုပုံ</h2>
