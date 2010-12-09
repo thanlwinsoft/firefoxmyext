@@ -11,7 +11,7 @@
 <!ENTITY myanmarConverter.options.urlList.urlPathname "Pathname">
 <!ENTITY myanmarConverter.options.enableConversionForPattern "Enable conversion for Pattern">
 <!ENTITY myanmarConverter.options.defaultEnableConversion "Enable conversion by default">
-<!ENTITY myanmarConverter.options.zeroWidthSpaceEnableConversion "Enable conversion by '0' width space">
+<!ENTITY myanmarConverter.options.zeroWidthSpaceEnableConversion "Enable conversion by zero width space">
 <!ENTITY myanmarConverter.options.accept "OK">
 <!ENTITY myanmarConverter.options.cancel "Cancel">
 <!ENTITY myanmarConverter.options.urlHostname "Hostname">

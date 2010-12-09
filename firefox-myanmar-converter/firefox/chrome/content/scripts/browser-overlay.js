@@ -46,6 +46,7 @@ MyanmarConverterExtension.initialize = function() {
         for (var i = 0; i < this.legacyFonts.length; i++)
         {
             var conv = new TlsMyanmarConverter(tlsMyanmarConverterData[this.legacyFonts[i].toLowerCase()]);
+            conv.listener = new MyanmarConverterEventListener(conv);
             MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
 
@@ -1344,25 +1345,25 @@ MyanmarConverterExtension.addFormEventHandlers = function(converterName, node)
     try
     {
         var conv=tlsMyanmarConverters[converterName.toLowerCase()];
-        var eListener=new MyanmarConverterEventListener(conv);
         MyanmarConverterExtension._trace('addFormEventHandlers' + node.nodeName + ' "' + node.value + '"');
         var doc = node.ownerDocument;
         
-        if(node.nodeName == 'TEXTAREA' || (node.nodeName == 'INPUT' && (!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')))
+        if(node.nodeName == 'TEXTAREA' || (node.nodeName == 'INPUT' && (!node.hasAttribute('type') || !node.getAttribute('type').match("password|checkbox|radio|submit|reset|file|hidden|image|button"))))
         {
-            if(typeof node.tlsEventListener == "object")
+            for (var i = 0; i < this.legacyFonts.length; i++)
             {
-                node.removeEventListener('keydown',node.tlsEventListener,false);
-                node.removeEventListener('focus',node.tlsEventListener,false);
-                node.removeEventListener('change',node.tlsEventListener,false);
-                node.removeEventListener('blur',node.tlsEventListener,false);
+                var oldConv = tlsMyanmarConverters[this.legacyFonts[i].toLowerCase()];
+                node.removeEventListener('keydown',oldConv.listener,false);
+                node.removeEventListener('focus',oldConv.listener,false);
+                node.removeEventListener('change',oldConv.listener,false);
+                node.removeEventListener('blur',oldConv.listener,false);
             }
-            node.addEventListener('keydown',eListener,false);
-            node.addEventListener('focus',eListener,false);
-            node.addEventListener('change',eListener,false);
-            node.addEventListener('blur',eListener,false);
-            node.tlsEventListener = eListener;
-            node.tlsUnicode = true;
+            node.addEventListener('keydown',conv.listener,false);
+            node.addEventListener('focus',conv.listener,false);
+            node.addEventListener('change',conv.listener,false);
+            node.addEventListener('blur',conv.listener,false);
+            //node.tlsEventListener = conv.listener;
+            //node.tlsUnicode = true;
             // status TODO
             var fontName=this.messages.GetStringFromName(converterName);
             MyanmarConverterExtension._trace('Font As::::' + fontName);
