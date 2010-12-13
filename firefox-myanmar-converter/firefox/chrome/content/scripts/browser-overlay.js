@@ -204,6 +204,14 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
         return;
     var oldSelStart = inputElement.selectionStart;
     var oldSelEnd = inputElement.selectionEnd;
+    // strip any old ZWSP and redo, since they may be in the wrong place after editing
+    var zwspWjRegEx = new RegExp("[\u200B\b2060]", "g");
+    var myNoPunctuationRegEx = new RegExp("[\u1000-\u1049\u104C-\u109F]");
+    var beforeSelection = text.substring(0, oldSelStart).replace(zwspWjRegEx, '');
+    var selectionText = text.substring(oldSelStart, oldSelEnd).replace(zwspWjRegEx, '');
+    text = text.replace(zwspWjRegEx, "");
+    oldSelStart = beforeSelection.length;
+    oldSelEnd = beforeSelection.length + selectionText.length;
     var newSelStart = oldSelStart;
     var newSelEnd = oldSelEnd;
     var utn11 = new TlsMyanmarUtn11();
@@ -254,7 +262,7 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
                 checkResult.wordBreaks.shift();
             }
         }
-        else if (!syllables[i].match("[\u1000-\u1049\u104C-\u109F]"))
+        else if (!syllables[i].match(myNoPunctuationRegEx))
         {
             startIndex = newIndex;
         }
