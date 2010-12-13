@@ -104,13 +104,9 @@ Unicode has many advantages over Zaw Gyi:
 <br />
 <h2 class="enTranslation">Install</h2>
 <h2 lang="my" class="myTranslation">ထည့်သွင်းသည်</h2>
-<p class="enTranslation"></p>
-<p lang="my" class="myTranslation">
-
-</p>
-<p class="centre">
-<img src="images/install.png" />
-</p>
+<p class="enTranslation">
+Click  <em>myanmar-converter-0.3.1.xpi</em>. Firefox web browser will ask to install software on your computer. Click <em>Allow</em> and restart firefox.
+<br>
 <?php
 # <!--
 $uri = $_SERVER['REQUEST_URI'];
@@ -127,7 +123,31 @@ $dir = new DownloadList(".",$uri);
 $dir->setIncludePattern(".*\.xpi");
 $dir->listDir();
 #-->
-?>
+?></p>
+<p lang="my" class="myTranslation">
+အောက်တွင်ဖော်ပြထားသော <em>myanmar-converter-0.3.1.xpi</em> ကို မောက်စ်ဖြင့် တစ်ချက်ကလစ်လိုက်ပါ။ ထိုအခါ ​ပုံတွင်တွေ့ရသည့်အတိုင်း firefox web browser က ဤ software ကိုမိမိ၏ စက်အတွင်းသို့ ထည့်သွင်းခွင့်ပေး မပေး မေးပါလိမ့်မည်။ ထိုအခါ Allow ကိုနှိပ်လိုက်ပါ။ ပြီးနောက်firefox ကို restart ပြန်လုပ်ပေးရပါမည်။
+<br>
+<?php
+# <!--
+$uri = $_SERVER['REQUEST_URI'];
+// remove trailing slash
+if (substr($uri, -1) == '/')
+{
+    $uri = substr($uri, 0, strlen($uri) - 1);
+}
+else
+{
+    $uri = dirname($uri);
+}
+$dir = new DownloadList(".",$uri);
+$dir->setIncludePattern(".*\.xpi");
+$dir->listDir();
+#-->
+?></p>
+<p class="centre">
+<img src="images/install.png" />
+</p>
+
 <h2 class="enTranslation">Usage</h2>
 <h2 lang="my" class="myTranslation">အသုံးပြုပုံ</h2>
 <p class="enTranslation">
