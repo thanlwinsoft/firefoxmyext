@@ -101,6 +101,13 @@ Unicode has many advantages over Zaw Gyi:
 </ul>
 <h2 class="enTranslation">Install</h2>
 <h2 lang="my" class="myTranslation">ထည့်သွင်းသည်</h2>
+<p class="enTranslation"></p>
+<p lang="my" class="myTranslation">
+
+</p>
+<p class="centre">
+<img src="images/install.png" />
+</p>
 <?php
 $dir = new DownloadList("/var/www/MyanmarConverter/","/MyanmarConverter");
 $dir->listDir();
@@ -111,7 +118,7 @@ $dir->listDir();
 Many Myanmar web pages are using ZawGyi or other fonts which are not following the Unicode Standard correctly. The "Myanmar Converter" Firefox Extension allows people with only genuine Myanmar Unicode fonts installed to read these pages by converting the text to Unicode when the page opens.
 </p>
 <p lang="my" class="myTranslation">
-မြန်မာ web page ​တော်တော်များများသည် ယူနီကုတ်အဆင့်အတန်းကို မှန်ကန်စွာမလိုက်နာသော ဇော်ဂျီ သို့မဟုတ် အခြားဖောင့် များကို အသုံးပြုနေကြပါသည်။ စစ်မှန်သော မြန်မာယူနီကုတ်ဖောင့် တစ်မျိုးတည်းကိုသာ ထည့်သွင်းအသုံးပြုထားသော သူများအနေဖြင့် ထိုစာမျက်နှာများကို ဖတ်ရှုနိုင်ရန် စာမျက်နှာဖွင့်လိုက်သောအခါ Firefox ကို တိုးချဲ့ အထူးပြုထားသော မြန်မာစာပြောင်းလဲခြင်း (The "Myanmar Converter" Firefox Extension) ၏ စာသားများကို ယူနီကုတ်သို့ ပြောင်းလဲပေးခြင်းအားဖြင့် ဖတ်ရှုနိုင်ပါသည်။
+မြန်မာ web page ​တော်တော်များများသည် ယူနီကုတ်အဆင့်အတန်းကို မှန်ကန်စွာမလိုက်နာသော ဇော်ဂျီ သို့မဟုတ် အခြားဖောင့် များကို အသုံးပြုနေကြပါသည်။ စစ်မှန်သော မြန်မာယူနီကုတ်ဖောင့် တစ်မျိုးတည်းကိုသာ ထည့်သွင်းအသုံးပြုထားသော သူများအနေဖြင့် ထိုစာမျက်နှာများကို ဖတ်ရှုနိုင်ရန် စာမျက်နှာဖွင့်လိုက်သောအခါ Firefox ကို တိုးချဲ့ အထူးပြုထားသော မြန်မာစာပြောင်းလဲခြင်း (The "Myanmar Converter" Firefox Extension) ၏ စာသားများကိုယူနီကုတ်သို့ပြောင်းလဲပေးခြင်း နည်းစနစ်အားဖြင့် ဖတ်ရှုနိုင်ပါသည်။
 </p>
 <p class="enTranslation">
 The Myanmar text will display wrongly like this:
@@ -129,7 +136,7 @@ Select Tools/Myanmar Converter from the menu.
 မီနူး ပေါ်မှ Tools ဆိုသည့် ကိရိယာထဲမှ Myanmar Converter ဆိုသည့် အရာကို ရွေးချယ်ပါ။ 
 </p>
 <p class="centre">
-<img src="images/state1.png" alt="Ubuntu Software Center/Myanmar"/>
+<img src="images/state1.png"/>
 </p>
 
 <p class="enTranslation">
