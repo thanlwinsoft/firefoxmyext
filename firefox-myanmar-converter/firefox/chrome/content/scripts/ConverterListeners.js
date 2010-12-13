@@ -22,6 +22,7 @@ function MyanmarConverterEventListener(conv)
                 .getService(Components.interfaces.nsIStringBundleService)
                 .createBundle("chrome://myanmar-converter/locale/MyanmarConverter.properties");
     this.conv=conv;
+    this.utn11 = new TlsMyanmarUtn11();
     return this;
 }
 
@@ -36,23 +37,30 @@ try{
         var fontName=this.messages.GetStringFromName(this.conv.data.fonts[0]);
         var statusBar = document.getElementById('myanmarConverter.status.text');
         statusBar.setAttribute("label", this.messages.formatStringFromName("sendAs",[fontName],1));
-        if(event.target.tlsUnicode == false)
-        {
-            event.target.value=this.conv.convertToUnicode(event.target.value);
-            event.target.tlsUnicode = true;
-        }
+        var origSyllables = this.utn11.findSyllables(event.target.value);
+        var origSpellStatus = MyanmarConverterExtension.spellCheckSyllables(origSyllables);
+        var converted = this.conv.convertToUnicodeSyllables(event.target.value);
+        var convertedSpellStatus = MyanmarConverterExtension.spellCheckSyllables(converted.syllables);
+        if (convertedSpellStatus.knownWords > origSpellStatus.knownWords)
+            event.target.value = converted.outputText;
     }
     else if(event.type=='change' || event.type=='blur')
     {
-        if(event.target.tlsUnicode == true)
+        var origSyllables = this.utn11.findSyllables(event.target.value);
+        var origSpellStatus = MyanmarConverterExtension.spellCheckSyllables(origSyllables);
+        
+        var nonUnicode = this.conv.convertFromUnicode(event.target.value);
+        var backToUnicode = this.conv.convertToUnicodeSyllables(nonUnicode);
+        var backSpellStatus = MyanmarConverterExtension.spellCheckSyllables(backToUnicode.syllables);
+        if ((origSpellStatus.knownWords > 0) && 
+            (backSpellStatus.knownWords >= origSpellStatus.knownWords))
         {
-            event.target.value=this.conv.convertFromUnicode(event.target.value);
-            event.target.tlsUnicode = false;
+            event.target.value= nonUnicode;
+            //event.target.tlsUnicode = false;
+             MyanmarConverterExtension._trace('myanmarConverterEvent nonUnicode=' + nonUnicode);
         }
-        else if(event.target.length == 0)
-        {
-            event.target.tlsUnicode = true;
-        }
+        MyanmarConverterExtension._trace("myanmarConverterEvent orig wc:" + 
+            origSpellStatus.knownWords + " bcwc:" + backSpellStatus.knownWords );
         var statusBar = document.getElementById('myanmarConverter.status.text');
         statusBar.setAttribute("label","");
     }
