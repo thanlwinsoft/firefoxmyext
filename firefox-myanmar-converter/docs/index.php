@@ -211,7 +211,7 @@ It is also possible to send Myanmar text to people using Zawgyi or other fonts f
 <p class="enTranslation">Choose the textarea where you went to spell-check and right click with the mouse. Choose Check Spelling and Languages/ Burmese/Myanmar.</p>
 <p lang="my" class="myTranslation">သင်စစ်ဆေးလိုသော textarea ကိုရွေး​၍ မောက်စ်ညာဘက်ကိုကလစ်လိုက်ပါ၊ Check Spelling ကိုအမှန်ခြစ်ပြီး Languages ထဲမှ Burmese/Myanmar ကို အမှန်ခြစ်ပါ။</p>
 <p  class="centre">
-<img src="images/spallCheck1.png" />
+<img src="images/spellCheck1.png" />
 </p>
 
 <p class="enTranslation">
@@ -221,8 +221,8 @@ ZWSP instead. Choose <em>Myanmar Unicode Converter/Separate words as you type (w
 <p lang="my" class="myTranslation">မြန်မာစကားတွင် အများအားဖြင့် စကားလုံးတစ်လုံးနှင့်တစ်လုံးကြားတွင် နေရာလွတ်ချန်ခြင်းမရှိပေ။ သို့သော် သင်သည် သုညအကျယ်အစားထိုးခြင်းကို အလိုအလျောက် ဖြည့်ဆွက်နိုင်ပါသည်။ ထို့ကြောင့် <em>Myanmar Unicode Converter ထဲမှ Separate words as you type (with ZWSP)</em> ကို ထပ်မံရွေးချယ်ပေးရပါမည်။ ထိုမှသာ စာလုံးပေါင်းသတ်ပုံကို မှန်ကန်စွာ ခွဲခြား စစ်ဆေးပေးနိုင်မည် ဖြစ်သည်။
 </p>
 <p  class="centre">
-<img src="images/spallCheck2.png" style="vertical-align: top;"/>
-<img src="images/spallCheck2.1.png" style="vertical-align: top;"/>
+<img src="images/spellCheck2.png" style="vertical-align: top;"/>
+<img src="images/spellCheck2.1.png" style="vertical-align: top;"/>
 </p>
 
 <p class="enTranslation">
@@ -233,9 +233,9 @@ In the example below, "ဖြားနာသည်", the word "ဖြား" sho
 ထိုစကားလုံးပေါ်တွင် မောက်စ်၏ညာဘက်ကိုကလစ်လိုက်ပါက ဖြစ်နိုင်ချေရှိသောစကားလုံးအစီအစဉ်တစ်ခု ဖော်ပြပေးပါမည်။ ထို့ကြောင့်သင်သည် စာလုံးပေါင်းကို မှန်ကန်စွာ ပြင်ဆင်ပေးနိုင်ပါသည်။
 </p>
 <p class="centre" >
-<img src="images/spallCheck3.png" style="vertical-align: top;"/>
-<img src="images/spallCheck4.png" style="vertical-align: top;"/>
-<img src="images/spallCheck5.png" style="vertical-align: top;"/>
+<img src="images/spellCheck3.png" style="vertical-align: top;"/>
+<img src="images/spellCheck4.png" style="vertical-align: top;"/>
+<img src="images/spellCheck5.png" style="vertical-align: top;"/>
 </p>
 
 <p class="enTranslation">
@@ -245,7 +245,7 @@ This extension does not understand the meaning of Myanmar words, so it can only 
 ဤတိုးချဲ့အထူးပြုချက်သည် မြန်မာစကားလုံးများ၏ အနက်အဓိပ္ပာယ်ကို နားမလည်နိုင်ပါ။ ထို့ကြောင့် တိုးချဲ့အထူးပြုချက်သည် စကားလုံးတစ်လုံး၏ စာလုံးပေါင်း မှန်ကန်မှု ရှိ၊ မရှိကိုသာလျှင် စစ်ဆေးနိုင်ပါသည်။ သူသည် သက်ဆိုင်ရာဝါကျအလိုက် မည်သို့စာလုံးပေါင်းရမည်ကို မှန်ကန်စွာ ​မပြောနိုင်ပေ။ အောက်ပါဥပမာတွင် သွေးဆောင်ဖြားယောင်းသည်ဟု အဓိပ္ပာယ်ရသော "​ဖြားယောင်း" ကို "ဖျားရောင်း" ဟုမှားယွင်းရေးသားထားသည်။ သို့သော် "ဖျား" နှင့် "ရောင်း" သည် မှန်ကန်သော စာလုံးပေါင်းရှိသည့် စကားလုံးများဖြစ်ပေသည်။ ထို့ကြောင့် ဤသို့သော အခြေအနေမျိုးတွင် တိုးချဲ့အထူးပြုချက်သည် ထိုစကားလုံးများကို မှာယွင်းသည်ဟု သိနိုင်မည်မဟုတ်ပေ။ စာလုံးပေါင်းသတ်ပုံစစ်ဆေးခြင်းနှင့် ပတ်သတ်၍ English စသည့် အခြားဘာသာစကားများတွင် လည်း တူညီသောပြဿနာများ ဖြစ်ပွားနေပါသည်။ ထို​ကြောင့် စာလုံးပေါင်းသတ်ပုံစစ်ဆေးခြင်း ပြီးပြည့်စုံရန် သင်ကိုယ်တိုင်စစ်ဆေးခြင်းသည် ပို၍ကောင်းသောနည်းလမ်းတစ်ခု ဖြစ်သည်ကို သတိပြုရန် လိုပေသည်။
 </p>
 <p  class="centre">
-<img src="images/spallCheck6.png" />
+<img src="images/spellCheck6.png" />
 </p>
 </div>
 </body>
