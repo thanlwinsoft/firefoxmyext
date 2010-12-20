@@ -198,12 +198,14 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
         return;
     var oldSelStart = inputElement.selectionStart;
     var oldSelEnd = inputElement.selectionEnd;
-    // strip any old ZWSP and redo, since they may be in the wrong place after editing
-    var zwspWjRegEx = new RegExp("[\u200B\b2060]", "g");
+    // Strip any old ZWSP and redo, since they may be in the wrong place after
+    // editing, BUT leave ZWSP E-Vowel since otherwise U+1031 will hop to the
+    // previous consonant with some input methods.
+    var zwspWjRegEx = new RegExp("(\u200B[\u1031\u1084])|[\u200B\u2060]", "g");
     var myNoPunctuationRegEx = new RegExp("[\u1000-\u1049\u104C-\u109F]");
-    var beforeSelection = text.substring(0, oldSelStart).replace(zwspWjRegEx, '');
-    var selectionText = text.substring(oldSelStart, oldSelEnd).replace(zwspWjRegEx, '');
-    text = text.replace(zwspWjRegEx, "");
+    var beforeSelection = text.substring(0, oldSelStart).replace(zwspWjRegEx, "$1");
+    var selectionText = text.substring(oldSelStart, oldSelEnd).replace(zwspWjRegEx, "$1");
+    text = text.replace(zwspWjRegEx, "$1");
     oldSelStart = beforeSelection.length;
     oldSelEnd = beforeSelection.length + selectionText.length;
     var newSelStart = oldSelStart;

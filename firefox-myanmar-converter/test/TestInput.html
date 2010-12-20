@@ -12,7 +12,21 @@ function testKeyPress(event)
     keyDiv.appendChild(eventDesc);
     if(key==13 && (event.shiftKey == false))
     {
-     event.target.value=event.target.value.toUpperCase();
+        var enteredText = document.createTextNode(event.target.value);
+        var lb = document.createElement("br");
+        //event.target.value=event.target.value.toUpperCase();
+        var entered = document.getElementById('entered');
+        if (entered.hasChildNodes())
+        {
+            var prevFirst = entered.firstChild;
+            entered.insertBefore(enteredText, prevFirst);
+            entered.insertBefore(lb, prevFirst);
+        }
+        else
+        {
+            entered.appendChild(enteredText);
+        }
+        event.target.value = "";
     }
 
 }
@@ -32,5 +46,6 @@ event.target.value=event.target.value.toUpperCase();
 </form>
 <div id="key">
 </div>
+<div id="entered"></div>
 </body>
 </html>
