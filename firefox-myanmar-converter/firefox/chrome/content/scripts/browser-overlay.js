@@ -49,6 +49,7 @@ MyanmarConverterExtension.initialize = function() {
             conv.listener = new MyanmarConverterEventListener(conv);
             MyanmarConverterExtension._trace("Loaded " + this.legacyFonts[i]);
         }
+        this.utn11 = new TlsMyanmarUtn11();
 
         //page load listener
         var appcontent = document.getElementById("appcontent"); // browser
@@ -122,13 +123,6 @@ MyanmarConverterExtension.toggleEnable = function() {
         this._fail(e);
     }
 };
-
-/*
-MyanmarConverterExtension.getMyConv = function() {
-    return Components.classes["@thanlwinsoft.org/myanmar-converter;1"]
-        .getService(Components.interfaces.nsIMyanmarConverter);
-};
-*/
 
 MyanmarConverterExtension._trace = function (msg) {
     if (MyanmarConverterExtension.trace)
@@ -214,8 +208,7 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
     oldSelEnd = beforeSelection.length + selectionText.length;
     var newSelStart = oldSelStart;
     var newSelEnd = oldSelEnd;
-    var utn11 = new TlsMyanmarUtn11();
-    var syllables = utn11.findSyllables(text);
+    var syllables = this.utn11.findSyllables(text);
     var checkResult = this.spellCheckSyllables(syllables);
     var output = "";
     var origIndex = 0;
@@ -700,6 +693,7 @@ MyanmarConverterExtension.processDoc = function(doc) {
             statusBar.setAttribute("label","");
         }
         MyanmarConverterExtension.parseNodes(doc.body, null, true);
+        MyanmarConverterExtension.addWordSegmenters(doc.body);
         MyanmarConverterExtension.convertTitle(doc);
         doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
         doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
@@ -715,7 +709,13 @@ MyanmarConverterExtension.convertTitle = function(doc)
             var converter = tlsMyanmarConverters[doc.tlsMyanmarEncoding.toLowerCase()];
             if (typeof converter != "undefined")
             {
-                doc.title = converter.convertToUnicode(doc.title);
+                var titleSyllables = this.utn11.findSyllables(doc.title);
+                var unconvertedCheck = this.spellCheckSyllables(titleSyllables);
+                var converted = converter.convertToUnicodeSyllables(doc.title);
+                var convertedCheck = this.spellCheckSyllables(converted.syllables);
+                if ((convertedCheck.knownWords > unconvertedCheck.knownWords) &&
+                    (convertedCheck.unknownSyllables <= unconvertedCheck.unknownSyllables))
+                    doc.title = converted.outputText;
             }
             else if (doc.tlsMyanmarEncoding != "unicode")
             {
@@ -725,9 +725,36 @@ MyanmarConverterExtension.convertTitle = function(doc)
     }
     catch (e)
     {
-        MyanmarConverterExtension._trace(e);
+        MyanmarConverterExtension._fail(e);
     }
 };
+
+MyanmarConverterExtension.addWordSegmenters = function(parentNode)
+{
+    try
+    {
+        var prefs = Components.classes["@mozilla.org/preferences-service;1"]
+          .getService(Components.interfaces.nsIPrefService)
+          .getBranch("extensions.myanmarconverter.");
+        if (prefs.getBoolPref("useZwsp") && parentNode.nodeType == Node.ELEMENT_NODE)
+        {
+            var treeWalker = parentNode.ownerDocument.createTreeWalker(parentNode,
+                        NodeFilter.SHOW_ELEMENT,{ acceptNode: function(node) {
+                            if (node.nodeName == 'INPUT' || node.nodeName == 'TEXTAREA')
+                            {return NodeFilter.FILTER_ACCEPT;}
+                            else return NodeFilter.FILTER_SKIP; }} 
+                        , false);
+            while(treeWalker.nextNode())
+            {
+                MyanmarConverterExtension.addSegmentWordListener(treeWalker.currentNode);
+            }
+        }
+    }
+    catch (e)
+    {
+        MyanmarConverterExtension._fail(e);
+    }
+}
 
 MyanmarConverterExtension.onTreeModified = function(event)
 {
@@ -747,6 +774,7 @@ MyanmarConverterExtension.onTreeModified = function(event)
             else
             {
                 MyanmarConverterExtension.parseNodes(event.target, null, true);
+                MyanmarConverterExtension.addWordSegmenters(event.target);
             }
             doc.addEventListener("DOMCharacterDataModified",MyanmarConverterExtension.onTreeModified, true);
             doc.addEventListener("DOMNodeInserted", MyanmarConverterExtension.onTreeModified, true);
@@ -879,30 +907,6 @@ MyanmarConverterExtension.guessMyanmarEncoding = function(doc, testNode) {
     return null;
 };
 
-/*
-MyanmarConverterExtension.isZawGyi = function(doc) {
-    if (doc.body && doc.body.textContent.match("[\u1050-\u109F]"))
-    {
-        var myConv = MyanmarConverterExtension.getMyConv();
-        if (typeof myConv == "undefined")
-        {
-            MyanmarConverterExtension._trace("myConv undefined");
-            return false;
-        }
-        var converter = myConv.wrappedJSObject.getConv();
-        var testContent = doc.body.textContent;
-        var converted = converter.convert(testContent, false);
-        if (converted != doc.body.textContent)
-        {
-            doc.myconvDefaultToZawGyi = true;
-            MyanmarConverterExtension._trace(doc.location + " Default to ZawGyi");
-            return true;
-        }
-        return false;
-    }
-    return false;
-};
-*/
 
 MyanmarConverterExtension.convertDocument = function(node)
 {
@@ -1333,7 +1337,7 @@ MyanmarConverterExtension.addSegmentWordListener = function(n)
 {
     try
     {
-        if (n.nodeName == 'TEXTAREA' || (n.nodeName == 'INPUT' && (!input[i].hasAttribute('type') || input[i].getAttribute('type')=='text')))
+        if (n.nodeName == 'TEXTAREA' || (n.nodeName == 'INPUT' && (!n.hasAttribute('type') || !n.getAttribute('type').match("password|checkbox|radio|submit|reset|file|hidden|image|button"))))
         {
             MyanmarConverterExtension.segmentInputWords(n);
             var eListener = new MyanmarConverterWordSeparatorListener(n);

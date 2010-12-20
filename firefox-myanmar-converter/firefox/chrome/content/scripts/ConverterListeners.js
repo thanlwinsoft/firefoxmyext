@@ -89,13 +89,33 @@ function MyanmarConverterWordSeparatorListener(input)
 MyanmarConverterWordSeparatorListener.prototype.countSpaces = function()
 {
     var count = 0;
+    var prevIndex = 0;
     var i = this.input.value.indexOf(' ');
+    var maxWordLength = 0;
     while (i > -1)
     {
         ++count;
+        var wordLength = i - prevIndex;
+        var zwspPos = this.input.value.substring(prevIndex, i).lastIndexOf('\u200B', prevIndex + 1);
+        // this is approx but if zwsp are present we have probably already 
+        // processed into words, so just check end of phrase
+        if (zwspPos > -1)
+            wordLength -= zwspPos;
+        if (wordLength > maxWordLength)
+            maxWordLength = wordLength;
+        prevIndex = i;
          i = this.input.value.indexOf(' ', i + 1);
     }
-    return count;
+    var lastWordLength = this.input.value.length - prevIndex;
+    var lastZwspPos = this.input.value.lastIndexOf('\u200B', prevIndex + 1);
+    if (lastZwspPos > -1)
+        lastWordLength = this.input.value.length - lastZwspPos;
+    if (lastWordLength > maxWordLength)
+        maxWordLength = lastWordLength;
+    var countData = new Object();
+    countData.count = count;
+    countData.maxWordLength = maxWordLength;
+    return countData;
 }
 
 MyanmarConverterWordSeparatorListener.prototype.handleEvent = function(event)
@@ -110,24 +130,35 @@ MyanmarConverterWordSeparatorListener.prototype.handleEvent = function(event)
         {
             MyanmarConverterExtension.segmentInputWords(event.target);
         }
-        else if ((event.type=='keyup') && (event.keyCode == 229) && (this.input.value.length > 0)) // Windows IME
+        else if ((event.type=='keyup') && (this.input.value.length > 0))
         {
-            MyanmarConverterExtension._trace("input.value='" + this.input.value + "'");
-            // check for a trailing space
-            if (this.input.value.charAt(this.input.value.length - 1) == ' ')
+            // count spaces and length of longest word
+            var spaceCountData = this.countSpaces();
+            MyanmarConverterExtension._trace("input.value='" + this.input.value + "' maxWordLength=" +
+                spaceCountData.maxWordLength + " spaceCount=" + spaceCountData.count);
+            // Apps like gmail will insert zwsp arbitrarily after 16 characters
+            // if there aren't spaces or ZWSP. This causes problems if 
+            // inserted mid-syllable.
+            if (spaceCountData.maxWordLength >= 16)
             {
                 MyanmarConverterExtension.segmentInputWords(event.target);
-                this.spaceCount++;
             }
-            else // count number of spaces in case inserting in middle of paragraph
+            if (event.keyCode == 229) // Windows IME
             {
-                var newSpaceCount = this.countSpaces();
-                if (newSpaceCount > this.spaceCount)
+                // check for a trailing space
+                if (this.input.value.charAt(this.input.value.length - 1) == ' ')
                 {
                     MyanmarConverterExtension.segmentInputWords(event.target);
                 }
-                this.spaceCount = newSpaceCount;
+                else // count number of spaces in case inserting in middle of paragraph
+                {
+                    if (spaceCountData.count > this.spaceCount)
+                    {
+                        MyanmarConverterExtension.segmentInputWords(event.target);
+                    }
+                }
             }
+            this.spaceCount = spaceCountData.count;
         }
     }
     catch (except)
