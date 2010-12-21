@@ -41,7 +41,9 @@ try{
         var origSpellStatus = MyanmarConverterExtension.spellCheckSyllables(origSyllables);
         var converted = this.conv.convertToUnicodeSyllables(event.target.value);
         var convertedSpellStatus = MyanmarConverterExtension.spellCheckSyllables(converted.syllables);
-        if (convertedSpellStatus.knownWords > origSpellStatus.knownWords)
+        if (convertedSpellStatus.knownWords > origSpellStatus.knownWords ||
+            ((convertedSpellStatus.knownWords == origSpellStatus.knownWords) &&
+             (convertedSpellStatus.unknownSyllables < origSpellStatus.unknownSyllables)))
             event.target.value = converted.outputText;
     }
     else if(event.type=='change' || event.type=='blur')
