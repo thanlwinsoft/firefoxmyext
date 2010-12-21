@@ -98,18 +98,18 @@ MyanmarConverterWordSeparatorListener.prototype.countSpaces = function()
     {
         ++count;
         var wordLength = i - prevIndex;
-        var zwspPos = this.input.value.substring(prevIndex, i).lastIndexOf('\u200B', prevIndex + 1);
+        var zwspPos = this.input.value.substring(prevIndex, i).lastIndexOf('\u200B', i);
         // this is approx but if zwsp are present we have probably already 
         // processed into words, so just check end of phrase
         if (zwspPos > -1)
             wordLength -= zwspPos;
         if (wordLength > maxWordLength)
             maxWordLength = wordLength;
-        prevIndex = i;
+        prevIndex = i + 1;
          i = this.input.value.indexOf(' ', i + 1);
     }
     var lastWordLength = this.input.value.length - prevIndex;
-    var lastZwspPos = this.input.value.lastIndexOf('\u200B', prevIndex + 1);
+    var lastZwspPos = this.input.value.lastIndexOf("\u200B", this.input.value.length);
     if (lastZwspPos > -1)
         lastWordLength = this.input.value.length - lastZwspPos;
     if (lastWordLength > maxWordLength)
@@ -141,7 +141,7 @@ MyanmarConverterWordSeparatorListener.prototype.handleEvent = function(event)
             // Apps like gmail will insert zwsp arbitrarily after 16 characters
             // if there aren't spaces or ZWSP. This causes problems if 
             // inserted mid-syllable.
-            if (spaceCountData.maxWordLength >= 16)
+            if (spaceCountData.maxWordLength >= 14)
             {
                 MyanmarConverterExtension.segmentInputWords(event.target);
             }

@@ -411,7 +411,7 @@ TlsMyanmarConverter.prototype.toUnicodeMapper = function(inputText, matchData, p
 */
 TlsMyanmarConverter.prototype.convertFromUnicode = function(inputText)
 {
-    inputText = inputText.replace(/[\u200B\u2060]/g, '');
+    //inputText = inputText.replace(/[\u200B\u2060]/g, '');
     var outputText = "";
     var pos = 0;
     this.unicodePattern.lastIndex = 0;
