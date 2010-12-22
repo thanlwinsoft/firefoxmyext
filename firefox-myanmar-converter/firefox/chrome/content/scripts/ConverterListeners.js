@@ -71,7 +71,8 @@ try{
         if((event.keyCode==13) && (event.shiftKey == false))
         {
             event.target.value=this.conv.convertFromUnicode(event.target.value);
-            MyanmarConverterExtension._trace('myanmarConverterEvent Enter');
+            MyanmarConverterExtension._trace('myanmarConverterEvent Enter ' + 
+                this.conv.fontFamily + " " + event.target.value);
         }
     }
   }
@@ -125,10 +126,15 @@ MyanmarConverterWordSeparatorListener.prototype.handleEvent = function(event)
     try
     {
         MyanmarConverterExtension._trace("Event.type:" + event.type + " wordsep key: " + event.keyCode +
-            " char:" + event.charCode + " which: " + event.which);
-        // tab, space or arrow keys
-        if(((event.type=='keydown')||(event.type=='keyup')) && (event.keyCode == 9 || event.keyCode == 32 ||
-             event.keyCode == 37 || event.keyCode == 38 || event.keyCode == 39 || event.keyCode == 40))
+            " char:" + event.charCode + " which: " + event.which + " " + this.input.value);
+        // tab, space or arrow keys only on key down otherwise cursor is wrong
+        if (event.keyCode == 9 || event.keyCode == 37 ||
+            event.keyCode == 38 || event.keyCode == 39 ||  event.keyCode == 40)
+        {
+            if (event.type == 'keydown')
+                MyanmarConverterExtension.segmentInputWords(event.target);  
+        }
+        else if (event.keyCode == 32) 
         {
             MyanmarConverterExtension.segmentInputWords(event.target);
         }

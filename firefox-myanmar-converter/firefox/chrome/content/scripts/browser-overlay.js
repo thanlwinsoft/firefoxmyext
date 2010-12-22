@@ -249,11 +249,26 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
                 output += "\u2060";
                 checkResult.wordBreaks.shift();
             }
-            else
+            else if ((syllables[i].length > 0) && 
+                    !(syllables[i].substring(syllables[i].length-1,
+                     syllables[i].length).match(myNoPunctuationRegEx)))
+            {
+                startIndex = newIndex;
+                checkResult.wordBreaks.shift();
+            }
+            else if ((i + 1 < syllables.length) && (syllables[i+1].length > 0)
+                && syllables[i+1].substring(0,1).match(myNoPunctuationRegEx))
             {
                 newIndex += 1;
                 startIndex = newIndex;
                 output += "\u200B";
+                checkResult.wordBreaks.shift();
+                this._trace("zwsp between " + syllables[i] + "'" + 
+                    syllables[i+1] +"'");
+            }
+            else
+            {
+                startIndex = newIndex;
                 checkResult.wordBreaks.shift();
             }
         }
@@ -313,7 +328,7 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
         else
         {
             convertedText += syllables[j];
-            if (syllables[j].match("[\u1000-\u109F]"))
+            if (syllables[j].match("[\u1000-\u1049\u104C-\u109F]"))
             {
                 unknownSyllables += 1;
                 if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u1049\u104C-\u109F]")))
@@ -328,7 +343,7 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
     ret.knownWords = knownWordCount;
     ret.unknownSyllables = unknownSyllables;
     ret.wordBreaks = wordBreaks;
-    this._trace(ret.text + " Known: " + ret.knownWords + " Unknown: " + ret.unknownSyllables);
+    this._trace(ret.text + " Known: " + ret.knownWords + " Unknown: " + ret.unknownSyllables + " " + wordBreaks);
     return ret;
 }
 
