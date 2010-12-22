@@ -41,9 +41,10 @@ try{
         var origSpellStatus = MyanmarConverterExtension.spellCheckSyllables(origSyllables);
         var converted = this.conv.convertToUnicodeSyllables(event.target.value);
         var convertedSpellStatus = MyanmarConverterExtension.spellCheckSyllables(converted.syllables);
-        if (convertedSpellStatus.knownWords > origSpellStatus.knownWords ||
-            ((convertedSpellStatus.knownWords == origSpellStatus.knownWords) &&
-             (convertedSpellStatus.unknownSyllables < origSpellStatus.unknownSyllables)))
+        if (((convertedSpellStatus.knownWords >= origSpellStatus.knownWords) &&
+            (convertedSpellStatus.unknownSyllables < origSpellStatus.unknownSyllables))||
+            ((convertedSpellStatus.knownWords < origSpellStatus.knownWords) &&
+             (convertedSpellStatus.unknownSyllables <= origSpellStatus.unknownSyllables)))
             event.target.value = converted.outputText;
     }
     else if(event.type=='change' || event.type=='blur')
@@ -55,14 +56,16 @@ try{
         var backToUnicode = this.conv.convertToUnicodeSyllables(nonUnicode);
         var backSpellStatus = MyanmarConverterExtension.spellCheckSyllables(backToUnicode.syllables);
         if ((origSpellStatus.knownWords > 0) && 
-            (backSpellStatus.knownWords >= origSpellStatus.knownWords))
+            (backSpellStatus.unknownSyllables <= origSpellStatus.unknownSyllables))
         {
             event.target.value= nonUnicode;
             //event.target.tlsUnicode = false;
              MyanmarConverterExtension._trace('myanmarConverterEvent nonUnicode=' + nonUnicode);
         }
         MyanmarConverterExtension._trace("myanmarConverterEvent orig wc:" + 
-            origSpellStatus.knownWords + " bcwc:" + backSpellStatus.knownWords );
+            origSpellStatus.knownWords + " unknown:" +
+            origSpellStatus.unknownWords + " backwc:" + 
+            backSpellStatus.knownWords + " unknown:" + backSpellStatus.unknownWords);
         var statusBar = document.getElementById('myanmarConverter.status.text');
         statusBar.setAttribute("label","");
     }

@@ -735,8 +735,8 @@ MyanmarConverterExtension.convertTitle = function(doc)
                 var unconvertedCheck = this.spellCheckSyllables(titleSyllables);
                 var converted = converter.convertToUnicodeSyllables(doc.title);
                 var convertedCheck = this.spellCheckSyllables(converted.syllables);
-                if ((convertedCheck.knownWords > unconvertedCheck.knownWords) &&
-                    (convertedCheck.unknownSyllables <= unconvertedCheck.unknownSyllables))
+                if ((convertedCheck.unknownSyllables <= unconvertedCheck.unknownSyllables) &&
+                    (convertedCheck.knownWords <= unconvertedCheck.knownWords))
                     doc.title = converted.outputText;
             }
             else if (doc.tlsMyanmarEncoding != "unicode")
