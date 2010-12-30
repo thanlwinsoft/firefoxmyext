@@ -194,20 +194,20 @@ MyanmarConverterExtension.onPageLoad = function(event) {
 MyanmarConverterExtension.segmentInputWords = function(inputElement)
 {
     var text = inputElement.value;
-    if (!text.match("[\u1000-\u109F]"))
+    if (!text.match("[က-႟]"))
         return;
     var oldSelStart = inputElement.selectionStart;
     var oldSelEnd = inputElement.selectionEnd;
     // Strip any old ZWSP and redo, since they may be in the wrong place after
     // editing, BUT leave ZWSP E-Vowel since otherwise U+1031 will hop to the
     // previous consonant with some input methods.
-    var zwspWjRegEx = new RegExp("(\u200B[\u1031\u1084])|[\u200B\u2060]", "g");
+    var zwspWjRegEx = new RegExp("(​[ေႄ])|[​⁠]", "g");
     var beforeSelection = text.substring(0, oldSelStart).replace(zwspWjRegEx, "$1");
     var selectionText = text.substring(oldSelStart, oldSelEnd).replace(zwspWjRegEx, "$1");
     text = text.replace(zwspWjRegEx, "$1");
     oldSelStart = beforeSelection.length;
     oldSelEnd = beforeSelection.length + selectionText.length;
-    var myNoPunctuationRegEx = new RegExp("[\u1000-\u1049\u104C-\u109F]");
+    var myNoPunctuationRegEx = new RegExp("[က-၉၌-႟]");
     var newSelStart = oldSelStart;
     var newSelEnd = oldSelEnd;
     var syllables = this.utn11.findSyllables(text);
@@ -306,7 +306,7 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
         var k = j + 1;
         for (; k < j + 8 && k < syllables.length; k++)
         {
-            if (!(syllables[k].match("[\u1000-\u109F]")))
+            if (!(syllables[k].match("[က-႟]")))
                 break;
             testWord += syllables[k];
             if (this.spellChecker.check(testWord))
@@ -319,7 +319,7 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
         {
             convertedText += checkedWord;
             j += matchedSyllables - 1;
-            if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u1049\u104C-\u109F]")))
+            if ((j + 1 < syllables.length) && (syllables[j+1].match("[က-၉၌-႟]")))
             {
                 wordBreaks.push(j);
             }
@@ -328,10 +328,10 @@ MyanmarConverterExtension.spellCheckSyllables = function(syllables)
         else
         {
             convertedText += syllables[j];
-            if (syllables[j].match("[\u1000-\u1049\u104C-\u109F]"))
+            if (syllables[j].match("[က-၉၌-႟]"))
             {
                 unknownSyllables += 1;
-                if ((j + 1 < syllables.length) && (syllables[j+1].match("[\u1000-\u1049\u104C-\u109F]")))
+                if ((j + 1 < syllables.length) && (syllables[j+1].match("[က-၉၌-႟]")))
                 {
                     wordBreaks.push(j);
                 }
@@ -384,7 +384,7 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
         {
             // it is quite common for short Zawgyi phrases not to use Mon, Karen, Shan codes, so need to
             // change for any characters in Myanmar code range
-            if (nodeText.match("[\u1000-\u109F]") && testConv.isPseudoUnicode())
+            if (nodeText.match("[က-႟]") && testConv.isPseudoUnicode())
             {
                 var uniFreqMatch = testConv.matchFrequency(nodeText, true);
                 var uniFreq = uniFreqMatch.freq;
@@ -456,7 +456,7 @@ MyanmarConverterExtension.segmentWords = function (syllables, wordBreaks)
         if ((wordBreaks.length > 0) &&
             (wordBreaks[0] == i))
         {
-            converted += "\u200B";
+            converted += "​";
             wordBreaks.shift();
         }
     }

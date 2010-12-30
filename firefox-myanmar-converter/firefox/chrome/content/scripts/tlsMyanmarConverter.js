@@ -411,7 +411,6 @@ TlsMyanmarConverter.prototype.toUnicodeMapper = function(inputText, matchData, p
 */
 TlsMyanmarConverter.prototype.convertFromUnicode = function(inputText)
 {
-    //inputText = inputText.replace(/[\u200B\u2060]/g, '');
     var outputText = "";
     var pos = 0;
     this.unicodePattern.lastIndex = 0;
@@ -832,16 +831,16 @@ TlsMyanmarConverter.prototype.isPseudoUnicode = function()
 
 function TlsMyanmarUtn11()
 {
-    this.kinzi = "((င|ရ|ၚ)်\u1039)?";//1
+    this.kinzi = "((င|ရ|ၚ)်္)?";//1
     this.cons = "(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ဣ|ဤ|ဥ|ဦ|ဧ|ဩ|ဪ|ဿ|၀|၁|၂|၃|၄|၅|၆|၇|၈|၉|၌|၍|၎|၏|ၐ|ၑ|ၒ|ၓ|ၔ|ၕ|ၚ|ၛ|ၜ|ၝ|ၡ|ၥ|ၦ|ၮ|ၯ|ၰ|ၵ|ၶ|ၷ|ၸ|ၹ|ၺ|ၻ|ၼ|ၽ|ၾ|ၿ|ႀ|ႁ|ႎ|႐|႑|႒|႓|႔|႕|႖|႗|႘|႙|႟|ꩠ|ꩡ|ꩢ|ꩣ|ꩤ|ꩥ|ꩦ|ꩧ|ꩨ|ꩩ|ꩪ|ꩫ|ꩬ|ꩭ|ꩮ|ꩯ|ꩱ|ꩲ|ꩳ|ꩴ|ꩵ|ꩶ|꩷|꩸|꩹|ꩺ)";//3
-    this.stack = "(\u1039(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ၚ|ၛ|ၜ|ၝ)){0,2}";//4
-    this.asat = "(\u103A)?";//6,11,22
+    this.stack = "(္(က|ခ|ဂ|ဃ|င|စ|ဆ|ဇ|ဈ|ဉ|ည|ဋ|ဌ|ဍ|ဎ|ဏ|တ|ထ|ဒ|ဓ|န|ပ|ဖ|ဗ|ဘ|မ|ယ|ရ|လ|ဝ|သ|ဟ|ဠ|အ|ၚ|ၛ|ၜ|ၝ)){0,2}";//4
+    this.asat = "(်)?";//6,11,22
     this.medialY = "(ျ|ၞ|ၟ)?";//7
     this.medialR = "(ြ)?";//8
     this.medialW = "(ွ|ႂ)?";//9
     this.medialH = "(ှ|ၠ)?";//10
     // asat 11
-    this.eVowel = "(\u1031\u1031|\u1084\u1031|\u1031|\u1084)?";//12
+    this.eVowel = "(ေေ|ႄေ|ေ|ႄ)?";//12
     this.uVowel = "(ိ|ီ|ဲ|ဳ|ဴ|ဵ|ံ|ၱ|ၲ|ၳ|ၴ|ႅ|ႝ)?";//13
     this.lVowel = "(ု|ူ)?";//14
     this.karenVowel = "(ၢ|့)?";//15
