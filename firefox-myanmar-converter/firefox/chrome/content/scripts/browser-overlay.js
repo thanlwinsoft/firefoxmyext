@@ -222,9 +222,27 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
         {
             newSelStart += (newIndex - origIndex);
         }
+        else if (oldSelStart == origIndex)
+        {
+            newSelStart += (newIndex - origIndex);
+            // check if we should be before a zwsp
+            if ((output.length > 0) &&
+                (output.charAt(output.length - 1) == '\u200B') &&
+                (inputElement.selectionStart == newSelStart - 1))
+                newSelStart = inputElement.selectionStart;
+        }
         if ((oldSelEnd > origIndex) && (oldSelEnd < origIndex + syllables[i].length))
         {
             newSelEnd += (newIndex - origIndex);
+        }
+        else if (oldSelEnd == origIndex)
+        {
+            newSelEnd += (newIndex - origIndex);
+            // check if we should be before a zwsp
+            if ((output.length > 0) &&
+                (output.charAt(output.length - 1) == '\u200B') &&
+                (inputElement.selectionEnd == newSelEnd - 1))
+                newSelEnd = inputElement.selectionEnd;
         }
         output += syllables[i];
         origIndex += syllables[i].length;
@@ -277,9 +295,19 @@ MyanmarConverterExtension.segmentInputWords = function(inputElement)
             startIndex = newIndex;
         }
     }
+    if (oldSelStart >= origIndex)
+    {
+        newSelStart = newIndex;
+    }
+    if (oldSelEnd >= origIndex)
+    {
+        newSelEnd = newIndex;
+    }
+    this._trace("segmentInputWords old:" + oldSelStart + "-" + oldSelEnd + " " +
+        inputElement.selectionStart + "-" +
+        inputElement.selectionEnd + " new" + newSelStart + "-" + newSelEnd);
     inputElement.value = output;
-    inputElement.startSelection = newSelStart;
-    inputElement.endSelection = newSelEnd;
+    inputElement.setSelectionRange(newSelStart, newSelEnd);
 }
 
 /**
