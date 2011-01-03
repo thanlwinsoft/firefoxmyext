@@ -51,16 +51,18 @@ try{
     {
         var origSyllables = this.utn11.findSyllables(event.target.value);
         var origSpellStatus = MyanmarConverterExtension.spellCheckSyllables(origSyllables);
-        
+        var nonUnicodeToUnicode = this.conv.convertToUnicodeSyllables(event.target.value);
         var nonUnicode = this.conv.convertFromUnicode(event.target.value);
         var backToUnicode = this.conv.convertToUnicodeSyllables(nonUnicode);
         var backSpellStatus = MyanmarConverterExtension.spellCheckSyllables(backToUnicode.syllables);
+        var alreadyNonUnicodeSpell = MyanmarConverterExtension.spellCheckSyllables(nonUnicodeToUnicode.syllables);
         if ((origSpellStatus.knownWords > 0) && 
-            (backSpellStatus.unknownSyllables <= origSpellStatus.unknownSyllables))
+            (backSpellStatus.unknownSyllables <= origSpellStatus.unknownSyllables) &&
+            (alreadyNonUnicodeSpell.unknownSyllables > origSpellStatus.unknownSyllables))
         {
             event.target.value= nonUnicode;
-            //event.target.tlsUnicode = false;
-             MyanmarConverterExtension._trace('myanmarConverterEvent nonUnicode=' + nonUnicode);
+            MyanmarConverterExtension._trace('myanmarConverterEvent nonUnicode=' +
+                nonUnicode);
         }
         MyanmarConverterExtension._trace("myanmarConverterEvent orig wc:" + 
             origSpellStatus.knownWords + " unknown:" +
