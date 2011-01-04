@@ -162,7 +162,9 @@ MyanmarConverterExtension._fail = function(e) {
 MyanmarConverterExtension.onPageLoad = function(event) {
     try
     {
-        MyanmarConverterExtension._trace("onPageLoad " + event.originalTarget.nodeName);
+        MyanmarConverterExtension._trace("onPageLoad " + event.originalTarget.nodeName +
+            " " + event.originalTarget.location.href + " "
+            /*+ event.originalTarget.body.innerHTML*/);
         var enableMenu = document.getElementById("myanmarConverter.enable.menu");
         if (enableMenu)
         {
@@ -428,7 +430,7 @@ MyanmarConverterExtension.guessConvert = function(parentNode, nodeText, pageConv
                         var convertedResult = this.spellCheckSyllables(syllables);
                         ret.converted = this.segmentWords(syllables, convertedResult.wordBreaks);
                         ret.converter = testConv;
-                        this._trace("segmented words in guessConvert " + ret.converted);
+                        this._trace(parentNode.nodeName + " segmented words in guessConvert " + ret.converted);
                         return ret;
                     }
                     this._trace("Not segmented words in guessConvert " + ret.converted);
@@ -514,6 +516,7 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         }
     }
     var convertText = true;
+    //this._trace("parseNodes " + parent.innerHTML);
     // if this is directly called by the event it may not be a text node
     if (parent.nodeType == Node.TEXT_NODE)
     {
@@ -521,6 +524,8 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         var theParent = node.parentNode;
         var oldValue = new String(node.nodeValue);
         var bestConv = converter;
+        // don't convert within a text area
+        if (theParent.nodeName == "TEXTAREA") return;
         if (toUnicode)
         {
             var convResult = MyanmarConverterExtension.guessConvert(node.parentNode, node.nodeValue, converter, toUnicode);
@@ -552,7 +557,10 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
     var convertedCount = 0;
     
     var walker = parent.ownerDocument.createTreeWalker(parent,
-            NodeFilter.SHOW_TEXT, null, false);
+            NodeFilter.SHOW_TEXT, { acceptNode: function(node) {
+                        if (node.parentNode.nodeName == "TEXTAREA")
+                        {return NodeFilter.FILTER_SKIP;} 
+                        else return NodeFilter.FILTER_ACCEPT; }}, false);
     var textNode = walker.currentNode;
     if (textNode != null && textNode.nodeType != Node.TEXT_NODE)
     {
@@ -564,19 +572,6 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
         var theParent = textNode.parentNode;
         var style = window.getComputedStyle(theParent, null);
         var bestConv = converter;
-//        if (toUnicode)
-//        {
-//            var nodeResult = MyanmarConverterExtension.guessConvert(textNode.parentNode, textNode.nodeValue, converter, toUnicode);
-//            bestConv = nodeResult.converter;
-//        }
-//        if (bestConv)
-//        {
-//            convertText = true;
-//        }
-//        else
-//        {
-//            convertText = false;
-//        }
         var oldValue = new String(textNode.nodeValue);
         var prevNode = textNode;
         var hasWbr = false;
@@ -662,8 +657,6 @@ MyanmarConverterExtension.parseNodes = function(parent, converter, toUnicode)
                     break;
                 }
             }
-            //var newValue = (toUnicode)? bestConv.convertToUnicode(oldValue) : 
-            //    bestConv.convertFromUnicode(oldValue);
             var guessResult = this.guessConvert(walker.currentNode.parentNode, oldValue, converter, toUnicode);    
             var newValue = guessResult.converted;
             bestConv = guessResult.converter;
@@ -808,7 +801,8 @@ MyanmarConverterExtension.addWordSegmenters = function(parentNode)
 
 MyanmarConverterExtension.onTreeModified = function(event)
 {
-    MyanmarConverterExtension._trace(event.type + " " + event.target);
+    MyanmarConverterExtension._trace(event.type + " " + event.target + ' ' +
+        event.target.nodeName + ' ' /* + event.target.innerHTML*/);
     if (event.target)
     {
         try
