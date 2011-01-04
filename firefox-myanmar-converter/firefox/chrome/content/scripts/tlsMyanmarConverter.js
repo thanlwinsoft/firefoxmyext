@@ -853,8 +853,8 @@ function TlsMyanmarUtn11()
     // asat 22
     this.visarga = "(း|ႇ|ႈ|ႉ|ႊ|ႋ|ႌ|ႍ|ႏ|ႚ|ႛ|ႜ)?";//23
     this.redup = "(ႝꩰ)?";//24
-    this.section = "(၊|။)?";//25
-    this.pattern = new RegExp(this.kinzi + this.cons + this.stack + this.asat  +this.medialY + this.medialR + this.medialW + this.medialH + this.asat + this.eVowel + this.uVowel + this.lVowel + this.karenVowel + this.shanVowel + this.aVowel + this.anusvara + this.pwoTone + this.lowerDot + this.monH + this.asat + this.visarga + this.redup + this.section, "g");
+    //this.section = "(၊|။)?";//25
+    this.pattern = new RegExp(this.kinzi + this.cons + this.stack + this.asat  +this.medialY + this.medialR + this.medialW + this.medialH + this.asat + this.eVowel + this.uVowel + this.lVowel + this.karenVowel + this.shanVowel + this.aVowel + this.anusvara + this.pwoTone + this.lowerDot + this.monH + this.asat + this.visarga + this.redup, "g");
     return this;
 }
 
