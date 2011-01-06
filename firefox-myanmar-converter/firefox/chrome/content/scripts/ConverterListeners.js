@@ -1,5 +1,6 @@
 /*
-Copyright 2009 Keith Stribley http://www.thanlwinsoft.org/
+Copyright 2010, 2011 Keith Stribley
+Website: http://www.thanlwinsoft.org/
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

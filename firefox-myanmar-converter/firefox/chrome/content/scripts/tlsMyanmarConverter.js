@@ -1,4 +1,5 @@
-// Copyright: Keith Stribley 2010 http://www.ThanLwinSoft.org/
+// Copyright: Keith Stribley 2010, 2011
+// Website: http://www.ThanLwinSoft.org/
 // License: GNU Lesser General Public License, version 2.1 or later.
 // http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html
 
